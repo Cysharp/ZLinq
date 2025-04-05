@@ -29,7 +29,7 @@ namespace ZLinq.Linq
 #endif
     {
         TEnumerator source = source;
-        int index;
+        int index = -1;
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -66,8 +66,8 @@ namespace ZLinq.Linq
         {
             if (source.TryGetNext(out var value))
             {
-                current = (index, value);
                 checked { index++; }
+                current = (index, value);
                 return true;
             }
 
