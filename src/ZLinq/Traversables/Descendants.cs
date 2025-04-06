@@ -5,7 +5,7 @@ public struct Descendants<TTraverser, T>(TTraverser traverser, bool withSelf)
     : IValueEnumerator<T>
     where TTraverser : struct, ITraverser<TTraverser, T>
 {
-    RefStack<Children<TTraverser, T>>? recursiveStack = null;
+    PooledStack<Children<TTraverser, T>>? recursiveStack = null;
 
     public bool TryGetNonEnumeratedCount(out int count)
     {
@@ -24,7 +24,7 @@ public struct Descendants<TTraverser, T>(TTraverser traverser, bool withSelf)
     public bool TryGetNext(out T current)
     {
         // IsDisposed
-        if (recursiveStack == RefStack<Children<TTraverser, T>>.DisposeSentinel)
+        if (recursiveStack == PooledStack<Children<TTraverser, T>>.DisposeSentinel)
         {
             Unsafe.SkipInit(out current);
             return false;
@@ -42,7 +42,7 @@ public struct Descendants<TTraverser, T>(TTraverser traverser, bool withSelf)
         {
             // mutable struct(enumerator) must use from stack ref
             var children = traverser.Children<TTraverser, T>();
-            recursiveStack = RefStack<Children<TTraverser, T>>.Rent();
+            recursiveStack = PooledStack<Children<TTraverser, T>>.Rent();
             recursiveStack.Push(children.Enumerator);
         }
 
@@ -86,8 +86,8 @@ public struct Descendants<TTraverser, T>(TTraverser traverser, bool withSelf)
     {
         if (recursiveStack != null)
         {
-            RefStack<Children<TTraverser, T>>.Return(recursiveStack);
-            recursiveStack = RefStack<Children<TTraverser, T>>.DisposeSentinel;
+            PooledStack<Children<TTraverser, T>>.Return(recursiveStack);
+            recursiveStack = PooledStack<Children<TTraverser, T>>.DisposeSentinel;
         }
     }
 }
