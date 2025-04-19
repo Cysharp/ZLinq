@@ -1,5 +1,4 @@
-﻿using BenchmarkDotNet.Analysers;
-using BenchmarkDotNet.Engines;
+using BenchmarkDotNet.Analysers;
 using BenchmarkDotNet.EventProcessors;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
@@ -22,6 +21,7 @@ public class BenchmarkEventProcessor : EventProcessor
     private int completedBenchmarkCount = 0;
 
     private int maxBenchmarkMethodNameLength = 0;
+    private int maxBenchmarkParameterInfoLength = 0;
     private bool containsMultipleJobIds = false;
 
     public static readonly BenchmarkEventProcessor Instance = new();
@@ -87,6 +87,11 @@ public class BenchmarkEventProcessor : EventProcessor
         // Gets max length of benchmark method name.
         maxBenchmarkMethodNameLength = benchmarks.Count > 0
             ? benchmarks.Max(x => x.Descriptor.WorkloadMethod.Name.Length)
+            : 0;
+
+        // Gets max length of benchmark parameters info.
+        maxBenchmarkParameterInfoLength = benchmarks.Count > 0
+            ? benchmarks.Max(x => x.HasParameters ? x.Parameters.PrintInfo.Length : 0)
             : 0;
 
         // Gets benchmarks contains multiple JobIds or not.
@@ -204,7 +209,11 @@ public class BenchmarkEventProcessor : EventProcessor
         sb.Append(methodName);
 
         if (benchmarkCase.HasParameters)
-            sb.Append($" ({benchmarkCase.Parameters.PrintInfo})");
+        {
+            var parametersInfo = benchmarkCase.Parameters.PrintInfo;
+            var parametersInfoWithParentheses = $"({parametersInfo})".PadRight(maxBenchmarkParameterInfoLength + 2);
+            sb.Append($" {parametersInfoWithParentheses}");
+        }
 
         if (containsMultipleJobIds)
             sb.Append($" JobId({benchmarkCase.Job.ResolvedId})");

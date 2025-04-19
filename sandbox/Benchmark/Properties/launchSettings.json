@@ -2,7 +2,7 @@
   "profiles": {
     "Default": {
       "commandName": "Project",
-      "commandLineArgs": "--filter Benchmark.SelectFromEnumerableArray.* -- Default",
+      "commandLineArgs": "--filter Benchmark.SelectFromSourceTypes* -- Default",
 
       // Available config
       // 1. Default
@@ -40,6 +40,8 @@
       // "commandLineArgs": "--filter Benchmark.ReadMeBenchmark.*",
       // "commandLineArgs": "--filter Benchmark.Select4.*",
       // "commandLineArgs": "--filter Benchmark.Select4_Consume.*",
+      // "commandLineArgs": "--filter Benchmark.SelectFromEnumerableArray.*",
+      // "commandLineArgs": "--filter Benchmark.SelectFromSourceTypes*",
       // "commandLineArgs": "--filter Benchmark.ShuffleBench.*",
       // "commandLineArgs": "--filter Benchmark.SimdAny.*",
       // "commandLineArgs": "--filter Benchmark.SimdCount.*",

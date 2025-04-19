@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Environments;
+using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
@@ -34,10 +34,10 @@ public static partial class SummariesExtensions
             Summary summary = items[0];
             var benchmarkTypeName = summary.BenchmarksCases[0].Descriptor.Type.GetDisplayName();
 
-            // Join generic type benchmarks summaries.
+            // Join benchmarks summaries that using generic type.
             if (items.Length > 1)
             {
-                // benchmarkTypeName = grouping.Key.Replace("`1", "<T>");
+                benchmarkTypeName = grouping.Key.Replace("`1", "<T>");
                 summary = Join(items, TimeSpan.FromTicks(items.Sum(x => x.TotalTime.Ticks)));
             }
 
