@@ -43,6 +43,8 @@ public static partial class PlatformDetection
 #endif
     }
 #else
+    public static bool IsLinqSpeedOptimized => IsSpeedOptimized;
+
     public static bool IsSpeedOptimized => !IsSizeOptimized;
     public static bool IsSizeOptimized => IsBrowser || IsWasi || IsAndroid || IsAppleMobile;
 #endif

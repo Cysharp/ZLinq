@@ -81,7 +81,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ProduceCorrectDictionary()
         {
-            int[] sourceArray = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+            int[] sourceArray = [1, 2, 3, 4, 5, 6, 7];
             RunToDictionaryOnAllCollectionTypes(sourceArray,
                 resultDictionary =>
                 {
@@ -90,7 +90,7 @@ namespace ZLinq.Tests
                     Assert.Equal(sourceArray, resultDictionary.Values);
                 });
 
-            string[] sourceStringArray = new string[] { "1", "2", "3", "4", "5", "6", "7", "8" };
+            string[] sourceStringArray = ["1", "2", "3", "4", "5", "6", "7", "8"];
             RunToDictionaryOnAllCollectionTypes(sourceStringArray,
                 resultDictionary =>
                 {
@@ -103,7 +103,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionaryFromKv_ProduceCorrectDictionary()
         {
-            int[] sourceArray = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            int[] sourceArray = [1, 2, 3, 4, 5, 6, 7];
             RunToDictionaryFromKvOnAllCollectionTypes(sourceArray,
                 resultDictionary =>
                 {
@@ -112,7 +112,7 @@ namespace ZLinq.Tests
                     Assert.Equal(sourceArray, resultDictionary.Values);
                 });
 
-            string[] sourceStringArray = new[] { "1", "2", "3", "4", "5", "6", "7", "8" };
+            string[] sourceStringArray = ["1", "2", "3", "4", "5", "6", "7", "8"];
             RunToDictionaryFromKvOnAllCollectionTypes(sourceStringArray,
                 resultDictionary =>
                 {
@@ -144,7 +144,7 @@ namespace ZLinq.Tests
         public void ToDictionary_PassCustomComparer()
         {
             EqualityComparer<int> comparer = EqualityComparer<int>.Create((x, y) => x == y, x => x);
-            TestCollection<int> collection = new TestCollection<int>(new int[] { 1, 2, 3, 4, 5, 6 });
+            TestCollection<int> collection = new TestCollection<int>([1, 2, 3, 4, 5, 6]);
 
             Dictionary<int, int> result1 = collection.ToDictionary(key => key, comparer);
             Assert.Same(comparer, result1.Comparer);
@@ -162,7 +162,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_UseDefaultComparerOnNull()
         {
-            TestCollection<int> collection = new TestCollection<int>(new int[] { 1, 2, 3, 4, 5, 6 });
+            TestCollection<int> collection = new TestCollection<int>([1, 2, 3, 4, 5, 6]);
 
             Dictionary<int, int> result1 = collection.ToDictionary(key => key, comparer: null);
             Assert.Same(EqualityComparer<int>.Default, result1.Comparer);
@@ -174,7 +174,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_UseDefaultComparer()
         {
-            TestCollection<int> collection = new TestCollection<int>(new[] { 1, 2, 3, 4, 5, 6 });
+            TestCollection<int> collection = new TestCollection<int>([1, 2, 3, 4, 5, 6]);
 
             Dictionary<int, int> result1 = collection.ToDictionary(key => key);
             Assert.Same(EqualityComparer<int>.Default, result1.Comparer);
@@ -192,7 +192,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_KeyValueSelectorsWork()
         {
-            TestCollection<int> collection = new TestCollection<int>(new int[] { 1, 2, 3, 4, 5, 6 });
+            TestCollection<int> collection = new TestCollection<int>([1, 2, 3, 4, 5, 6]);
 
             Dictionary<int, int> result = collection.ToDictionary(key => key + 10, val => val + 100);
 
@@ -213,7 +213,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ThrowArgumentNullExceptionWhenKeySelectorIsNull()
         {
-            int[] source = new int[0];
+            int[] source = [];
             Func<int, int> keySelector = null;
             AssertExtensions.Throws<ArgumentNullException>("keySelector", () => source.ToDictionary(keySelector));
         }
@@ -221,7 +221,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ThrowArgumentNullExceptionWhenValueSelectorIsNull()
         {
-            int[] source = new int[0];
+            int[] source = [];
             Func<int, int> keySelector = key => key;
             Func<int, int> valueSelector = null;
             AssertExtensions.Throws<ArgumentNullException>("elementSelector", () => source.ToDictionary(keySelector, valueSelector));
@@ -238,7 +238,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ThrowArgumentNullExceptionWhenKeySelectorIsNullElementSelector()
         {
-            int[] source = new int[0];
+            int[] source = [];
             Func<int, int> keySelector = null;
             AssertExtensions.Throws<ArgumentNullException>("keySelector", () => source.ToDictionary(keySelector, e => e));
         }
@@ -246,7 +246,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_KeySelectorThrowException()
         {
-            int[] source = new int[] { 1, 2, 3 };
+            int[] source = [1, 2, 3];
             Func<int, int> keySelector = key =>
             {
                 if (key == 1)
@@ -261,7 +261,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ThrowWhenKeySelectorReturnNull()
         {
-            int[] source = new int[] { 1, 2, 3 };
+            int[] source = [1, 2, 3];
             Func<int, string> keySelector = key => null;
 
             AssertExtensions.Throws<ArgumentNullException>("key", () => source.ToDictionary(keySelector));
@@ -270,7 +270,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ThrowWhenKeySelectorReturnSameValueTwice()
         {
-            int[] source = new int[] { 1, 2, 3 };
+            int[] source = [1, 2, 3];
             Func<int, int> keySelector = key => 1;
 
             AssertExtensions.Throws<ArgumentException>(null, () => source.ToDictionary(keySelector));
@@ -279,7 +279,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToDictionary_ValueSelectorThrowException()
         {
-            int[] source = new int[] { 1, 2, 3 };
+            int[] source = [1, 2, 3];
             Func<int, int> keySelector = key => key;
             Func<int, int> valueSelector = value =>
             {
@@ -303,12 +303,12 @@ namespace ZLinq.Tests
 
             source.ToDictionary(e => e.Name); // Doesn't throw;
 
-            source = new[]
-            {
+            source =
+            [
                 new { Name = "Chris", Score = 50 },
                 new { Name = "Bob", Score = 95 },
                 new { Name = default(string), Score = 55 }
-            };
+            ];
 
             AssertExtensions.Throws<ArgumentNullException>("key", () => source.ToDictionary(e => e.Name));
 
@@ -343,12 +343,12 @@ namespace ZLinq.Tests
 
             source.ToDictionary(e => e.Name, new AnagramEqualityComparer()); // Doesn't throw;
 
-            source = new[]
-            {
+            source =
+            [
                 new { Name = "Chris", Score = 50 },
                 new { Name = "Bob", Score = 95 },
                 new { Name = default(string), Score = 55 }
-            };
+            ];
 
             AssertExtensions.Throws<ArgumentNullException>("key", () => source.ToDictionary(e => e.Name, new AnagramEqualityComparer()));
         }
@@ -365,12 +365,12 @@ namespace ZLinq.Tests
 
             source.ToDictionary(e => e.Name, e => e); // Doesn't throw;
 
-            source = new[]
-            {
+            source =
+            [
                 new { Name = "Chris", Score = 50 },
                 new { Name = "Bob", Score = 95 },
                 new { Name = default(string), Score = 55 }
-            };
+            ];
 
             AssertExtensions.Throws<ArgumentNullException>("key", () => source.ToDictionary(e => e.Name, e => e));
         }
@@ -387,12 +387,12 @@ namespace ZLinq.Tests
 
             source.ToDictionary(e => e.Name, e => e, new AnagramEqualityComparer()); // Doesn't throw;
 
-            source = new[]
-            {
+            source =
+            [
                 new { Name = "Chris", Score = 50 },
                 new { Name = "Bob", Score = 95 },
                 new { Name = default(string), Score = 55 }
-            };
+            ];
 
             AssertExtensions.Throws<ArgumentNullException>("key", () => source.ToDictionary(e => e.Name, e => e, new AnagramEqualityComparer()));
         }
@@ -433,27 +433,26 @@ namespace ZLinq.Tests
             Assert.NotNull(dict);
             Assert.NotNull(keys);
             Assert.NotNull(values);
-            using (var ke = keys.GetEnumerator())
+
+            using var ke = keys.GetEnumerator();
+            foreach (var value in values)
             {
-                foreach (var value in values)
-                {
-                    Assert.True(ke.MoveNext());
-                    var key = ke.Current;
-                    E dictValue;
-                    Assert.True(dict.TryGetValue(key, out dictValue));
-                    Assert.Equal(value, dictValue);
-                    dict.Remove(key);
-                }
-                Assert.False(ke.MoveNext());
-                Assert.Empty(dict);
+                Assert.True(ke.MoveNext());
+                var key = ke.Current;
+                E dictValue;
+                Assert.True(dict.TryGetValue(key, out dictValue));
+                Assert.Equal(value, dictValue);
+                dict.Remove(key);
             }
+            Assert.False(ke.MoveNext());
+            Assert.Empty(dict);
         }
 
         [Fact]
         public void EmptySource()
         {
-            int[] elements = new int[] { };
-            string[] keys = new string[] { };
+            int[] elements = [];
+            string[] keys = [];
             var source = keys.Zip(elements, (k, e) => new { Name = k, Score = e });
 
             AssertMatches(keys, elements, source.ToDictionary(e => e.Name, e => e.Score, new AnagramEqualityComparer()));
@@ -462,8 +461,8 @@ namespace ZLinq.Tests
         [Fact]
         public void OneElementNullComparer()
         {
-            int[] elements = new int[] { 5 };
-            string[] keys = new string[] { "Bob" };
+            int[] elements = [5];
+            string[] keys = ["Bob"];
             var source = new[] { new { Name = keys[0], Score = elements[0] } };
 
             AssertMatches(keys, elements, source.ToDictionary(e => e.Name, e => e.Score, null));
@@ -472,7 +471,7 @@ namespace ZLinq.Tests
         [Fact]
         public void SeveralElementsCustomComparerer()
         {
-            string[] keys = new string[] { "Bob", "Zen", "Prakash", "Chris", "Sachin" };
+            string[] keys = ["Bob", "Zen", "Prakash", "Chris", "Sachin"];
             var source = new[]
             {
                 new { Name = "Bbo", Score = 95 },
@@ -488,9 +487,9 @@ namespace ZLinq.Tests
         [Fact]
         public void NullCoalescedKeySelector()
         {
-            string[] elements = new string[] { null };
-            string[] keys = new string[] { string.Empty };
-            string[] source = new string[] { null };
+            string[] elements = [null];
+            string[] keys = [string.Empty];
+            string[] source = [null];
 
             AssertMatches(keys, elements, source.ToDictionary(e => e ?? string.Empty, e => e, EqualityComparer<string>.Default));
 

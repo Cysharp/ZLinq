@@ -23,10 +23,10 @@ namespace ZLinq.Tests
             MethodInfo queryableNotInEnumerable = GetMissingExtensionMethod(
                 typeof(Queryable),
                 typeof(Enumerable),
-                 new[] {
+                [
                      nameof(Queryable.AsQueryable)
-                 }
-                );
+                ]
+            );
 
             Assert.True(queryableNotInEnumerable is null, string.Format("Queryable method {0} not defined by Enumerable", queryableNotInEnumerable));
         }

@@ -56,22 +56,22 @@ namespace ZLinq.Tests
 
         public static IEnumerable<object[]> TestDataWithPredicate()
         {
-            yield return new object[] { new int[0], null, false };
-            yield return new object[] { new int[] { 3 }, null, true };
+            yield return [new int[0], null, false];
+            yield return [new int[] { 3 }, null, true];
 
             Func<int, bool> isEvenFunc = IsEven;
-            yield return new object[] { new int[0], isEvenFunc, false };
-            yield return new object[] { new int[] { 4 }, isEvenFunc, true };
-            yield return new object[] { new int[] { 5 }, isEvenFunc, false };
-            yield return new object[] { new int[] { 5, 9, 3, 7, 4 }, isEvenFunc, true };
-            yield return new object[] { new int[] { 5, 8, 9, 3, 7, 11 }, isEvenFunc, true };
+            yield return [new int[0], isEvenFunc, false];
+            yield return [new int[] { 4 }, isEvenFunc, true];
+            yield return [new int[] { 5 }, isEvenFunc, false];
+            yield return [new int[] { 5, 9, 3, 7, 4 }, isEvenFunc, true];
+            yield return [new int[] { 5, 8, 9, 3, 7, 11 }, isEvenFunc, true];
 
             int[] range = Enumerable.Range(1, 10).ToArray();
-            yield return new object[] { range, (Func<int, bool>)(i => i > 10), false };
+            yield return [range, (Func<int, bool>)(i => i > 10), false];
             for (int j = 0; j <= 9; j++)
             {
                 int k = j; // Local copy for iterator
-                yield return new object[] { range, (Func<int, bool>)(i => i > k), true };
+                yield return [range, (Func<int, bool>)(i => i > k), true];
             }
         }
 
@@ -111,7 +111,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NullObjectsInArray_Included()
         {
-            int?[] source = { null, null, null, null };
+            int?[] source = [null, null, null, null];
             Assert.All(CreateSources(source), source =>
             {
                 Assert.True(source.Any());

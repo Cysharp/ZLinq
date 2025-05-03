@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Linq.Tests;
 using Xunit;
+using static System.Linq.Tests.SkipTakeData;
 
 namespace ZLinq.Tests
 {
@@ -15,28 +17,29 @@ namespace ZLinq.Tests
         }
 
         [Theory]
-        [MemberData(nameof(SkipTakeData.EnumerableData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EnumerableData), MemberType = typeof(SkipTakeData))]
         public void SkipLast(IEnumerable<int> source, int count)
         {
-            Assert.All(IdentityTransforms<int>(), transform =>
-            {
-                IEnumerable<int> equivalent = transform(source);
+            int[] expected = source.Reverse().Skip(count).Reverse().ToArray();
 
-                var expected = equivalent.Reverse().Skip(count).Reverse().ToArray();
-                var actual = equivalent.SkipLast(count).ToArray();
+            Assert.All(CreateSources(source), source =>
+            {
+                var actual = source.SkipLast(count);
 
                 Assert.Equal(expected, actual);
-                Assert.Equal(expected.Count(), actual.Count());
+
+                Assert.Equal(expected.Length, actual.Count());
                 Assert.Equal(expected, actual.ToArray());
                 Assert.Equal(expected, actual.ToList());
-
                 Assert.Equal(expected.FirstOrDefault(), actual.FirstOrDefault());
                 Assert.Equal(expected.LastOrDefault(), actual.LastOrDefault());
 
-                Assert.All(Enumerable.Range(0, expected.Count()), index =>
+                if (expected.Length > 0)
                 {
-                    Assert.Equal(expected.ElementAt(index), actual.ElementAt(index));
-                });
+                    Assert.Equal(expected[0], actual.ElementAt(0));
+                    Assert.Equal(expected[^1], actual.ElementAt(expected.Length - 1));
+                    Assert.Equal(expected[expected.Length / 2], actual.ElementAt(expected.Length / 2));
+                }
 
                 Assert.Equal(0, actual.ElementAtOrDefault(-1));
                 Assert.Equal(0, actual.ElementAtOrDefault(actual.Count()));
@@ -44,7 +47,7 @@ namespace ZLinq.Tests
         }
 
         [Theory]
-        [MemberData(nameof(SkipTakeData.EvaluationBehaviorData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EvaluationBehaviorData), MemberType = typeof(SkipTakeData))]
         public void EvaluationBehavior(int count)
         {
             // We want to make sure no more than `count` items are ever evaluated ahead of the current position.
@@ -58,26 +61,25 @@ namespace ZLinq.Tests
                 current: () => index, // Yield from 1 up to the limit, inclusive.
                 dispose: () => index ^= int.MinValue);
 
-            var iterator = source.SkipLast(count).GetEnumerator();
-
-            Assert.Equal(0, index); // Nothing should be done before MoveNext is called.
-
-            for (int i = 1; i <= count; i++)
+            using (var iterator = source.SkipLast(count).GetEnumerator())
             {
-                Assert.True(iterator.MoveNext());
-                Assert.Equal(i, iterator.Current);
-                Assert.Equal(count + i, index);
+                Assert.Equal(0, index); // Nothing should be done before MoveNext is called.
+
+                for (int i = 1; i <= count; i++)
+                {
+                    Assert.True(iterator.MoveNext());
+                    Assert.Equal(i, iterator.Current);
+                    Assert.Equal(count + i, index);
+                }
+
+                Assert.False(iterator.MoveNext());
             }
 
-            Assert.False(iterator.MoveNext());
-            Assert.Equal(0, iterator.Current);
-
-            iterator.Dispose();
             Assert.Equal(int.MinValue, index & int.MinValue);
         }
 
         [Theory]
-        [MemberData(nameof(SkipTakeData.EnumerableData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EnumerableData), MemberType = typeof(SkipTakeData))]
         public void RunOnce(IEnumerable<int> source, int count)
         {
             var expected = source.SkipLast(count);
@@ -94,7 +96,7 @@ namespace ZLinq.Tests
             list.RemoveAt(4);
             list.RemoveAt(3);
 
-            Assert.Equal(new[] { 1 }, e.ToArray());
+            Assert.Equal([1], e.ToArray());
         }
 
         [Fact]
@@ -106,7 +108,7 @@ namespace ZLinq.Tests
 
             list.RemoveAt(4);
 
-            Assert.Equal(new[] { 2 }, e.ToArray());
+            Assert.Equal([2], e.ToArray());
         }
     }
 }

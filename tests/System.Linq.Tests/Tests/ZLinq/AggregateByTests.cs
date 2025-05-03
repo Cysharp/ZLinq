@@ -13,8 +13,8 @@ namespace ZLinq.Tests
         {
             Assert.All(IdentityTransforms<int>(), transform =>
             {
-                Assert.Equal(Enumerable.Empty<KeyValuePair<int, int>>(), transform(Enumerable.Empty<int>()).AggregateBy(i => i, i => i, (a, i) => a + i));
-                Assert.Equal(Enumerable.Empty<KeyValuePair<int, int>>(), transform(Enumerable.Empty<int>()).AggregateBy(i => i, 0, (a, i) => a + i));
+                Assert.Equal([], transform([]).AggregateBy(i => i, i => i, (a, i) => a + i));
+                Assert.Equal([], transform([]).AggregateBy(i => i, 0, (a, i) => a + i));
             });
         }
 
@@ -68,7 +68,7 @@ namespace ZLinq.Tests
         {
             IEnumerable<int> source = new ThrowsOnGetEnumerator();
 
-            var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
+            using var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
 
             try
             {
@@ -85,7 +85,7 @@ namespace ZLinq.Tests
         {
             IEnumerable<int> source = new ThrowsOnMoveNext();
 
-            var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
+            using var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
 
             try
             {
@@ -102,7 +102,7 @@ namespace ZLinq.Tests
         {
             IEnumerable<int> source = new ThrowsOnCurrentEnumerator();
 
-            var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
+            using var enumerator = source.AggregateBy(x => x, 0, (x, y) => x + y).GetEnumerator();
 
             try
             {
@@ -123,7 +123,7 @@ namespace ZLinq.Tests
                 seedSelector: x => 0,
                 func: (x, y) => x + y,
                 comparer: null,
-                expected: Enumerable.Empty<KeyValuePair<int, int>>());
+                expected: []);
 
             Validate(
                 source: Enumerable.Range(0, 10),
@@ -158,7 +158,7 @@ namespace ZLinq.Tests
                 expected: Enumerable.Repeat(5, 1).Select(x => new KeyValuePair<int, int>(x, 100)).ToArray());
 
             Validate(
-                source: new string[] { "Bob", "bob", "tim", "Bob", "Tim" },
+                source: ["Bob", "bob", "tim", "Bob", "Tim"],
                 keySelector: x => x,
                 seedSelector: x => string.Empty,
                 func: (x, y) => x + y,
@@ -172,7 +172,7 @@ namespace ZLinq.Tests
                 ]);
 
             Validate(
-                source: new string[] { "Bob", "bob", "tim", "Bob", "Tim" },
+                source: ["Bob", "bob", "tim", "Bob", "Tim"],
                 keySelector: x => x,
                 seedSelector: x => string.Empty,
                 func: (x, y) => x + y,
@@ -244,7 +244,7 @@ namespace ZLinq.Tests
                     seedSelector: _ => new List<int>(),
                     func: (group, element) => { group.Add(element); return group; });
 
-            var e = oddsEvens.GetEnumerator();
+            using var e = oddsEvens.GetEnumerator();
 
             Assert.True(e.MoveNext());
             KeyValuePair<bool, List<int>> oddsItem = e.Current;
@@ -274,7 +274,7 @@ namespace ZLinq.Tests
                 seed: 0L,
                 func: (count, _) => ++count);
 
-            var e = oddsEvens.GetEnumerator();
+            using var e = oddsEvens.GetEnumerator();
 
             Assert.True(e.MoveNext());
             KeyValuePair<bool, long> oddsItem = e.Current;

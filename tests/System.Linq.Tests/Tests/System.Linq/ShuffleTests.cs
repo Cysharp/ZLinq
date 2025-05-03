@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using Xunit;
 
 #if NET10_0_OR_GREATER
-
 namespace System.Linq.Tests
 {
     public class ShuffleTests : EnumerableTests

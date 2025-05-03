@@ -37,7 +37,7 @@ namespace ZLinq.Tests
         [Fact]
         public void SourceEmpty()
         {
-            int[] source = { };
+            int[] source = [];
             Assert.Empty(source.Order());
         }
 
@@ -52,8 +52,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SurviveBadComparerAlwaysReturnsNegative()
         {
-            int[] source = { 1 };
-            int[] expected = { 1 };
+            int[] source = [1];
+            int[] expected = [1];
 
             Assert.Equal(expected, source.Order(new BadComparer2()));
         }
@@ -61,8 +61,8 @@ namespace ZLinq.Tests
         [Fact]
         public void KeySelectorReturnsNull()
         {
-            int?[] source = { null, null, null };
-            int?[] expected = { null, null, null };
+            int?[] source = [null, null, null];
+            int?[] expected = [null, null, null];
 
             Assert.Equal(expected, source.Order());
         }
@@ -70,8 +70,8 @@ namespace ZLinq.Tests
         [Fact]
         public void ElementsAllSameKey()
         {
-            int?[] source = { 9, 9, 9, 9, 9, 9 };
-            int?[] expected = { 9, 9, 9, 9, 9, 9 };
+            int?[] source = [9, 9, 9, 9, 9, 9];
+            int?[] expected = [9, 9, 9, 9, 9, 9];
 
             Assert.Equal(expected, source.Order());
         }
@@ -79,8 +79,8 @@ namespace ZLinq.Tests
         [Fact]
         public void FirstAndLastAreDuplicatesCustomComparer()
         {
-            string[] source = { "Prakash", "Alpha", "dan", "DAN", "Prakash" };
-            string[] expected = { "Alpha", "dan", "DAN", "Prakash", "Prakash" };
+            string[] source = ["Prakash", "Alpha", "dan", "DAN", "Prakash"];
+            string[] expected = ["Alpha", "dan", "DAN", "Prakash", "Prakash"];
 
             Assert.Equal(expected, source.Order(StringComparer.OrdinalIgnoreCase));
         }
@@ -88,8 +88,8 @@ namespace ZLinq.Tests
         [Fact]
         public void RunOnce()
         {
-            string[] source = { "Prakash", "Alpha", "dan", "DAN", "Prakash" };
-            string[] expected = { "Alpha", "dan", "DAN", "Prakash", "Prakash" };
+            string[] source = ["Prakash", "Alpha", "dan", "DAN", "Prakash"];
+            string[] expected = ["Alpha", "dan", "DAN", "Prakash", "Prakash"];
 
             Assert.Equal(expected, source.RunOnce().Order(StringComparer.OrdinalIgnoreCase));
         }
@@ -97,8 +97,8 @@ namespace ZLinq.Tests
         [Fact]
         public void FirstAndLastAreDuplicatesNullPassedAsComparer()
         {
-            int[] source = { 5, 1, 3, 2, 5 };
-            int[] expected = { 1, 2, 3, 5, 5 };
+            int[] source = [5, 1, 3, 2, 5];
+            int[] expected = [1, 2, 3, 5, 5];
 
             Assert.Equal(expected, source.Order(null));
         }
@@ -106,8 +106,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SourceReverseOfResultNullPassedAsComparer()
         {
-            int?[] source = { 100, 30, 9, 5, 0, -50, -75, null };
-            int?[] expected = { null, -75, -50, 0, 5, 9, 30, 100 };
+            int?[] source = [100, 30, 9, 5, 0, -50, -75, null];
+            int?[] expected = [null, -75, -50, 0, 5, 9, 30, 100];
 
             Assert.Equal(expected, source.Order(null));
         }
@@ -158,8 +158,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SurviveBadComparerAlwaysReturnsPositive()
         {
-            int[] source = { 1 };
-            int[] expected = { 1 };
+            int[] source = [1];
+            int[] expected = [1];
 
             Assert.Equal(expected, source.Order(new BadComparer1()));
         }
@@ -291,7 +291,7 @@ namespace ZLinq.Tests
         [Fact]
         public void LastOnOrderedMatchingCases()
         {
-            object[] boxedInts = new object[] { 0, 1, 2, 9, 1, 2, 3, 9, 4, 5, 7, 8, 9, 0, 1 };
+            object[] boxedInts = [0, 1, 2, 9, 1, 2, 3, 9, 4, 5, 7, 8, 9, 0, 1];
             Assert.Same(boxedInts[12], boxedInts.Order().Last());
             Assert.Same(boxedInts[12], boxedInts.Order().LastOrDefault());
             Assert.Same(boxedInts[12], boxedInts.Order().Last(o => (int)o % 2 == 1));
@@ -325,7 +325,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EnumeratorDoesntContinue()
         {
-            var enumerator = NumberRangeGuaranteedNotCollectionType(0, 3).Shuffle().Order().GetEnumerator();
+            using var enumerator = NumberRangeGuaranteedNotCollectionType(0, 3).Shuffle().Order().GetEnumerator();
             while (enumerator.MoveNext()) { }
             Assert.False(enumerator.MoveNext());
         }
@@ -397,7 +397,7 @@ namespace ZLinq.Tests
         [Fact]
         public void CultureOrder()
         {
-            string[] source = new[] { "Apple0", "\u00C6ble0", "Apple1", "\u00C6ble1", "Apple2", "\u00C6ble2" };
+            string[] source = ["Apple0", "\u00C6ble0", "Apple1", "\u00C6ble1", "Apple2", "\u00C6ble2"];
 
             CultureInfo dk = new CultureInfo("da-DK");
             CultureInfo au = new CultureInfo("en-AU");
@@ -430,7 +430,7 @@ namespace ZLinq.Tests
 
             using (new ThreadCultureChange(dk)) // "dk" whilst GetEnumerator
             {
-                var s = source.Order().GetEnumerator();
+                using var s = source.Order().GetEnumerator();
                 using (new ThreadCultureChange(au)) // but "au" whilst accessing...
                 {
                     int idx = 0;
@@ -444,7 +444,7 @@ namespace ZLinq.Tests
             using (new ThreadCultureChange(au))
             {
                 // "au" whilst GetEnumerator
-                var s = source.Order().GetEnumerator();
+                using var s = source.Order().GetEnumerator();
 
                 using (new ThreadCultureChange(dk))
                 {
@@ -469,7 +469,7 @@ namespace ZLinq.Tests
         [Fact]
         public void CultureOrderElementAt()
         {
-            string[] source = new[] { "Apple0", "\u00C6ble0", "Apple1", "\u00C6ble1", "Apple2", "\u00C6ble2" };
+            string[] source = ["Apple0", "\u00C6ble0", "Apple1", "\u00C6ble1", "Apple2", "\u00C6ble2"];
 
             CultureInfo dk = new CultureInfo("da-DK");
             CultureInfo au = new CultureInfo("en-AU");
@@ -504,7 +504,7 @@ namespace ZLinq.Tests
         [Fact]
         public void StableSort_CustomComparerAlwaysReturns0()
         {
-            byte[] values = new byte[] { 0x45, 0x7D, 0x4B, 0x61, 0x27 };
+            byte[] values = [0x45, 0x7D, 0x4B, 0x61, 0x27];
             byte[] newValues = values.Order(Comparer<byte>.Create((a, b) => 0)).ToArray();
             AssertExtensions.SequenceEqual(values, newValues);
         }

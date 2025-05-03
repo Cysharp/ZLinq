@@ -33,12 +33,12 @@ namespace ZLinq.Tests
 
         public static IEnumerable<object[]> TestData()
         {
-            yield return new object[] { NumberRangeGuaranteedNotCollectionType(9, 1), 0, 1, 9 };
-            yield return new object[] { NumberRangeGuaranteedNotCollectionType(9, 10), 9, 1, 18 };
-            yield return new object[] { NumberRangeGuaranteedNotCollectionType(-4, 10), 3, 7, -1 };
+            yield return [NumberRangeGuaranteedNotCollectionType(9, 1), 0, 1, 9];
+            yield return [NumberRangeGuaranteedNotCollectionType(9, 10), 9, 1, 18];
+            yield return [NumberRangeGuaranteedNotCollectionType(-4, 10), 3, 7, -1];
 
-            yield return new object[] { new int[] { -4 }, 0, 1, -4 };
-            yield return new object[] { new int[] { 9, 8, 0, -5, 10 }, 4, 1, 10 };
+            yield return [new int[] { -4 }, 0, 1, -4];
+            yield return [new int[] { 9, 8, 0, -5, 10 }, 4, 1, 10];
         }
 
         [Theory]
@@ -99,7 +99,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NullableArray_ValidIndex_ReturnsCorrectObject()
         {
-            int?[] source = { 9, 8, null, -5, 10 };
+            int?[] source = [9, 8, null, -5, 10];
 
             Assert.Null(source.ElementAt(2));
             Assert.Equal(-5, source.ElementAt(3));
@@ -131,7 +131,7 @@ namespace ZLinq.Tests
             }
 
             {
-                source.InsertRange(3, new[] { -1, -2 });
+                source.InsertRange(3, [-1, -2]);
                 source.RemoveAt(0);
                 Assert.Equal(-1, source.ElementAt(2));
                 Assert.Equal(-1, source.ElementAt(new Index(2)));
@@ -157,7 +157,7 @@ namespace ZLinq.Tests
                 var query1 = ForceNotCollection(source).Select(i => i);
                 var query2 = ForceNotCollection(source).Select(i => i);
                 var query3 = ForceNotCollection(source).Select(i => i);
-                source.InsertRange(3, new[] { -1, -2 });
+                source.InsertRange(3, [-1, -2]);
                 source.RemoveAt(0);
                 Assert.Equal(-1, query1.ElementAt(2));
                 Assert.Equal(-1, query2.ElementAt(new Index(2)));
@@ -207,7 +207,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, source.ElementAt(5));
             Assert.Equal(5, source.ElementAt(new Index(5)));
@@ -238,7 +238,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_ThrowsIListIndexerException()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(-1));
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(^11));
             // ImmutableArray<T> implements IList<T>. ElementAt calls ImmutableArray<T>'s indexer, which throws IndexOutOfRangeException instead of ArgumentOutOfRangeException.
@@ -256,7 +256,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_NotList()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, ForceNotCollection(source).ElementAt(5));
             Assert.Equal(5, ForceNotCollection(source).ElementAt(new Index(5)));
@@ -289,7 +289,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_ListPartition()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, ListPartitionOrEmpty(source).ElementAt(5));
             Assert.Equal(5, ListPartitionOrEmpty(source).ElementAt(new Index(5)));
@@ -320,7 +320,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_EnumerablePartition()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, EnumerablePartitionOrEmpty(source).ElementAt(5));
             Assert.Equal(5, EnumerablePartitionOrEmpty(source).ElementAt(new Index(5)));
@@ -351,7 +351,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_Collection()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, new TestCollection<int>(source).ElementAt(5));
             Assert.Equal(5, new TestCollection<int>(source).ElementAt(new Index(5)));
@@ -382,7 +382,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NonEmptySource_Consistency_NonGenericCollection()
         {
-            int[] source = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+            int[] source = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             Assert.Equal(5, new TestNonGenericCollection<int>(source.ToArray()).ElementAt(5));
             Assert.Equal(5, new TestNonGenericCollection<int>(source.ToArray()).ElementAt(new Index(5)));
@@ -413,7 +413,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(-1));
@@ -434,7 +434,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_ThrowsIListIndexerException()
         {
-            int[] source = { };
+            int[] source = [];
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(-1));
             Assert.Throws<ArgumentOutOfRangeException>(() => source.ElementAt(^1));
             // ImmutableArray<T> implements IList<T>. ElementAt calls ImmutableArray<T>'s indexer, which throws IndexOutOfRangeException instead of ArgumentOutOfRangeException.
@@ -455,7 +455,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_NotList()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => ForceNotCollection(source).ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => ForceNotCollection(source).ElementAt(-1));
@@ -476,7 +476,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_ListPartition()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => ListPartitionOrEmpty(source).ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => ListPartitionOrEmpty(source).ElementAt(-1));
@@ -497,7 +497,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_EnumerablePartition()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => EnumerablePartitionOrEmpty(source).ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => EnumerablePartitionOrEmpty(source).ElementAt(-1));
@@ -518,7 +518,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_Collection()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new TestCollection<int>(source).ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => new TestCollection<int>(source).ElementAt(-1));
@@ -539,7 +539,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource_Consistency_NonGenericCollection()
         {
-            int[] source = { };
+            int[] source = [];
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new TestNonGenericCollection<int>(source.ToArray()).ElementAt(1));
             Assert.Throws<ArgumentOutOfRangeException>(() => new TestNonGenericCollection<int>(source.ToArray()).ElementAt(-1));

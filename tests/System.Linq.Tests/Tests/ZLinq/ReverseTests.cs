@@ -11,7 +11,8 @@ namespace ZLinq.Tests
         [Fact]
         public void InvalidArguments()
         {
-            AssertExtensions.Throws<ArgumentNullException>("source", () => Enumerable.Reverse<string>(null));
+            AssertExtensions.Throws<ArgumentNullException>("source", () => Enumerable.Reverse<string>((IEnumerable<string>)null));
+            AssertExtensions.Throws<ArgumentNullException>("source", () => Enumerable.Reverse<string>((string[])null));
         }
 
         [Theory]
@@ -22,6 +23,40 @@ namespace ZLinq.Tests
             Array.Reverse(expected);
 
             var actual = source.Reverse();
+
+            Assert.Equal(expected, actual);
+            Assert.Equal(expected.Count(), actual.Count()); // Count may be optimized.
+            Assert.Equal(expected, actual.ToArray());
+            Assert.Equal(expected, actual.ToList());
+
+            Assert.Equal(expected.FirstOrDefault(), actual.FirstOrDefault());
+            Assert.Equal(expected.LastOrDefault(), actual.LastOrDefault());
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                Assert.Equal(expected[i], actual.ElementAt(i));
+
+                Assert.Equal(expected.Skip(i), actual.Skip(i));
+                Assert.Equal(expected.Take(i), actual.Take(i));
+            }
+
+            Assert.Equal(default(T), actual.ElementAtOrDefault(-1));
+            Assert.Equal(default(T), actual.ElementAtOrDefault(expected.Length));
+
+            Assert.Equal(expected, actual.Select(_ => _));
+            Assert.Equal(expected, actual.Where(_ => true));
+
+            Assert.Equal(actual, actual); // Repeat the enumeration against itself.
+        }
+
+        [Theory]
+        [MemberData(nameof(ReverseData))]
+        public void ReverseArray<T>(IEnumerable<T> source)
+        {
+            T[] expected = source.ToArray();
+            Array.Reverse(expected);
+
+            var actual = source.ToArray().Reverse();
 
             Assert.Equal(expected, actual);
             Assert.Equal(expected.Count(), actual.Count()); // Count may be optimized.
@@ -64,9 +99,9 @@ namespace ZLinq.Tests
             var integers = new[]
             {
                 Array.Empty<int>(), // No elements.
-                new[] { 1 }, // One element.
-                new[] { 9999, 0, 888, -1, 66, -777, 1, 2, -12345 }, // Distinct elements.
-                new[] { -10, 0, 5, 0, 9, 100, 9 }, // Some repeating elements.
+                [1], // One element.
+                [9999, 0, 888, -1, 66, -777, 1, 2, -12345], // Distinct elements.
+                [-10, 0, 5, 0, 9, 100, 9], // Some repeating elements.
             };
 
             return integers

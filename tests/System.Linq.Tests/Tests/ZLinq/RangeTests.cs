@@ -26,7 +26,7 @@ namespace ZLinq.Tests
         {
             for (int i = 0; i < 64; i++)
             {
-                yield return new object[] { i };
+                yield return [i];
             }
         }
 
@@ -78,33 +78,27 @@ namespace ZLinq.Tests
         [Fact]
         public void Range_NotEnumerateAfterEnd()
         {
-            using (var rangeEnum = Enumerable.Range(1, 1).GetEnumerator())
-            {
-                Assert.True(rangeEnum.MoveNext());
-                Assert.False(rangeEnum.MoveNext());
-                Assert.False(rangeEnum.MoveNext());
-            }
+            using var rangeEnum = Enumerable.Range(1, 1).GetEnumerator();
+            Assert.True(rangeEnum.MoveNext());
+            Assert.False(rangeEnum.MoveNext());
+            Assert.False(rangeEnum.MoveNext());
         }
 
         [Fact]
         public void Range_EnumerableAndEnumeratorAreSame()
         {
             var rangeEnumerable = Enumerable.Range(1, 1);
-            using (var rangeEnumerator = rangeEnumerable.GetEnumerator())
-            {
-                Assert.Same(rangeEnumerable, rangeEnumerator);
-            }
+            using var rangeEnumerator = rangeEnumerable.GetEnumerator();
+            Assert.Same(rangeEnumerable, rangeEnumerator);
         }
 
         [Fact]
         public void Range_GetEnumeratorReturnUniqueInstances()
         {
             var rangeEnumerable = Enumerable.Range(1, 1);
-            using (var enum1 = rangeEnumerable.GetEnumerator())
-            using (var enum2 = rangeEnumerable.GetEnumerator())
-            {
-                Assert.NotSame(enum1, enum2);
-            }
+            using var enum1 = rangeEnumerable.GetEnumerator();
+            using var enum2 = rangeEnumerable.GetEnumerator();
+            Assert.NotSame(enum1, enum2);
         }
 
         [Fact]
@@ -116,7 +110,7 @@ namespace ZLinq.Tests
 
             Assert.Equal(count, rangeEnumerable.Count());
 
-            int[] expected = { int.MaxValue - 3, int.MaxValue - 2, int.MaxValue - 1, int.MaxValue };
+            int[] expected = [int.MaxValue - 3, int.MaxValue - 2, int.MaxValue - 1, int.MaxValue];
             Assert.Equal(expected, rangeEnumerable);
         }
 
@@ -132,7 +126,7 @@ namespace ZLinq.Tests
         {
             int start = -5;
             int count = 1;
-            int[] expected = { -5 };
+            int[] expected = [-5];
 
             Assert.Equal(expected, Enumerable.Range(start, count));
         }
@@ -142,7 +136,7 @@ namespace ZLinq.Tests
         {
             int start = 12;
             int count = 6;
-            int[] expected = { 12, 13, 14, 15, 16, 17 };
+            int[] expected = [12, 13, 14, 15, 16, 17];
 
             Assert.Equal(expected, Enumerable.Range(start, count));
         }
@@ -174,10 +168,10 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipTakeCanOnlyBeOne()
         {
-            Assert.Equal(new[] { 1 }, Enumerable.Range(1, 10).Take(1));
-            Assert.Equal(new[] { 2 }, Enumerable.Range(1, 10).Skip(1).Take(1));
-            Assert.Equal(new[] { 3 }, Enumerable.Range(1, 10).Take(3).Skip(2));
-            Assert.Equal(new[] { 1 }, Enumerable.Range(1, 10).Take(3).Take(1));
+            Assert.Equal([1], Enumerable.Range(1, 10).Take(1));
+            Assert.Equal([2], Enumerable.Range(1, 10).Skip(1).Take(1));
+            Assert.Equal([3], Enumerable.Range(1, 10).Take(3).Skip(2));
+            Assert.Equal([1], Enumerable.Range(1, 10).Take(3).Take(1));
         }
 
         [Fact]
@@ -246,8 +240,8 @@ namespace ZLinq.Tests
         [Fact]
         public void IListImplementationIsValid()
         {
-            Validate(Enumerable.Range(42, 10), new[] { 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 });
-            Validate(Enumerable.Range(42, 10).Skip(3).Take(4).ToArray().AsEnumerable(), new[] { 45, 46, 47, 48 });
+            Validate(Enumerable.Range(42, 10), [42, 43, 44, 45, 46, 47, 48, 49, 50, 51]);
+            Validate(Enumerable.Range(42, 10).Skip(3).Take(4).ToArray().AsEnumerable(), [45, 46, 47, 48]);
 
             static void Validate(IEnumerable<int> e, int[] expected)
             {

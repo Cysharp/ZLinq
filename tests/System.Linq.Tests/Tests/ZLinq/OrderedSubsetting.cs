@@ -107,7 +107,7 @@ namespace ZLinq.Tests
             Assert.Empty(ordered.Take(0));
             Assert.Empty(ordered.Take(-1));
             Assert.Empty(ordered.Take(int.MinValue));
-            Assert.Equal(new int[] { 0 }, ordered.Take(1));
+            Assert.Equal([0], ordered.Take(1));
             Assert.Equal(Enumerable.Range(0, 100), ordered.Take(101));
             Assert.Equal(Enumerable.Range(0, 100), ordered.Take(int.MaxValue));
             Assert.Equal(Enumerable.Range(0, 100), ordered.Take(100));
@@ -145,7 +145,7 @@ namespace ZLinq.Tests
             Assert.Equal(Enumerable.Range(0, 100), ordered.Skip(0));
             Assert.Equal(Enumerable.Range(0, 100), ordered.Skip(-1));
             Assert.Equal(Enumerable.Range(0, 100), ordered.Skip(int.MinValue));
-            Assert.Equal(new int[] { 99 }, ordered.Skip(99));
+            Assert.Equal([99], ordered.Skip(99));
             Assert.Empty(ordered.Skip(101));
             Assert.Empty(ordered.Skip(int.MaxValue));
             Assert.Empty(ordered.Skip(100));
@@ -335,10 +335,10 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipTakesOnlyOne()
         {
-            Assert.Equal(new[] { 1 }, Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(1));
-            Assert.Equal(new[] { 2 }, Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Skip(1).Take(1));
-            Assert.Equal(new[] { 3 }, Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(3).Skip(2));
-            Assert.Equal(new[] { 1 }, Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(3).Take(1));
+            Assert.Equal([1], Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(1));
+            Assert.Equal([2], Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Skip(1).Take(1));
+            Assert.Equal([3], Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(3).Skip(2));
+            Assert.Equal([1], Enumerable.Range(1, 10).Shuffle().OrderBy(i => i).Take(3).Take(1));
         }
 
         [Fact]
@@ -399,7 +399,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EnumeratorDoesntContinue()
         {
-            var enumerator = NumberRangeGuaranteedNotCollectionType(0, 3).Shuffle().OrderBy(i => i).Skip(1).GetEnumerator();
+            using var enumerator = NumberRangeGuaranteedNotCollectionType(0, 3).Shuffle().OrderBy(i => i).Skip(1).GetEnumerator();
             while (enumerator.MoveNext()) { }
             Assert.False(enumerator.MoveNext());
         }
@@ -407,7 +407,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select()
         {
-            Assert.Equal(new[] { 0, 2, 4, 6, 8 }, Enumerable.Range(-1, 8).Shuffle().OrderBy(i => i).Skip(1).Take(5).Select(i => i * 2));
+            Assert.Equal([0, 2, 4, 6, 8], Enumerable.Range(-1, 8).Shuffle().OrderBy(i => i).Skip(1).Take(5).Select(i => i * 2));
         }
 
         [Fact(Skip = SkipReason.EnumeratorBehaviorDifference)]
@@ -453,14 +453,14 @@ namespace ZLinq.Tests
         public void SelectArray()
         {
             var source = Enumerable.Range(0, 9).Shuffle().OrderBy(i => i).Skip(1).Take(5).Select(i => i * 2);
-            Assert.Equal(new[] { 2, 4, 6, 8, 10 }, source.ToArray());
+            Assert.Equal([2, 4, 6, 8, 10], source.ToArray());
         }
 
         [Fact]
         public void SelectList()
         {
             var source = Enumerable.Range(0, 9).Shuffle().OrderBy(i => i).Skip(1).Take(5).Select(i => i * 2);
-            Assert.Equal(new[] { 2, 4, 6, 8, 10 }, source.ToList());
+            Assert.Equal([2, 4, 6, 8, 10], source.ToList());
         }
 
         [Fact]

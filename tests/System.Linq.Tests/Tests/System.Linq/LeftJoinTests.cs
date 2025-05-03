@@ -5,10 +5,8 @@ using System.Collections.Generic;
 using Xunit;
 
 #if NET10_0_OR_GREATER
-
 namespace System.Linq.Tests
 {
-
     public class LeftJoinTests : EnumerableTests
     {
         public struct CustomerRec

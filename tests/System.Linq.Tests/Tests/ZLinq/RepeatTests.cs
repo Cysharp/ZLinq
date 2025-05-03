@@ -125,7 +125,7 @@ namespace ZLinq.Tests
         [Fact]
         public void CountOneSingleResult()
         {
-            int[] expected = { -15 };
+            int[] expected = [-15];
 
             Assert.Equal(expected, Enumerable.Repeat(-15, 1));
         }
@@ -133,7 +133,7 @@ namespace ZLinq.Tests
         [Fact]
         public void RepeatArbitraryCorrectResults()
         {
-            int[] expected = { 12, 12, 12, 12, 12, 12, 12, 12 };
+            int[] expected = [12, 12, 12, 12, 12, 12, 12, 12];
 
             Assert.Equal(expected, Enumerable.Repeat(12, 8));
         }
@@ -141,7 +141,7 @@ namespace ZLinq.Tests
         [Fact]
         public void RepeatNull()
         {
-            int?[] expected = { null, null, null, null };
+            int?[] expected = [null, null, null, null];
 
             Assert.Equal(expected, Enumerable.Repeat((int?)null, 4));
         }
@@ -173,10 +173,10 @@ namespace ZLinq.Tests
         [Fact]
         public void TakeCanOnlyBeOne()
         {
-            Assert.Equal(new[] { 1 }, Enumerable.Repeat(1, 10).Take(1));
-            Assert.Equal(new[] { 1 }, Enumerable.Repeat(1, 10).Skip(1).Take(1));
-            Assert.Equal(new[] { 1 }, Enumerable.Repeat(1, 10).Take(3).Skip(2));
-            Assert.Equal(new[] { 1 }, Enumerable.Repeat(1, 10).Take(3).Take(1));
+            Assert.Equal([1], Enumerable.Repeat(1, 10).Take(1));
+            Assert.Equal([1], Enumerable.Repeat(1, 10).Skip(1).Take(1));
+            Assert.Equal([1], Enumerable.Repeat(1, 10).Take(3).Skip(2));
+            Assert.Equal([1], Enumerable.Repeat(1, 10).Take(3).Take(1));
         }
 
         [Fact]
@@ -242,8 +242,8 @@ namespace ZLinq.Tests
         [Fact]
         public void ICollectionImplementationIsValid()
         {
-            Validate(Enumerable.Repeat(42, 10), new[] { 42, 42, 42, 42, 42, 42, 42, 42, 42, 42 });
-            Validate(Enumerable.Repeat(42, 10).Skip(3).Take(4).ToArray(), new[] { 42, 42, 42, 42 });
+            Validate(Enumerable.Repeat(42, 10), [42, 42, 42, 42, 42, 42, 42, 42, 42, 42]);
+            Validate(Enumerable.Repeat(42, 10).Skip(3).Take(4).ToArray(), [42, 42, 42, 42]);
 
             static void Validate(IEnumerable<int> e, int[] expected)
             {

@@ -49,13 +49,13 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipExcessive()
         {
-            Assert.Equal(Enumerable.Empty<int>(), NumberRangeGuaranteedNotCollectionType(0, 20).Skip(42));
+            Assert.Equal([], NumberRangeGuaranteedNotCollectionType(0, 20).Skip(42));
         }
 
         [Fact]
         public void SkipExcessiveIList()
         {
-            Assert.Equal(Enumerable.Empty<int>(), NumberRangeGuaranteedNotCollectionType(0, 20).ToList().Skip(42));
+            Assert.Equal([], NumberRangeGuaranteedNotCollectionType(0, 20).ToList().Skip(42));
         }
 
         [Fact]
@@ -86,9 +86,9 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipOnEmpty()
         {
-            Assert.Equal(Enumerable.Empty<int>(), GuaranteeNotIList(Enumerable.Empty<int>()).Skip(0));
-            Assert.Equal(Enumerable.Empty<string>(), GuaranteeNotIList(Enumerable.Empty<string>()).Skip(-1));
-            Assert.Equal(Enumerable.Empty<double>(), GuaranteeNotIList(Enumerable.Empty<double>()).Skip(1));
+            Assert.Equal([], GuaranteeNotIList(Enumerable.Empty<int>()).Skip(0));
+            Assert.Equal([], GuaranteeNotIList(Enumerable.Empty<string>()).Skip(-1));
+            Assert.Equal([], GuaranteeNotIList(Enumerable.Empty<double>()).Skip(1));
         }
 
         [Fact]
@@ -96,9 +96,9 @@ namespace ZLinq.Tests
         {
             // Enumerable.Empty does return an IList, but not guaranteed as such
             // by the spec.
-            Assert.Equal(Enumerable.Empty<int>(), Enumerable.Empty<int>().ToList().Skip(0));
-            Assert.Equal(Enumerable.Empty<string>(), Enumerable.Empty<string>().ToList().Skip(-1));
-            Assert.Equal(Enumerable.Empty<double>(), Enumerable.Empty<double>().ToList().Skip(1));
+            Assert.Equal([], Enumerable.Empty<int>().ToList().Skip(0));
+            Assert.Equal([], Enumerable.Empty<string>().ToList().Skip(-1));
+            Assert.Equal([], Enumerable.Empty<double>().ToList().Skip(1));
         }
 
         [Fact]
@@ -156,8 +156,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipOne()
         {
-            int?[] source = { 3, 100, 4, null, 10 };
-            int?[] expected = { 100, 4, null, 10 };
+            int?[] source = [3, 100, 4, null, 10];
+            int?[] expected = [100, 4, null, 10];
 
             Assert.Equal(expected, source.Skip(1));
         }
@@ -165,8 +165,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipOneNotIList()
         {
-            int?[] source = { 3, 100, 4, null, 10 };
-            int?[] expected = { 100, 4, null, 10 };
+            int?[] source = [3, 100, 4, null, 10];
+            int?[] expected = [100, 4, null, 10];
 
             Assert.Equal(expected, GuaranteeNotIList(source).Skip(1));
         }
@@ -174,8 +174,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipAllButOne()
         {
-            int?[] source = { 3, 100, null, 4, 10 };
-            int?[] expected = { 10 };
+            int?[] source = [3, 100, null, 4, 10];
+            int?[] expected = [10];
 
             Assert.Equal(expected, source.Skip(source.Length - 1));
         }
@@ -183,8 +183,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipAllButOneNotIList()
         {
-            int?[] source = { 3, 100, null, 4, 10 };
-            int?[] expected = { 10 };
+            int?[] source = [3, 100, null, 4, 10];
+            int?[] expected = [10];
 
             Assert.Equal(expected, GuaranteeNotIList(source.Skip(source.Length - 1).ToArray()));
         }
@@ -192,14 +192,14 @@ namespace ZLinq.Tests
         [Fact]
         public void SkipOneMoreThanAll()
         {
-            int[] source = { 3, 100, 4, 10 };
+            int[] source = [3, 100, 4, 10];
             Assert.Empty(source.Skip(source.Length + 1));
         }
 
         [Fact]
         public void SkipOneMoreThanAllNotIList()
         {
-            int[] source = { 3, 100, 4, 10 };
+            int[] source = [3, 100, 4, 10];
             Assert.Empty(GuaranteeNotIList(source).Skip(source.Length + 1));
         }
 
@@ -290,7 +290,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ElementAtNotIList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5, 6 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5, 6]);
             var remaining = source.Skip(2);
             Assert.Equal(3, remaining.ElementAt(0));
             Assert.Equal(4, remaining.ElementAt(1));
@@ -314,7 +314,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ElementAtOrDefaultNotIList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5, 6 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5, 6]);
             var remaining = source.Skip(2);
             Assert.Equal(3, remaining.ElementAtOrDefault(0));
             Assert.Equal(4, remaining.ElementAtOrDefault(1));
@@ -336,7 +336,7 @@ namespace ZLinq.Tests
         [Fact]
         public void FirstNotIList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
             Assert.Equal(1, source.Skip(0).First());
             Assert.Equal(3, source.Skip(2).First());
             Assert.Equal(5, source.Skip(4).First());
@@ -356,7 +356,7 @@ namespace ZLinq.Tests
         [Fact]
         public void FirstOrDefaultNotIList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
             Assert.Equal(1, source.Skip(0).FirstOrDefault());
             Assert.Equal(3, source.Skip(2).FirstOrDefault());
             Assert.Equal(5, source.Skip(4).FirstOrDefault());
@@ -376,7 +376,7 @@ namespace ZLinq.Tests
         [Fact]
         public void LastNotList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
             Assert.Equal(5, source.Skip(0).Last());
             Assert.Equal(5, source.Skip(1).Last());
             Assert.Equal(5, source.Skip(4).Last());
@@ -396,7 +396,7 @@ namespace ZLinq.Tests
         [Fact]
         public void LastOrDefaultNotList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
             Assert.Equal(5, source.Skip(0).LastOrDefault());
             Assert.Equal(5, source.Skip(1).LastOrDefault());
             Assert.Equal(5, source.Skip(4).LastOrDefault());
@@ -407,8 +407,8 @@ namespace ZLinq.Tests
         public void ToArray()
         {
             var source = new[] { 1, 2, 3, 4, 5 };
-            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, source.Skip(0).ToArray());
-            Assert.Equal(new[] { 2, 3, 4, 5 }, source.Skip(1).ToArray());
+            Assert.Equal([1, 2, 3, 4, 5], source.Skip(0).ToArray());
+            Assert.Equal([2, 3, 4, 5], source.Skip(1).ToArray());
             Assert.Equal(5, source.Skip(4).ToArray().Single());
             Assert.Empty(source.Skip(5).ToArray());
             Assert.Empty(source.Skip(40).ToArray());
@@ -417,9 +417,9 @@ namespace ZLinq.Tests
         [Fact]
         public void ToArrayNotList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
-            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, source.Skip(0).ToArray());
-            Assert.Equal(new[] { 2, 3, 4, 5 }, source.Skip(1).ToArray());
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
+            Assert.Equal([1, 2, 3, 4, 5], source.Skip(0).ToArray());
+            Assert.Equal([2, 3, 4, 5], source.Skip(1).ToArray());
             Assert.Equal(5, source.Skip(4).ToArray().Single());
             Assert.Empty(source.Skip(5).ToArray());
             Assert.Empty(source.Skip(40).ToArray());
@@ -429,8 +429,8 @@ namespace ZLinq.Tests
         public void ToList()
         {
             var source = new[] { 1, 2, 3, 4, 5 };
-            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, source.Skip(0).ToList());
-            Assert.Equal(new[] { 2, 3, 4, 5 }, source.Skip(1).ToList());
+            Assert.Equal([1, 2, 3, 4, 5], source.Skip(0).ToList());
+            Assert.Equal([2, 3, 4, 5], source.Skip(1).ToList());
             Assert.Equal(5, source.Skip(4).ToList().Single());
             Assert.Empty(source.Skip(5).ToList());
             Assert.Empty(source.Skip(40).ToList());
@@ -439,9 +439,9 @@ namespace ZLinq.Tests
         [Fact]
         public void ToListNotList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
-            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, source.Skip(0).ToList());
-            Assert.Equal(new[] { 2, 3, 4, 5 }, source.Skip(1).ToList());
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
+            Assert.Equal([1, 2, 3, 4, 5], source.Skip(0).ToList());
+            Assert.Equal([2, 3, 4, 5], source.Skip(1).ToList());
             Assert.Equal(5, source.Skip(4).ToList().Single());
             Assert.Empty(source.Skip(5).ToList());
             Assert.Empty(source.Skip(40).ToList());
@@ -458,7 +458,7 @@ namespace ZLinq.Tests
         [Fact]
         public void RepeatEnumeratingNotList()
         {
-            var source = GuaranteeNotIList(new[] { 1, 2, 3, 4, 5 });
+            var source = GuaranteeNotIList([1, 2, 3, 4, 5]);
             var remaining = source.Skip(1);
             Assert.Equal(remaining, remaining);
         }

@@ -2,7 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Generic;
+using System.Linq.Tests;
 using Xunit;
+using static System.Linq.Tests.SkipTakeData;
 
 namespace ZLinq.Tests
 {
@@ -15,28 +17,29 @@ namespace ZLinq.Tests
         }
 
         [Theory]
-        [MemberData(nameof(SkipTakeData.EnumerableData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EnumerableData), MemberType = typeof(SkipTakeData))]
         public void TakeLast(IEnumerable<int> source, int count)
         {
-            Assert.All(IdentityTransforms<int>(), transform =>
-            {
-                IEnumerable<int> equivalent = transform(source);
+            int[] expected = source.Reverse().Take(count).Reverse().ToArray();
 
-                var expected = equivalent.Reverse().Take(count).Reverse().ToArray();
-                var actual = equivalent.TakeLast(count).ToArray();
+            Assert.All(CreateSources(source), source =>
+            {
+                var actual = source.TakeLast(count);
 
                 Assert.Equal(expected, actual);
-                Assert.Equal(expected.Count(), actual.Count());
+
+                Assert.Equal(expected.Length, actual.Count());
                 Assert.Equal(expected, actual.ToArray());
                 Assert.Equal(expected, actual.ToList());
-
                 Assert.Equal(expected.FirstOrDefault(), actual.FirstOrDefault());
                 Assert.Equal(expected.LastOrDefault(), actual.LastOrDefault());
 
-                Assert.All(Enumerable.Range(0, expected.Count()), index =>
+                if (expected.Length > 0)
                 {
-                    Assert.Equal(expected.ElementAt(index), actual.ElementAt(index));
-                });
+                    Assert.Equal(expected[0], actual.ElementAt(0));
+                    Assert.Equal(expected[^1], actual.ElementAt(expected.Length - 1));
+                    Assert.Equal(expected[expected.Length / 2], actual.ElementAt(expected.Length / 2));
+                }
 
                 Assert.Equal(0, actual.ElementAtOrDefault(-1));
                 Assert.Equal(0, actual.ElementAtOrDefault(actual.Count()));
@@ -44,7 +47,7 @@ namespace ZLinq.Tests
         }
 
         [Theory(Skip = SkipReason.Issue0081)]
-        [MemberData(nameof(SkipTakeData.EvaluationBehaviorData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EvaluationBehaviorData), MemberType = typeof(SkipTakeData))]
         public void EvaluationBehavior(int count)
         {
             int index = 0;
@@ -55,33 +58,33 @@ namespace ZLinq.Tests
                 current: () => index, // Yield from 1 up to the limit, inclusive.
                 dispose: () => index ^= int.MinValue);
 
-            var iterator = source.TakeLast(count).GetEnumerator();
-            Assert.Equal(0, index); // Nothing should be done before MoveNext is called.
-
-            for (int i = 1; i <= count; i++)
+            using (var iterator = source.TakeLast(count).GetEnumerator())
             {
-                Assert.True(iterator.MoveNext());
-                Assert.Equal(count + i, iterator.Current);
+                Assert.Equal(0, index); // Nothing should be done before MoveNext is called.
 
-                // After the first MoveNext call to the enumerator, everything should be evaluated and the enumerator
-                // should be disposed.
-                Assert.Equal(int.MinValue, index & int.MinValue);
-                Assert.Equal(limit + 1, index & int.MaxValue);
+                for (int i = 1; i <= count; i++)
+                {
+                    Assert.True(iterator.MoveNext());
+                    Assert.Equal(count + i, iterator.Current);
+
+                    // After the first MoveNext call to the enumerator, everything should be evaluated and the enumerator
+                    // should be disposed.
+                    Assert.Equal(int.MinValue, index & int.MinValue);
+                    Assert.Equal(limit + 1, index & int.MaxValue);
+                }
+
+                Assert.False(iterator.MoveNext());
             }
-
-            Assert.False(iterator.MoveNext());
-            Assert.Equal(0, iterator.Current);
 
             // Unlike SkipLast, TakeLast can tell straightaway that it can return a sequence with no elements if count <= 0.
             // The enumerable it returns is a specialized empty iterator that has no connections to the source. Hence,
             // after MoveNext returns false under those circumstances, it won't invoke Dispose on our enumerator.
             int expected = count <= 0 ? 0 : int.MinValue;
-            iterator.Dispose();
             Assert.Equal(expected, index & int.MinValue);
         }
 
         [Theory]
-        [MemberData(nameof(SkipTakeData.EnumerableData), MemberType = typeof(SkipTakeData))]
+        [MemberData(nameof(EnumerableData), MemberType = typeof(SkipTakeData))]
         public void RunOnce(IEnumerable<int> source, int count)
         {
             var expected = source.TakeLast(count);
@@ -98,7 +101,7 @@ namespace ZLinq.Tests
             list.RemoveAt(0);
             list.RemoveAt(0);
 
-            Assert.Equal(new[] { 3, 4, 5 }, e.ToArray());
+            Assert.Equal([3, 4, 5], e.ToArray());
         }
 
         [Fact]
@@ -110,7 +113,7 @@ namespace ZLinq.Tests
 
             list.RemoveAt(0);
 
-            Assert.Equal(new[] { 3, 4, 5 }, e.ToArray());
+            Assert.Equal([3, 4, 5], e.ToArray());
         }
     }
 }

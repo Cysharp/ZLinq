@@ -30,18 +30,18 @@ namespace ZLinq.Tests
 
         public static IEnumerable<object[]> Int_TestData()
         {
-            yield return new object[] { new int[0], null, 0 };
+            yield return [new int[0], null, 0];
 
             Func<int, bool> isEvenFunc = IsEven;
-            yield return new object[] { new int[0], isEvenFunc, 0 };
-            yield return new object[] { new int[] { 4 }, isEvenFunc, 1 };
-            yield return new object[] { new int[] { 5 }, isEvenFunc, 0 };
-            yield return new object[] { new int[] { 2, 5, 7, 9, 29, 10 }, isEvenFunc, 2 };
-            yield return new object[] { new int[] { 2, 20, 22, 100, 50, 10 }, isEvenFunc, 6 };
+            yield return [new int[0], isEvenFunc, 0];
+            yield return [new int[] { 4 }, isEvenFunc, 1];
+            yield return [new int[] { 5 }, isEvenFunc, 0];
+            yield return [new int[] { 2, 5, 7, 9, 29, 10 }, isEvenFunc, 2];
+            yield return [new int[] { 2, 20, 22, 100, 50, 10 }, isEvenFunc, 6];
 
-            yield return new object[] { RepeatedNumberGuaranteedNotCollectionType(0, 0), null, 0 };
-            yield return new object[] { RepeatedNumberGuaranteedNotCollectionType(5, 1), null, 1 };
-            yield return new object[] { RepeatedNumberGuaranteedNotCollectionType(5, 10), null, 10 };
+            yield return [RepeatedNumberGuaranteedNotCollectionType(0, 0), null, 0];
+            yield return [RepeatedNumberGuaranteedNotCollectionType(5, 1), null, 1];
+            yield return [RepeatedNumberGuaranteedNotCollectionType(5, 10), null, 10];
         }
 
         [Theory]
@@ -80,7 +80,7 @@ namespace ZLinq.Tests
         [Fact]
         public void NullableIntArray_IncludesNullObjects()
         {
-            int?[] data = { -10, 4, 9, null, 11 };
+            int?[] data = [-10, 4, 9, null, 11];
             Assert.Equal(5, data.Count());
         }
 
@@ -99,9 +99,9 @@ namespace ZLinq.Tests
 
         private static IEnumerable<object[]> EnumerateCollectionTypesAndCounts<T>(int count, IEnumerable<T> enumerable)
         {
-            foreach (var transform in IdentityTransforms<T>())
+            foreach (IEnumerable<T> source in CreateSources(enumerable))
             {
-                yield return new object[] { count, transform(enumerable) };
+                yield return [count, source];
             }
         }
 
@@ -148,12 +148,12 @@ namespace ZLinq.Tests
                 Assert.Equal(source.Length, actualCount);
             }
             {
-                var source = new List<int>(new int[] { 1, 2, 3, 4 });
+                var source = new List<int>([1, 2, 3, 4]);
                 Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
                 Assert.Equal(source.Count, actualCount);
             }
             {
-                var source = new Stack<int>(new int[] { 1, 2, 3, 4 });
+                var source = new Stack<int>([1, 2, 3, 4]);
                 Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
                 Assert.Equal(source.Count, actualCount);
             }
@@ -162,19 +162,19 @@ namespace ZLinq.Tests
                 Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
                 Assert.Equal(0, actualCount);
             }
-
-            if (PlatformDetection.IsSpeedOptimized)
             {
-                {
-                    var source = Enumerable.Range(1, 100);
-                    Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
-                    Assert.Equal(source.Count(), actualCount);
-                }
-                {
-                    var source = Enumerable.Repeat(1, 80);
-                    Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
-                    Assert.Equal(source.Count(), actualCount);
-                }
+                var source = Enumerable.Range(1, 100);
+                Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
+                Assert.Equal(100, actualCount);
+            }
+            {
+                var source = Enumerable.Repeat(1, 80);
+                Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
+                Assert.Equal(80, actualCount);
+            }
+
+            if (PlatformDetection.IsLinqSpeedOptimized)
+            {
                 {
                     var source = Enumerable.Range(1, 50).Select(x => x + 1);
                     Assert.True(source.TryGetNonEnumeratedCount(out int actualCount));
@@ -233,7 +233,7 @@ namespace ZLinq.Tests
                 Assert.Equal(0, actualCount);
             }
 
-            if (!PlatformDetection.IsSpeedOptimized)
+            if (!PlatformDetection.IsLinqSpeedOptimized)
             {
                 {
                     var source = Enumerable.Range(1, 100);

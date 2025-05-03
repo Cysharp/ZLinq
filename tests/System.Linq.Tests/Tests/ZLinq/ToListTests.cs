@@ -47,7 +47,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToList_ProduceCorrectList()
         {
-            int[] sourceArray = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+            int[] sourceArray = [1, 2, 3, 4, 5, 6, 7];
             RunToListOnAllCollectionTypes(sourceArray,
                 resultList =>
                 {
@@ -55,7 +55,7 @@ namespace ZLinq.Tests
                     Assert.Equal(sourceArray, resultList);
                 });
 
-            string[] sourceStringArray = new string[] { "1", "2", "3", "4", "5", "6", "7", "8" };
+            string[] sourceStringArray = ["1", "2", "3", "4", "5", "6", "7", "8"];
             RunToListOnAllCollectionTypes(sourceStringArray,
                 resultStringList =>
                 {
@@ -74,7 +74,7 @@ namespace ZLinq.Tests
         [Fact]
         public void ToList_TouchCountWithICollection()
         {
-            TestCollection<int> source = new TestCollection<int>(new int[] { 1, 2, 3, 4 });
+            TestCollection<int> source = new TestCollection<int>([1, 2, 3, 4]);
             var resultList = source.ToList();
 
             Assert.Equal(source, resultList);
@@ -93,7 +93,7 @@ namespace ZLinq.Tests
         [Fact(Skip = SkipReason.ICollectionCopyTo)]
         public void ToList_UseCopyToWithICollection()
         {
-            TestCollection<int> source = new TestCollection<int>(new int[] { 1, 2, 3, 4 });
+            TestCollection<int> source = new TestCollection<int>([1, 2, 3, 4]);
             var resultList = source.ToList();
 
             Assert.Equal(source, resultList);
@@ -160,13 +160,13 @@ namespace ZLinq.Tests
             Assert.Equal(convertedList, sourceList.Select(i => i.ToString()).ToList());
 
             Assert.Equal(sourceList, sourceList.Where(i => true).ToList());
-            Assert.Equal(ReadOnlyCollection<int>.Empty, sourceList.Where(i => false).ToList());
+            Assert.Equal([], sourceList.Where(i => false).ToList());
 
             Assert.Equal(convertedList, sourceList.Where(i => true).Select(i => i.ToString()).ToList());
-            Assert.Equal(ReadOnlyCollection<string>.Empty, sourceList.Where(i => false).Select(i => i.ToString()).ToList());
+            Assert.Equal([], sourceList.Where(i => false).Select(i => i.ToString()).ToList());
 
             Assert.Equal(convertedList, sourceList.Select(i => i.ToString()).Where(s => s is not null).ToList());
-            Assert.Equal(ReadOnlyCollection<string>.Empty, sourceList.Select(i => i.ToString()).Where(s => s is null).ToList());
+            Assert.Equal([], sourceList.Select(i => i.ToString()).Where(s => s is null).ToList());
         }
 
         [Fact]
@@ -192,7 +192,7 @@ namespace ZLinq.Tests
         [Fact]
         public void SourceIsEmptyICollectionT()
         {
-            int[] source = { };
+            int[] source = [];
 
             ICollection<int> collection = source as ICollection<int>;
 
@@ -203,8 +203,8 @@ namespace ZLinq.Tests
         [Fact]
         public void SourceIsICollectionTWithFewElements()
         {
-            int?[] source = { -5, null, 0, 10, 3, -1, null, 4, 9 };
-            int?[] expected = { -5, null, 0, 10, 3, -1, null, 4, 9 };
+            int?[] source = [-5, null, 0, 10, 3, -1, null, 4, 9];
+            int?[] expected = [-5, null, 0, 10, 3, -1, null, 4, 9];
 
             ICollection<int?> collection = source as ICollection<int?>;
 
@@ -223,7 +223,7 @@ namespace ZLinq.Tests
         public void SourceNotICollectionAndHasElements()
         {
             IEnumerable<int> source = NumberRangeGuaranteedNotCollectionType(-4, 10);
-            int[] expected = { -4, -3, -2, -1, 0, 1, 2, 3, 4, 5 };
+            int[] expected = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5];
 
             Assert.Null(source as ICollection<int>);
 
@@ -234,7 +234,7 @@ namespace ZLinq.Tests
         public void SourceNotICollectionAndAllNull()
         {
             IEnumerable<int?> source = RepeatedNullableNumberGuaranteedNotCollectionType(null, 5);
-            int?[] expected = { null, null, null, null, null };
+            int?[] expected = [null, null, null, null, null];
 
             Assert.Null(source as ICollection<int>);
 
@@ -245,14 +245,14 @@ namespace ZLinq.Tests
         public void ConstantTimeCountPartitionSelectSameTypeToList()
         {
             var source = Enumerable.Range(0, 100).Select(i => i * 2).Skip(1).Take(5);
-            Assert.Equal(new[] { 2, 4, 6, 8, 10 }, source.ToList());
+            Assert.Equal([2, 4, 6, 8, 10], source.ToList());
         }
 
         [Fact]
         public void ConstantTimeCountPartitionSelectDiffTypeToList()
         {
             var source = Enumerable.Range(0, 100).Select(i => i.ToString()).Skip(1).Take(5);
-            Assert.Equal(new[] { "1", "2", "3", "4", "5" }, source.ToList());
+            Assert.Equal(["1", "2", "3", "4", "5"], source.ToList());
         }
 
         [Fact]
@@ -273,14 +273,14 @@ namespace ZLinq.Tests
         public void NonConstantTimeCountPartitionSelectSameTypeToList()
         {
             var source = NumberRangeGuaranteedNotCollectionType(0, 100).OrderBy(i => i).Select(i => i * 2).Skip(1).Take(5);
-            Assert.Equal(new[] { 2, 4, 6, 8, 10 }, source.ToList());
+            Assert.Equal([2, 4, 6, 8, 10], source.ToList());
         }
 
         [Fact]
         public void NonConstantTimeCountPartitionSelectDiffTypeToList()
         {
             var source = NumberRangeGuaranteedNotCollectionType(0, 100).OrderBy(i => i).Select(i => i.ToString()).Skip(1).Take(5);
-            Assert.Equal(new[] { "1", "2", "3", "4", "5" }, source.ToList());
+            Assert.Equal(["1", "2", "3", "4", "5"], source.ToList());
         }
 
         [Fact]

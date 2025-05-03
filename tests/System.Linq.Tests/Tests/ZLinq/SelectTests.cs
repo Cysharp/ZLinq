@@ -32,7 +32,7 @@ namespace ZLinq.Tests
             {
                 new  { name = "Prakash", custID = 98088 }
             };
-            string[] expected = { "Prakash" };
+            string[] expected = ["Prakash"];
 
             Assert.Equal(expected, source.Select(e => e.name));
         }
@@ -47,7 +47,7 @@ namespace ZLinq.Tests
                 new { name=(string)null, custID=30349 },
                 new { name="Prakash", custID=39030 }
             };
-            string[] expected = { "Prakash", "Bob", "Chris", null, "Prakash" };
+            string[] expected = ["Prakash", "Bob", "Chris", null, "Prakash"];
             Assert.Equal(expected, source.Select(e => e.name));
         }
 
@@ -61,7 +61,7 @@ namespace ZLinq.Tests
                 new { name=(string)null, custID=30349 },
                 new { name="Prakash", custID=39030 }
             };
-            string[] expected = { "Prakash", "Bob", "Chris", null, "Prakash" };
+            string[] expected = ["Prakash", "Bob", "Chris", null, "Prakash"];
             Assert.Equal(expected, source.RunOnce().Select(e => e.name));
             Assert.Equal(expected, source.ToArray().RunOnce().Select(e => e.name));
             Assert.Equal(expected, source.ToList().RunOnce().Select(e => e.name));
@@ -70,7 +70,7 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptyWithIndexedSelector()
         {
-            Assert.Equal(Enumerable.Empty<int>(), Enumerable.Empty<string>().Select((s, i) => s.Length + i));
+            Assert.Equal([], Enumerable.Empty<string>().Select((s, i) => s.Length + i));
         }
 
         [Fact(Skip = SkipReason.RefStruct)]
@@ -91,7 +91,7 @@ namespace ZLinq.Tests
             {
                 new  { name = "Prakash", custID = 98088 }
             };
-            string[] expected = { "Prakash" };
+            string[] expected = ["Prakash"];
 
             Assert.Equal(expected, source.Select((e, index) => e.name));
         }
@@ -106,7 +106,7 @@ namespace ZLinq.Tests
                 new { name=(string)null, custID=30349 },
                 new { name="Prakash", custID=39030 }
             };
-            string[] expected = { "Prakash", "Bob", "Chris", null, "Prakash" };
+            string[] expected = ["Prakash", "Bob", "Chris", null, "Prakash"];
             Assert.Equal(expected, source.Select((e, i) => e.name));
         }
 
@@ -118,7 +118,7 @@ namespace ZLinq.Tests
                 new { name="Bob", custID=29099 },
                 new { name="Chris", custID=39033 }
             };
-            string[] expected = { "Prakash", null, null };
+            string[] expected = ["Prakash", null, null];
             Assert.Equal(expected, source.Select((e, i) => i == 0 ? e.name : null));
         }
 
@@ -133,7 +133,7 @@ namespace ZLinq.Tests
                 new { name="Allen", custID=39033 },
                 new { name="Chuck", custID=39033 }
             };
-            string[] expected = { null, null, null, null, null, "Chuck" };
+            string[] expected = [null, null, null, null, null, "Chuck"];
             Assert.Equal(expected, source.Select((e, i) => i == 5 ? e.name : null));
         }
 
@@ -189,7 +189,7 @@ namespace ZLinq.Tests
         public void Select_SourceIsAnArray_ExecutionIsDeferred()
         {
             bool funcCalled = false;
-            Func<int>[] source = new Func<int>[] { () => { funcCalled = true; return 1; } };
+            Func<int>[] source = [() => { funcCalled = true; return 1; }];
 
             var query = source.Select(d => d());
             Assert.False(funcCalled);
@@ -239,7 +239,7 @@ namespace ZLinq.Tests
         public void SelectSelect_SourceIsAnArray_ExecutionIsDeferred()
         {
             bool funcCalled = false;
-            Func<int>[] source = new Func<int>[] { () => { funcCalled = true; return 1; } };
+            Func<int>[] source = [() => { funcCalled = true; return 1; }];
 
             var query = source.Select(d => d).Select(d => d());
             Assert.False(funcCalled);
@@ -288,7 +288,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsAnArray_ReturnsExpectedValues()
         {
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
             Func<int, int> selector = i => i + 1;
 
             var query = source.Select(selector);
@@ -307,7 +307,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsAList_ReturnsExpectedValues()
         {
-            List<int> source = new List<int> { 1, 2, 3, 4, 5 };
+            List<int> source = [1, 2, 3, 4, 5];
             Func<int, int> selector = i => i + 1;
 
             var query = source.Select(selector);
@@ -384,7 +384,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsAnArray_CurrentIsDefaultOfTAfterEnumeration()
         {
-            int[] source = new[] { 1 };
+            int[] source = [1];
             Func<int, int> selector = i => i + 1;
 
             var query = source.Select(selector);
@@ -398,7 +398,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsAList_CurrentIsDefaultOfTAfterEnumeration()
         {
-            List<int> source = new List<int>() { 1 };
+            List<int> source = [1];
             Func<int, int> selector = i => i + 1;
 
             var query = source.Select(selector);
@@ -445,7 +445,7 @@ namespace ZLinq.Tests
 
             var query = source.Select(selector);
 
-            var enumerator = query.GetEnumerator();
+            using var enumerator = query.GetEnumerator();
             while (enumerator.MoveNext()) ;
 
             Assert.Equal(default(int), enumerator.Current);
@@ -455,7 +455,7 @@ namespace ZLinq.Tests
         public void SelectSelect_SourceIsAnArray_ReturnsExpectedValues()
         {
             Func<int, int> selector = i => i + 1;
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
 
             var query = source.Select(selector).Select(selector);
 
@@ -550,7 +550,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsEmptyEnumerable_ReturnedCollectionHasNoElements()
         {
-            IEnumerable<int> source = Enumerable.Empty<int>();
+            IEnumerable<int> source = [];
             bool wasSelectorCalled = false;
 
             var result = source.Select(i => { wasSelectorCalled = true; return i + 1; });
@@ -568,13 +568,13 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_ExceptionThrownFromSelector_ExceptionPropagatedToTheCaller()
         {
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
             Func<int, int> selector = i => { throw new InvalidOperationException(); };
 
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var result = source.Select(selector);
-                var enumerator = result.GetEnumerator();
+                using var enumerator = result.GetEnumerator();
                 enumerator.MoveNext();
             });
         }
@@ -582,7 +582,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_ExceptionThrownFromSelector_IteratorCanBeUsedAfterExceptionIsCaught()
         {
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
             Func<int, int> selector = i =>
             {
                 if (i == 1)
@@ -591,7 +591,7 @@ namespace ZLinq.Tests
             };
 
             var result = source.Select(selector);
-            var enumerator = result.GetEnumerator();
+            using var enumerator = result.GetEnumerator();
 
             try
             {
@@ -615,7 +615,7 @@ namespace ZLinq.Tests
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var result = source.Select(selector);
-                var enumerator = result.GetEnumerator();
+                using var enumerator = result.GetEnumerator();
                 enumerator.MoveNext();
             });
         }
@@ -627,7 +627,7 @@ namespace ZLinq.Tests
             Func<int, int> selector = i => i + 1;
 
             var result = source.Select(selector);
-            var enumerator = result.GetEnumerator();
+            using var enumerator = result.GetEnumerator();
 
             try
             {
@@ -667,7 +667,7 @@ namespace ZLinq.Tests
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var result = source.Select(selector);
-                var enumerator = result.GetEnumerator();
+                using var enumerator = result.GetEnumerator();
                 enumerator.MoveNext();
             });
         }
@@ -679,7 +679,7 @@ namespace ZLinq.Tests
             Func<int, int> selector = i => i + 1;
 
             var result = source.Select(selector);
-            var enumerator = result.GetEnumerator();
+            using var enumerator = result.GetEnumerator();
 
             try
             {
@@ -702,7 +702,7 @@ namespace ZLinq.Tests
             Assert.Throws<InvalidOperationException>(() =>
             {
                 var result = source.Select(selector);
-                var enumerator = result.GetEnumerator();
+                using var enumerator = result.GetEnumerator();
                 enumerator.MoveNext();
             });
         }
@@ -714,7 +714,7 @@ namespace ZLinq.Tests
             Func<int, string> selector = i => i.ToString();
 
             var result = source.Select(selector);
-            var enumerator = result.GetEnumerator();
+            using var enumerator = result.GetEnumerator();
 
             try
             {
@@ -739,7 +739,7 @@ namespace ZLinq.Tests
             Func<int, int> selector = i => i + 1;
 
             var result = source.Select(selector);
-            var enumerator = result.GetEnumerator();
+            using var enumerator = result.GetEnumerator();
 
             Assert.True(enumerator.MoveNext());
             Assert.Equal(2 /* 1 + 1 */, enumerator.Current);
@@ -758,11 +758,11 @@ namespace ZLinq.Tests
         [Fact(Skip = SkipReason.RefStruct)]
         public void Select_GetEnumeratorCalledTwice_DifferentInstancesReturned()
         {
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
             var query = source.Select(i => i + 1);
 
-            var enumerator1 = query.GetEnumerator();
-            var enumerator2 = query.GetEnumerator();
+            using var enumerator1 = query.GetEnumerator();
+            using var enumerator2 = query.GetEnumerator();
 
             // ZLinq use ref struct.
             //Assert.Same(query, enumerator1);
@@ -775,13 +775,13 @@ namespace ZLinq.Tests
         [Fact(Skip = SkipReason.EnumeratorReset)]
         public void Select_ResetCalledOnEnumerator_ThrowsException()
         {
-            int[] source = new[] { 1, 2, 3, 4, 5 };
+            int[] source = [1, 2, 3, 4, 5];
             Func<int, int> selector = i => i + 1;
 
             Assert.Throws<NotSupportedException>(() =>
             {
                 var result = source.Select(selector);
-                var enumerator = result.GetEnumerator();
+                using var enumerator = result.GetEnumerator();
                 // enumerator.Reset(); // ZLinq don't support Reset()
             });
         }
@@ -861,10 +861,10 @@ namespace ZLinq.Tests
         public void Select_SourceIsArray_Skip()
         {
             var source = new[] { 1, 2, 3, 4 }.Select(i => i * 2);
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2).Skip(-1));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(1).Skip(1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Skip(-1));
+            Assert.Equal([6, 8], source.Skip(2));
+            Assert.Equal([6, 8], source.Skip(2).Skip(-1));
+            Assert.Equal([6, 8], source.Skip(1).Skip(1));
+            Assert.Equal([2, 4, 6, 8], source.Skip(-1));
             Assert.Empty(source.Skip(4));
             Assert.Empty(source.Skip(20));
         }
@@ -873,10 +873,10 @@ namespace ZLinq.Tests
         public void Select_SourceIsList_Skip()
         {
             var source = new List<int> { 1, 2, 3, 4 }.Select(i => i * 2);
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2).Skip(-1));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(1).Skip(1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Skip(-1));
+            Assert.Equal([6, 8], source.Skip(2));
+            Assert.Equal([6, 8], source.Skip(2).Skip(-1));
+            Assert.Equal([6, 8], source.Skip(1).Skip(1));
+            Assert.Equal([2, 4, 6, 8], source.Skip(-1));
             Assert.Empty(source.Skip(4));
             Assert.Empty(source.Skip(20));
         }
@@ -885,10 +885,10 @@ namespace ZLinq.Tests
         public void Select_SourceIsIList_Skip()
         {
             var source = new List<int> { 1, 2, 3, 4 }.AsReadOnly().Select(i => i * 2);
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(2).Skip(-1));
-            Assert.Equal(new[] { 6, 8 }, source.Skip(1).Skip(1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Skip(-1));
+            Assert.Equal([6, 8], source.Skip(2));
+            Assert.Equal([6, 8], source.Skip(2).Skip(-1));
+            Assert.Equal([6, 8], source.Skip(1).Skip(1));
+            Assert.Equal([2, 4, 6, 8], source.Skip(-1));
             Assert.Empty(source.Skip(4));
             Assert.Empty(source.Skip(20));
         }
@@ -897,45 +897,45 @@ namespace ZLinq.Tests
         public void Select_SourceIsArray_Take()
         {
             var source = new[] { 1, 2, 3, 4 }.Select(i => i * 2);
-            Assert.Equal(new[] { 2, 4 }, source.Take(2));
-            Assert.Equal(new[] { 2, 4 }, source.Take(3).Take(2));
+            Assert.Equal([2, 4], source.Take(2));
+            Assert.Equal([2, 4], source.Take(3).Take(2));
             Assert.Empty(source.Take(-1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(4));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(40));
-            Assert.Equal(new[] { 2 }, source.Take(1));
-            Assert.Equal(new[] { 4 }, source.Skip(1).Take(1));
-            Assert.Equal(new[] { 6 }, source.Take(3).Skip(2));
-            Assert.Equal(new[] { 2 }, source.Take(3).Take(1));
+            Assert.Equal([2, 4, 6, 8], source.Take(4));
+            Assert.Equal([2, 4, 6, 8], source.Take(40));
+            Assert.Equal([2], source.Take(1));
+            Assert.Equal([4], source.Skip(1).Take(1));
+            Assert.Equal([6], source.Take(3).Skip(2));
+            Assert.Equal([2], source.Take(3).Take(1));
         }
 
         [Fact]
         public void Select_SourceIsList_Take()
         {
             var source = new List<int> { 1, 2, 3, 4 }.Select(i => i * 2);
-            Assert.Equal(new[] { 2, 4 }, source.Take(2));
-            Assert.Equal(new[] { 2, 4 }, source.Take(3).Take(2));
+            Assert.Equal([2, 4], source.Take(2));
+            Assert.Equal([2, 4], source.Take(3).Take(2));
             Assert.Empty(source.Take(-1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(4));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(40));
-            Assert.Equal(new[] { 2 }, source.Take(1));
-            Assert.Equal(new[] { 4 }, source.Skip(1).Take(1));
-            Assert.Equal(new[] { 6 }, source.Take(3).Skip(2));
-            Assert.Equal(new[] { 2 }, source.Take(3).Take(1));
+            Assert.Equal([2, 4, 6, 8], source.Take(4));
+            Assert.Equal([2, 4, 6, 8], source.Take(40));
+            Assert.Equal([2], source.Take(1));
+            Assert.Equal([4], source.Skip(1).Take(1));
+            Assert.Equal([6], source.Take(3).Skip(2));
+            Assert.Equal([2], source.Take(3).Take(1));
         }
 
         [Fact]
         public void Select_SourceIsIList_Take()
         {
             var source = new List<int> { 1, 2, 3, 4 }.AsReadOnly().Select(i => i * 2);
-            Assert.Equal(new[] { 2, 4 }, source.Take(2));
-            Assert.Equal(new[] { 2, 4 }, source.Take(3).Take(2));
+            Assert.Equal([2, 4], source.Take(2));
+            Assert.Equal([2, 4], source.Take(3).Take(2));
             Assert.Empty(source.Take(-1));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(4));
-            Assert.Equal(new[] { 2, 4, 6, 8 }, source.Take(40));
-            Assert.Equal(new[] { 2 }, source.Take(1));
-            Assert.Equal(new[] { 4 }, source.Skip(1).Take(1));
-            Assert.Equal(new[] { 6 }, source.Take(3).Skip(2));
-            Assert.Equal(new[] { 2 }, source.Take(3).Take(1));
+            Assert.Equal([2, 4, 6, 8], source.Take(4));
+            Assert.Equal([2, 4, 6, 8], source.Take(40));
+            Assert.Equal([2], source.Take(1));
+            Assert.Equal([4], source.Skip(1).Take(1));
+            Assert.Equal([6], source.Take(3).Skip(2));
+            Assert.Equal([2], source.Take(3).Take(1));
         }
 
         [Fact]
@@ -1141,22 +1141,22 @@ namespace ZLinq.Tests
         public void Select_SourceIsArraySkipSelect()
         {
             var source = new[] { 1, 2, 3, 4 }.Select(i => i * 2).Skip(1).Select(i => i + 1);
-            Assert.Equal(new[] { 5, 7, 9 }, source);
+            Assert.Equal([5, 7, 9], source);
         }
 
         [Fact]
         public void Select_SourceIsArrayTakeTake()
         {
             var source = new[] { 1, 2, 3, 4 }.Select(i => i * 2).Take(2).Take(1);
-            Assert.Equal(new[] { 2 }, source);
-            Assert.Equal(new[] { 2 }, source.Take(10));
+            Assert.Equal([2], source);
+            Assert.Equal([2], source.Take(10));
         }
 
         [Fact]
         public void Select_SourceIsIPartitionToArray()
         {
-            Assert.Equal(Array.Empty<int>(), new List<int>().Order().Select(i => i * 2).ToArray());
-            Assert.Equal(new[] { 2, 4, 6, 8 }, new List<int> { 1, 2, 3, 4 }.Order().Select(i => i * 2).ToArray());
+            Assert.Equal([], new List<int>().Order().Select(i => i * 2).ToArray());
+            Assert.Equal([2, 4, 6, 8], new List<int> { 1, 2, 3, 4 }.Order().Select(i => i * 2).ToArray());
         }
 
         [Fact]
@@ -1171,26 +1171,26 @@ namespace ZLinq.Tests
         [Fact]
         public void Select_SourceIsListSkipTakeToArray()
         {
-            Assert.Equal(new[] { 2, 4, 6 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(3).ToArray());
-            Assert.Equal(new[] { 2, 4, 6, 8 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(9).ToArray());
-            Assert.Equal(new[] { 6, 8 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(2).ToArray());
+            Assert.Equal([2, 4, 6], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(3).ToArray());
+            Assert.Equal([2, 4, 6, 8], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(9).ToArray());
+            Assert.Equal([6, 8], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(2).ToArray());
             Assert.Empty(new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(8).ToArray());
         }
 
         [Fact]
         public void Select_SourceIsListSkipTakeToList()
         {
-            Assert.Equal(new[] { 2, 4, 6 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(3).ToList());
-            Assert.Equal(new[] { 2, 4, 6, 8 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(9).ToList());
-            Assert.Equal(new[] { 6, 8 }, new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(2).ToList());
+            Assert.Equal([2, 4, 6], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(3).ToList());
+            Assert.Equal([2, 4, 6, 8], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Take(9).ToList());
+            Assert.Equal([6, 8], new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(2).ToList());
             Assert.Empty(new List<int> { 1, 2, 3, 4 }.Select(i => i * 2).Skip(8).ToList());
         }
 
         [Fact]
         public void Select_SourceIsIPartitionToList()
         {
-            Assert.Equal(Array.Empty<int>(), new List<int>().Order().Select(i => i * 2).ToList());
-            Assert.Equal(new[] { 2, 4, 6, 8 }, new List<int> { 1, 2, 3, 4 }.Order().Select(i => i * 2).ToList());
+            Assert.Equal([], new List<int>().Order().Select(i => i * 2).ToList());
+            Assert.Equal([2, 4, 6, 8], new List<int> { 1, 2, 3, 4 }.Order().Select(i => i * 2).ToList());
         }
 
         [Theory]
@@ -1212,19 +1212,19 @@ namespace ZLinq.Tests
             foreach (IEnumerable<int> equivalentSource in identityTransforms.Select(t => t(source)))
             {
                 var result = equivalentSource.Select(i => i);
-                using (var e = result.GetEnumerator())
-                {
-                    while (e.MoveNext()) ; // Loop until we reach the end of the iterator, @ which pt it gets disposed.
-                    Assert.False(e.MoveNext()); // MoveNext should not throw an exception after Dispose.
-                }
+                using var e = result.GetEnumerator();
+
+                while (e.MoveNext()) ; // Loop until we reach the end of the iterator, @ which pt it gets disposed.
+                Assert.False(e.MoveNext()); // MoveNext should not throw an exception after Dispose.
+
             }
         }
 
         public static IEnumerable<object[]> MoveNextAfterDisposeData()
         {
-            yield return new object[] { Array.Empty<int>() };
-            yield return new object[] { new int[1] };
-            yield return new object[] { Enumerable.Range(1, 30) };
+            yield return [Array.Empty<int>()];
+            yield return [new int[1]];
+            yield return [Enumerable.Range(1, 30)];
         }
 
         [Theory(Skip = SkipReason.Issue0082)]
@@ -1265,7 +1265,7 @@ namespace ZLinq.Tests
 
                 foreach (var transform in transforms)
                 {
-                    yield return new object[] { transform(enumerable) };
+                    yield return [transform(enumerable)];
                 }
             }
         }

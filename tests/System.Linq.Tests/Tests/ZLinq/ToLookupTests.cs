@@ -52,7 +52,7 @@ namespace ZLinq.Tests
         [Fact]
         public void Empty()
         {
-            AssertMatches(Enumerable.Empty<int>(), Enumerable.Empty<int>(), Enumerable.Empty<int>().ToLookup(i => i));
+            AssertMatches([], [], Enumerable.Empty<int>().ToLookup(i => i));
             Assert.False(Enumerable.Empty<int>().ToLookup(i => i).Contains(0));
             Assert.Empty(Enumerable.Empty<int>().ToLookup(i => i)[0]);
         }
@@ -60,8 +60,8 @@ namespace ZLinq.Tests
         [Fact]
         public void NullKeyIncluded()
         {
-            string[] key = { "Chris", "Bob", null, "Tim" };
-            int[] element = { 50, 95, 55, 90 };
+            string[] key = ["Chris", "Bob", null, "Tim"];
+            int[] element = [50, 95, 55, 90];
             var source = key.Zip(element, (k, e) => new { Name = k, Score = e });
 
             AssertMatches(key, source.ToArray(), source.ToLookup(e => e.Name));
@@ -70,8 +70,8 @@ namespace ZLinq.Tests
         [Fact]
         public void OneElementCustomComparer()
         {
-            string[] key = { "Chris" };
-            int[] element = { 50 };
+            string[] key = ["Chris"];
+            int[] element = [50];
             var source = new[] { new { Name = "risCh", Score = 50 } };
 
             AssertMatches(key, source, source.ToLookup(e => e.Name, new AnagramEqualityComparer()));
@@ -80,8 +80,8 @@ namespace ZLinq.Tests
         [Fact]
         public void UniqueElementsElementSelector()
         {
-            string[] key = { "Chris", "Prakash", "Tim", "Robert", "Brian" };
-            int[] element = { 50, 100, 95, 60, 80 };
+            string[] key = ["Chris", "Prakash", "Tim", "Robert", "Brian"];
+            int[] element = [50, 100, 95, 60, 80];
             var source = new[]
             {
                 new { Name = key[0], Score = element[0] },
@@ -97,8 +97,8 @@ namespace ZLinq.Tests
         [Fact]
         public void DuplicateKeys()
         {
-            string[] key = { "Chris", "Prakash", "Robert" };
-            int[] element = { 50, 80, 100, 95, 99, 56 };
+            string[] key = ["Chris", "Prakash", "Robert"];
+            int[] element = [50, 80, 100, 95, 99, 56];
             var source = new[]
             {
                 new { Name = key[0], Score = element[0] },
@@ -115,8 +115,8 @@ namespace ZLinq.Tests
         [Fact]
         public void RunOnce()
         {
-            string[] key = { "Chris", "Prakash", "Robert" };
-            int[] element = { 50, 80, 100, 95, 99, 56 };
+            string[] key = ["Chris", "Prakash", "Robert"];
+            int[] element = [50, 80, 100, 95, 99, 56];
             var source = new[]
             {
                 new { Name = key[0], Score = element[0] },
@@ -133,8 +133,8 @@ namespace ZLinq.Tests
         [Fact]
         public void Count()
         {
-            string[] key = { "Chris", "Prakash", "Robert" };
-            int[] element = { 50, 80, 100, 95, 99, 56 };
+            string[] key = ["Chris", "Prakash", "Robert"];
+            int[] element = [50, 80, 100, 95, 99, 56];
             var source = new[]
             {
                 new { Name = key[0], Score = element[0] },
@@ -151,8 +151,8 @@ namespace ZLinq.Tests
         [Fact]
         public void EmptySource()
         {
-            string[] key = { };
-            int[] element = { };
+            string[] key = [];
+            int[] element = [];
             var source = key.Zip(element, (k, e) => new { Name = k, Score = e });
 
             AssertMatches(key, element, source.ToLookup(e => e.Name, e => e.Score, new AnagramEqualityComparer()));
@@ -161,9 +161,9 @@ namespace ZLinq.Tests
         [Fact]
         public void SingleNullKeyAndElement()
         {
-            string[] key = { null };
-            string[] element = { null };
-            string[] source = new string[] { null };
+            string[] key = [null];
+            string[] element = [null];
+            string[] source = [null];
 
             AssertMatches(key, element, source.ToLookup(e => e, e => e, EqualityComparer<string>.Default));
         }
@@ -344,7 +344,7 @@ namespace ZLinq.Tests
         private sealed class NopGrouping : IGrouping<string, int>
         {
             public string Key => "";
-            public IEnumerator<int> GetEnumerator() => ((IList<int>)Array.Empty<int>()).GetEnumerator();
+            public IEnumerator<int> GetEnumerator() => ((IList<int>)[]).GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
