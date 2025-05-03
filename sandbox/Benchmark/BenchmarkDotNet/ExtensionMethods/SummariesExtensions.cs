@@ -1,32 +1,60 @@
-using BenchmarkDotNet.Environments;
+﻿using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
 using Kokuban;
-using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Benchmark;
 
 public static partial class SummariesExtensions
 {
-    private static readonly ILogger Logger = ConsoleLogger.Default;
-
     /// <summary>
     /// Render benchmark summaries to console.
     /// </summary>
     public static void RenderToConsole(this Summary[] summaries)
     {
-        RenderMarkdownTables(summaries);
-
-        RenderSummariesResult(summaries);
+        var logger = ConsoleLogger.Default;
+        RenderMarkdownTables(logger, summaries);
+        RenderSummariesResult(logger, summaries);
+        logger.Flush();
     }
 
-    private static void RenderMarkdownTables(Summary[] summaries)
+    /// <summary>
+    /// Render benchmark summaries to file.
+    /// </summary>
+    public static void ExportToFiles(this Summary[] summaries)
     {
-        // Temporary capture logs.
-        var logger = new LogCapture();
+        var resultsDirectoryPath = summaries[0].ResultsDirectoryPath;
 
+        // export benchmark reports markdown file
+        const string ReportFileName = "reports.md";
+        using var streamLogger = new StreamLogger(Path.Combine(resultsDirectoryPath, ReportFileName));
+        RenderMarkdownTables(streamLogger, summaries);
+
+        // export benchmark metadat json file
+        const string MetadataFileName = "reports.json";
+        ExportMetadataToFile(summaries, Path.Combine(resultsDirectoryPath, MetadataFileName));
+    }
+
+    internal static string GetSummaryTableMarkdown(this SummaryTable table)
+    {
+        // Temporary capture logs to filter logs.
+        var logCapture = new LogCapture();
+        table.RenderToConsole(logCapture);
+        var lines = logCapture.CapturedOutput
+                              .Where(x => x.Kind == LogKind.Statistic || x.Kind == LogKind.Header || x.Text == Environment.NewLine)
+                              .Select(x => x.Text)
+                              .ToArray();
+
+        return string.Join("", lines).TrimEnd();
+    }
+
+    private static void RenderMarkdownTables(ILogger logger, Summary[] summaries)
+    {
         foreach (var grouping in summaries.GroupBy(x => x.BenchmarksCases[0].Descriptor.Type.Name))
         {
             var items = grouping.ToArray();
@@ -42,22 +70,29 @@ public static partial class SummariesExtensions
             }
 
             logger.WriteLine();
-            logger.WriteLineStatistic($"## Benchmark Results: {benchmarkTypeName}");
+            logger.WriteLineStatistic($"## {benchmarkTypeName}");
             logger.WriteLine();
 
-            summary.Table.RenderToConsole(logger);
-
+            var tableMarkdown = GetSummaryTableMarkdown(summary.Table);
+            logger.WriteLineStatistic(tableMarkdown);
             logger.WriteLine();
         }
+    }
 
-        // Render accumulated logs to console
-        var lines = logger.CapturedOutput
-                          .Where(x => x.Kind == LogKind.Statistic || x.Kind == LogKind.Header || x.Text == Environment.NewLine)
-                          .Select(x => x.Text)
-                          .ToArray();
+    private static void ExportMetadataToFile(Summary[] summaries, string path)
+    {
+        var report = BenchmarkResultsReport.FromSummaries(summaries);
 
-        var text = string.Join("", lines).TrimEnd();
-        Logger.WriteLineStatistic(text);
+        // Serialize to json
+        var json = JsonSerializer.Serialize(report, new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+        });
+
+        File.WriteAllText(path, json);
     }
 
     // Helper methods to create joined summary.
@@ -75,51 +110,55 @@ public static partial class SummariesExtensions
     );
 
     // Render benchmark result summaries with clickable links.
-    private static void RenderSummariesResult(Summary[] summaries)
+    private static void RenderSummariesResult(ILogger logger, Summary[] summaries)
     {
         // Print executed benchmarks count.
         var benchmarkCount = summaries.Sum(x => x.GetNumberOfExecutedBenchmarks());
+        var benchmarkTotalTime = summaries.Select(x => x.TotalTime).Aggregate(TimeSpan.Zero, (x, y) => x + y);
 
-        Logger.WriteLine();
-        Logger.WriteLine($"{benchmarkCount} benchmarks are executed.");
-        Logger.WriteLine();
+        logger.WriteLine();
+        logger.WriteLine($"{benchmarkCount} benchmarks are executed. Elapsed: {benchmarkTotalTime.ToString(@"hh\:mm\:ss\.fff")}");
+        logger.WriteLine();
 
         // LogFilePath/ResultsDirectoryPath is shared between summaries. So use first element.
-        var summary = summaries[0];
+        var firstSummary = summaries[0];
 
         // Print log file path.
-        var logFilePath = summary.LogFilePath;
-        Logger.WriteLine("Benchmark LogFile:");
-        WriteLineAsClickableLink(logFilePath);
+        var logFilePath = firstSummary.LogFilePath;
+        logger.WriteLine("Benchmark LogFile:");
+        WriteLineAsClickableLink(logger, logFilePath);
 
         // Print results directory path.
-        var resultsDirectoryPath = summary.ResultsDirectoryPath;
-        Logger.WriteLine();
-        Logger.WriteLine("Benchmark Results Directory:");
-        WriteLineAsClickableLink(resultsDirectoryPath);
+        var resultsDirectoryPath = firstSummary.ResultsDirectoryPath;
+        logger.WriteLine();
+        logger.WriteLine("Benchmark Results Directory:");
+        WriteLineAsClickableLink(logger, resultsDirectoryPath);
 
         // Print exported file links.
-        Logger.WriteLine();
-        Logger.WriteLine("Exported Files:");
-        var exportedFiles = ExtractExportedFiles(summary);
-        foreach (var path in exportedFiles)
+        logger.WriteLine();
+        logger.WriteLine("Exported Files:");
+        foreach (var summary in summaries)
         {
-            var exportedFilePath = Path.Combine(Directory.GetCurrentDirectory(), path);
-            WriteLineAsClickableLink(exportedFilePath);
+            var exportedFiles = ExtractExportedFiles(summary);
+            foreach (var path in exportedFiles)
+            {
+                var relativePath = Path.GetRelativePath(resultsDirectoryPath, path);
+                WriteLineAsClickableLink(logger, path, caption: relativePath);
+            }
         }
-        Logger.WriteLine();
+        logger.WriteLine();
 
         // If benchmark failed. Print detailed log file path as error.
         var benchmarksWithTroubles = summaries.SelectMany(x => x.Reports).Where(r => !r.GetResultRuns().Any()).Select(r => r.BenchmarkCase).ToArray();
         if (benchmarksWithTroubles.Any())
         {
-            Logger.WriteLine(Chalk.Red[$"Error: {benchmarksWithTroubles.Length} benchmarks faled to run."]);
-            Logger.WriteLine();
+            logger.WriteLine(Chalk.Red[$"Error: {benchmarksWithTroubles.Length} benchmarks faled to run."]);
+            logger.WriteLine();
 
             // Print clickable log file link.
-            Logger.WriteLine(Chalk.Red[$"For detailed error messages. Confirm the output log file."]);
-            Logger.Write(Chalk.Red["  " + ToClickableLink(logFilePath)]);
-            Logger.Write(Chalk.Red["."]);
+            logger.WriteLine(Chalk.Red[$"For detailed error messages. Confirm the output log file."]);
+            logger.Write(Chalk.Red["  " + ToClickableLink(logFilePath)]);
+            logger.Write(Chalk.Red["."]);
         }
     }
 
@@ -134,17 +173,17 @@ public static partial class SummariesExtensions
                      .ToArray();
     }
 
-    private static void WriteLineAsClickableLink(string link, string prefixIndent = "  ")
+    private static void WriteLineAsClickableLink(ILogger logger, string link, string? caption = null, string prefixIndent = "  ")
     {
-        Logger.Write($"{prefixIndent}");
-        Logger.WriteLine(ToClickableLink(link));
+        logger.Write($"{prefixIndent}");
+        logger.WriteLine(ToClickableLink(link, caption));
     }
 
     private const string ESC = "\u001B"; // \e
     private static string ToClickableLink(string url, string? caption = null)
     {
         caption ??= url;
-        return $"{ESC}]8;;{url}{ESC}\\{url}{ESC}]8;;{ESC}\\";
+        return $"{ESC}]8;;{url}{ESC}\\{caption}{ESC}]8;;{ESC}\\";
     }
 
     // Currently this API is not publicky exposed.

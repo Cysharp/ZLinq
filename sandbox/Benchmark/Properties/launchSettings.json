@@ -11,6 +11,7 @@
       // 4. ColdStart
       // 5. TargeFrameworks
       // 6. NuGetVersions
+      // 7. SystemLinq
       //
       // Available benchmarks:
       // "commandLineArgs": "--filter Benchmark.LinqAf.Crazy+Giant.*",
@@ -22,7 +23,10 @@
       // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector.*",
       // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector_Comparer.*",
       // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector_Comparer.*",
-      // "commandLineArgs": "--filter Benchmark.AppendSelectLastBenchamrk.*",
+      // "commandLineArgs": "--filter Benchmark.ZLinq.*",
+      // "commandLineArgs": "--filter Benchmark.AnyPredicateWithCapturedLambda.*",
+      // "commandLineArgs": "--filter Benchmark.AllAnyPredicateWithCapturedLamda.*",
+      // "commandLineArgs": "--filter Benchmark.AsValueEnumerableBench.*",
       // "commandLineArgs": "--filter Benchmark.CastOfType.*",
       // "commandLineArgs": "--filter Benchmark.DistinctBattle.*",
       // "commandLineArgs": "--filter Benchmark.HugeChain.*",
@@ -37,12 +41,15 @@
       // "commandLineArgs": "--filter Benchmark.LookupBattle.*",
       // "commandLineArgs": "--filter Benchmark.Net80OptimizedBenchmark.*",
       // "commandLineArgs": "--filter Benchmark.Net90OptimizedBenchmark.*",
+      // "commandLineArgs": "--filter Benchmark.OrderTakeBenchmark.*",
       // "commandLineArgs": "--filter Benchmark.ReadMeBenchmark.*",
+      // "commandLineArgs": "--filter Benchmark.ReadMeBenchmark2.*",
       // "commandLineArgs": "--filter Benchmark.Select4.*",
       // "commandLineArgs": "--filter Benchmark.Select4_Consume.*",
       // "commandLineArgs": "--filter Benchmark.SelectFromEnumerableArray.*",
       // "commandLineArgs": "--filter Benchmark.SelectFromSourceTypes*",
       // "commandLineArgs": "--filter Benchmark.ShuffleBench.*",
+      // "commandLineArgs": "--filter Benchmark.SimdAggregate.*",
       // "commandLineArgs": "--filter Benchmark.SimdAny.*",
       // "commandLineArgs": "--filter Benchmark.SimdCount.*",
       // "commandLineArgs": "--filter Benchmark.SimdRange.*",
@@ -51,20 +58,6 @@
       // "commandLineArgs": "--filter Benchmark.SimdSumUnsigned.*",
       // "commandLineArgs": "--filter Benchmark.StringJoinBenchmark.*",
       // "commandLineArgs": "--filter Benchmark.VectorizableUpdate.*",
-      // "commandLineArgs": "--filter Benchmark.CastOfType.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.Crazy+Giant.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.Join+FourParams.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.Join+FiveParams.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelectorWithoutIterate.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_Comparer.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector_Comparer.*",
-      // "commandLineArgs": "--filter Benchmark.LinqAf.ToLookup+KeySelector_ElementSelector_Comparer.*",
-      // "commandLineArgs": "--filter Benchmark.SimdCount.*",
-      // "commandLineArgs": "--filter Benchmark.Net80OptimizedBenchmark.*",
-      // "commandLineArgs": "--filter Benchmark.Net90OptimizedBenchmark.*",
-      // "commandLineArgs": "--filter Benchmark.AnyPredicate* -- Default",
       "workingDirectory": "."
     },
     "Select Benchmark": {

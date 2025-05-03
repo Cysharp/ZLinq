@@ -62,10 +62,21 @@ internal static class Program
 
             // Render benchmark results to console
             summaries.RenderToConsole();
+
+            // Export benchmark results report/metadata to files
+            summaries.ExportToFiles();
+
             return 0;
+        }
+        catch (OperationCanceledException ex)
+        {
+            Console.WriteLine();
+            Console.WriteLine(Chalk.Red[ex.Message]);
+            return 1;
         }
         catch (Exception ex)
         {
+            Console.WriteLine();
             Console.WriteLine(Chalk.Red[ex.ToString()]);
             return 1;
         }
@@ -91,10 +102,11 @@ internal static class Program
             "NuGetVersions" => new NuGetVersionsBenchmarkConfig(),
             "TargetFrameworks" => new TargetFrameworksBenchmarkConfig(),
             "ColdStart" => new ColdStartBenchmarkConfig(),
+            "SystemLinq" => new SystemLinqBenchmarkConfig(),
             _ => throw new ArgumentException($"Specified benchmark config key is not supported: {key}"),
         };
 
-        if (IsBenchmarkSelectMode(benchmarkArgs) || IsShowInfoMode(benchmarkArgs))
+        if (IsBenchmarkSelectMode(benchmarkArgs) || IsShowInfoMode(benchmarkArgs) || extraArgs.Contains("--verbose"))
             config.AddLogger(ConsoleLogger.Default);
 
         Console.WriteLine($"Run Benchmarks with config: {config.GetType().Name}");

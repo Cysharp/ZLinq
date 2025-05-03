@@ -1,10 +1,12 @@
-using BenchmarkDotNet.Analysers;
+﻿using BenchmarkDotNet.Analysers;
 using BenchmarkDotNet.EventProcessors;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Toolchains;
 using BenchmarkDotNet.Toolchains.Results;
 using BenchmarkDotNet.Validators;
+using System.Diagnostics;
 using System.Text;
 
 namespace Benchmark;
@@ -20,6 +22,7 @@ public class BenchmarkEventProcessor : EventProcessor
     private int totalBenchmarkCount = 0;
     private int completedBenchmarkCount = 0;
 
+    private bool isAnyOfBenchmarkBuildFailed = false;
     private int maxBenchmarkMethodNameLength = 0;
     private int maxBenchmarkParameterInfoLength = 0;
     private bool containsMultipleJobIds = false;
@@ -53,17 +56,22 @@ public class BenchmarkEventProcessor : EventProcessor
 
     public override void OnBuildComplete(BuildPartition partition, BuildResult buildResult)
     {
+        var benchmarkCase = partition.RepresentativeBenchmarkCase;
+        var jobId = benchmarkCase.Job.ResolvedId;
+
         if (!buildResult.IsBuildSuccess)
         {
+            isAnyOfBenchmarkBuildFailed = true;
+
+            Logger.WriteLineError($"{Indent}Failed to build benchmark project ({jobId}):");
+            Logger.WriteLineError($"{buildResult.ErrorMessage}");
+
             if (buildResult.GenerateException != null)
-                Logger.WriteLineError($"{Indent}Failed to build benchmark project: {buildResult.ErrorMessage} {buildResult.GenerateException}");
-            else
-                Logger.WriteLineError($"{Indent}Failed to build benchmark project: {buildResult.ErrorMessage}");
+                Logger.WriteLineError($"{buildResult.GenerateException.ToString()}");
+            
             return;
         }
 
-        var benchmarkCase = partition.RepresentativeBenchmarkCase;
-        var jobId = benchmarkCase.Job.ResolvedId;
         if (benchmarkCase.Job.Infrastructure.TryGetToolchain(out var toolchain))
         {
             Logger.WriteLine($"{Indent}Build Completed: {toolchain.Name} ({jobId})");
@@ -73,6 +81,12 @@ public class BenchmarkEventProcessor : EventProcessor
             // If toolchain is not available. Use JobId instead. Because `ToolchainExtensions.GetToolchain` method is marked as internal.
             Logger.WriteLine($"{Indent}Build Completed: {jobId}");
         }
+    }
+
+    public override void OnEndBuildStage()
+    {
+        if (isAnyOfBenchmarkBuildFailed)
+            throw new OperationCanceledException("Benchmark stopped unexpectedly. Because an error occurred during the build phase of benchmark projects.");
     }
 
     public override void OnStartRunStage()

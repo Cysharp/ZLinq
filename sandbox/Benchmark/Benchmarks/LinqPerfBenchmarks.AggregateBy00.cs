@@ -18,6 +18,7 @@ public partial class LinqPerfBenchmarks
 #if NET9_0_OR_GREATER
         [Benchmark]
         [BenchmarkCategory(Categories.LINQ)]
+        [BenchmarkCategory(Categories.Filters.NET9_0_OR_GREATER)]
         public bool Linq_AggregateBy_Sum()
         {
             List<Product> products = TestData;
@@ -53,6 +54,7 @@ public partial class LinqPerfBenchmarks
 #if NET9_0_OR_GREATER
         [Benchmark]
         [BenchmarkCategory(Categories.ZLinq)]
+        [BenchmarkCategory(Categories.Filters.NET9_0_OR_GREATER)]
         public bool ZLinq_AggregateBy_Sum()
         {
             List<Product> products = TestData;

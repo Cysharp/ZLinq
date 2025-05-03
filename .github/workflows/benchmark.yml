@@ -1,12 +1,28 @@
 name: Benchmark
+run-name: Benchmark(${{ inputs.configKey }})
 
 on:
   workflow_dispatch:
+    inputs:
+      config:
+        type: choice
+        description: Specify benchmark config key
+        default: Default
+        options:
+          - Default
+          - Test
+          - TargetFrameworks
+          - NuGetVersions
+          - SystemLinq
+      filter:
+        type: string
+        description: Specify benchmark filter text (e,g. Benchmark.ReadMeBenchmark*)
+        default: '*'
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    timeout-minutes: 60 # Default: 360 minutes
+    timeout-minutes: 360 # Default: 360 minutes
     strategy:
       fail-fast: true
     steps:
@@ -17,7 +33,7 @@ jobs:
       - name: Run Benchmarks
         working-directory: sandbox/Benchmark
         run: |
-          dotnet run -c Release --framework net9.0 --no-build --no-launch-profile -- --filter "*"
+          dotnet run -c Release --framework net9.0 --no-build --no-launch-profile -- --filter "${{ github.event.inputs.filter }}" -- ${{ github.event.inputs.configKey }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 #v4.6.1

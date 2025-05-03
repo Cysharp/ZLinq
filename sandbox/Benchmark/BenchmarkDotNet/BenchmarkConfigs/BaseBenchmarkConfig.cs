@@ -1,7 +1,5 @@
-using BenchmarkDotNet.Columns;
-using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
@@ -81,6 +79,7 @@ public abstract class BaseBenchmarkConfig : ManualConfig
 
     protected virtual void AddFilters()
     {
+        AddFilter(TargetFrameworkFilter.Instance);
     }
 
     protected virtual void AddDiagnosers()

@@ -19,21 +19,8 @@
   <!-- Add .NET 10 support when running build inside Visual Studio Preview-->
   <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != '' AND $(VisualStudioDir.Contains('Preview'))">
     <!-- TODO: Temporary comment out, because BenchmarkDotNet 0.14.0 don't support .NET 10 -->
-    <!--<TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>-->
+    <!--<TargetFrameworks>net10.0;$(TargetFrameworks)</TargetFrameworks>-->
   </PropertyGroup>
-
-  <!-- Settings for NuGetVersionsBenchmarkConfig -->
-  <PropertyGroup>
-    <!-- Define benchmark target versions.First element is selected as baseline version. -->
-    <TargetZLinqVersions>0.9.3</TargetZLinqVersions>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>TargetZLinqVersions</_Parameter1>
-      <_Parameter2>$(TargetZLinqVersions)</_Parameter2>
-    </AssemblyAttribute>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AndanteSoft.SpanLinq" Version="1.0.1" />
@@ -50,17 +37,42 @@
     <PackageReference Include="Kokuban" Version="0.2.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(UseZLinqNuGetPackage)' != 'true'">
+  <ItemGroup>
+    <!-- Enable implicit usings of BenchmarkDotNet namespaces -->
+    <Using Include="BenchmarkDotNet.Attributes" />
+    <Using Include="BenchmarkDotNet.Configs" />
+    <Using Include="BenchmarkDotNet.Engines" />
+    <!-- Enable implicit usings for Immutable/Frozen Collections to use System.Linq extension methods -->
+    <Using Include="System.Collections.Immutable" />
+    <Using Include="System.Collections.Frozen" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\ZLinq\ZLinq.csproj" />
   </ItemGroup>
 
-  <!-- If `UseDocfxNuGetPackage` property is enabled. Use baseline NuGet package -->
-  <ItemGroup Condition="'$(UseZLinqNuGetPackage)' == 'true'">
-    <PackageReference Include="ZLinq" Version="$(TargetZLinqVersions.Split(';')[0])" />
-  </ItemGroup>
+  <Choose>
+    <!-- Settings for NuGetVersionsBenchmarkConfig -->
+    <When Condition="$(Configuration.StartsWith('UseZLinqNuGetPackage'))">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);$(ZLinqDefineConstants)</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <ProjectReference Remove="..\..\src\ZLinq\ZLinq.csproj" />
+        <PackageReference Include="ZLinq" Version="$(TargetZLinqVersion)" />
+      </ItemGroup>
+    </When>
+    <!-- Settings for SystemLinqBenchmarkConfig -->
+    <When Condition="'$(Configuration)'=='SystemLinq'">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);USE_SYSTEM_LINQ</DefineConstants>
+      </PropertyGroup>
+    </When>
+  </Choose>
 
-  <!-- Custom target to cleanup `BenchmarkDotNet.Artifacts` directory-->
-  <Target Name="CleanBenchmarkDotNetArtifacts" BeforeTargets="Clean" Condition="Exists('BenchmarkDotNet.Artifacts')">
-    <RemoveDir Directories="BenchmarkDotNet.Artifacts" />
+  <!-- Custom target to cleanup `bin`, and `BenchmarkDotNet.Artifacts` directories. (`obj` is retained. Because it cause intellisense error when deleted) -->
+  <Target Name="CleanBenchmarkDotNetArtifacts" BeforeTargets="Clean" Condition="Exists('bin')">
+    <RemoveDir ContinueOnError="WarnAndContinue" Directories="$(MSBuildThisFileDirectory)bin" />
+    <RemoveDir ContinueOnError="WarnAndContinue" Directories="$(MSBuildThisFileDirectory)BenchmarkDotNet.Artifacts" />
   </Target>
 </Project>

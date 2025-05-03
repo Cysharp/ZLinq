@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Columns;
+﻿using BenchmarkDotNet.Analysers;
+using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.CsProj;
 
@@ -24,6 +25,18 @@ public class TargetFrameworksBenchmarkConfig : BaseBenchmarkConfig
 
         // Configure additional settings.
         AddConfigurations();
+    }
+
+    protected override void AddAnalyzers()
+    {
+        // Remove BaselineCustomAnalyzer to suppress warning.
+        // Because baseline benchmark might be excluded by filter.
+        var analyzers = DefaultConfig.Instance
+                                     .GetAnalysers()
+                                     .Where(x => x is not BaselineCustomAnalyzer)
+                                     .ToArray();
+
+        AddAnalyser(analyzers);
     }
 
     protected override void AddColumnHidingRules()

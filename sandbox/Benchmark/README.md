@@ -1,4 +1,4 @@
-## How to run benchmarks
+﻿## How to run benchmarks
 
 ### 1. Visual Studio
 
@@ -20,8 +20,17 @@
 
 It can start benchmarks with following command.
 
-```
-gh workflow run benchmark.yml --repo Cysharp/ZLinq --ref "{{branch_name}}"
+```pwsh
+$branchName = 'main'
+
+# Run benchmark with `Default` config
+gh workflow run benchmark.yml --repo Cysharp/ZLinq --ref $branchName
+
+# Run benchmark with `Default` config with benchmark filter
+gh workflow run benchmark.yml --repo Cysharp/ZLinq --ref $branchName -f filter=Benchmark.ReadMeBenchmark*
+
+# Run benchmark with `SystemLinq` config
+gh workflow run benchmark.yml --repo Cysharp/ZLinq --ref $branchName -f config=SystemLinq
 ```
 
 Benchmark results are written to `GitHub Actions Job Summaries`.
@@ -64,3 +73,8 @@ Benchmark config to complare multiple target frameworks (.NET8/.NET9)
 
 ### `NuGetVersions`
 Benchmark config to complare multiple version on NuGet packages and local build.
+
+### `SystemLinq`
+Benchmark config to complare ZLinq/SystemLinq performance.
+When using this config. Target benchmarks must be defined on `Benchmark.ZLinq.*` namespace.
+Benchmarks that defined on other namespaces are filtered by `ZLinqBenchmarkFilter`.
