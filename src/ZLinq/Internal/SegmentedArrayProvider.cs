@@ -114,7 +114,10 @@ internal ref struct SegmentedArrayProvider<T>
     }
 }
 
-#if NET8_0_OR_GREATER
+#if NET10_0_OR_GREATER
+// .NET 10 or later supports build-in InlineArray16 implementation
+// https://source.dot.net/#System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Runtime/CompilerServices/InlineArray.cs
+#elif NET8_0_OR_GREATER
 
 [InlineArray(16)]
 internal struct InlineArray16<T>
