@@ -28,9 +28,15 @@ internal static class RandomShared
     {
         using (var rng = new RNGCryptoServiceProvider())
         {
+#if NETSTANDARD2_0
             var buffer = new byte[sizeof(int)];
             rng.GetBytes(buffer);
             var seed = BitConverter.ToInt32(buffer, 0);
+#else
+            Span<byte> buffer = stackalloc byte[sizeof(int)];
+            rng.GetBytes(buffer);
+            var seed = BitConverter.ToInt32(buffer);
+#endif
             return new Random(seed);
         }
     });
