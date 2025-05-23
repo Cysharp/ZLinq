@@ -248,7 +248,7 @@ Since `ValueEnumerable<T>` is not an `IEnumerable<T>`, it cannot be passed to me
 
 `ValueEnumerable<T>` is a struct, and its size increases slightly with each method chain. With many chained methods, copy costs can become significant. When iterating over small collections, these copy costs can outweigh the benefits, causing performance to be worse than standard LINQ. However, this is only an issue with extremely long method chains and small iteration counts, so it's rarely a practical concern.
 
-`ValueEnumerable<T>` is `ref strcut` in .NET 9 or above, this means that it cannot span across yield or await. Using yield or await inside foreach also fails and shows compilation errors. If enumeration is needed, please materialize the data using methods like [ToArrayPool](#pooledarraytsource-toarraypool).
+`ValueEnumerable<T>` is `ref struct` in .NET 9 or above, this means that it cannot span across yield or await. Using yield or await inside foreach also fails and shows compilation errors. If enumeration is needed, please materialize the data using methods like [ToArrayPool](#pooledarraytsource-toarraypool).
 
 Each chain operation returns a different type, so you cannot reassign to the same variable. For example, code that continuously reassigns `Concat` in a for loop cannot be implemented.
 
