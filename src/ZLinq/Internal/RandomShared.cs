@@ -26,6 +26,7 @@ internal static class RandomShared
 
     private static ThreadLocal<Random> Shared = new ThreadLocal<Random>(() =>
     {
+#if NETSTANDARD2_0
         using (var rng = new RNGCryptoServiceProvider())
         {
             var buffer = new byte[sizeof(int)];
@@ -33,6 +34,10 @@ internal static class RandomShared
             var seed = BitConverter.ToInt32(buffer, 0);
             return new Random(seed);
         }
+#else
+        var seed = RandomNumberGenerator.GetInt32(int.MinValue, int.MaxValue);
+        return new Random(seed);
+#endif
     });
 
     static void Shuffle<T>(this Random random, Span<T> values)
