@@ -350,4 +350,12 @@ internal static partial class ConsumerExtensions
     }
 
     #endregion
+
+    // ShuffleSkipTake FromArray
+    public static void Consume<T>(this ValueEnumerable<ShuffleSkipTake<FromArray<T>, T>, T> source, Consumer consumer)
+    {
+        using var e = source.Enumerator;
+        while (e.TryGetNext(out var item))
+            consumer.Consume(in item);
+    }
 }

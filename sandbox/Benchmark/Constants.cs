@@ -5,7 +5,11 @@ namespace Benchmark;
 
 public static class Constants
 {
+#if NET10_0_OR_GREATER
+    public static readonly IToolchain DefaultToolchain = CsProjCoreToolchain.NetCoreApp10_0;
+#else
     public static readonly IToolchain DefaultToolchain = CsProjCoreToolchain.NetCoreApp90;
+#endif
 
     public static class DefineConstants
     {

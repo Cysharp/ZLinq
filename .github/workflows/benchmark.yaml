@@ -18,6 +18,13 @@ on:
         type: string
         description: Specify benchmark filter text (e,g. Benchmark.ReadMeBenchmark*)
         default: '*'
+      framework:
+        type: choice
+        description: Specify target framework for benchmark
+        default: net9.0
+        options:
+          - net9.0
+          - net10.0
 
 jobs:
   benchmark:
@@ -28,11 +35,17 @@ jobs:
     steps:
       - uses: Cysharp/Actions/.github/actions/checkout@main
       - uses: Cysharp/Actions/.github/actions/setup-dotnet@main
+
+      - uses: Cysharp/Actions/.github/actions/setup-dotnet@main
+        if: ${{ inputs.framework }} == 'net10.0'
+        with:
+          dotnet-version: 10.0.x
+
       - run: dotnet build -c Release
 
       - name: Run Benchmarks
         working-directory: sandbox/Benchmark
-        run: dotnet run -c Release --framework net9.0 --no-build --no-launch-profile -- --filter "${{ inputs.filter }}" -- ${{ inputs.config }}
+        run: dotnet run -c Release --framework ${{ inputs.framework }} --no-build --no-launch-profile -- --filter "${{ inputs.filter }}" -- ${{ inputs.config }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 #v4.6.1

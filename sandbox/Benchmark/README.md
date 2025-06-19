@@ -1,4 +1,4 @@
-﻿## How to run benchmarks
+## How to run benchmarks
 
 ### 1. Visual Studio
 
@@ -29,9 +29,15 @@ gh workflow run benchmark.yaml --repo Cysharp/ZLinq --ref $branchName
 # Run benchmark with `Default` config with benchmark filter
 gh workflow run benchmark.yaml --repo Cysharp/ZLinq --ref $branchName -f filter=Benchmark.ReadMeBenchmark*
 
+# Run benchmark with `TargetFrameworks` config
+gh workflow run benchmark.yaml --repo Cysharp/ZLinq --ref $branchName -f config=TargetFrameworks
+
 # Run benchmark with `SystemLinq` config
 gh workflow run benchmark.yaml --repo Cysharp/ZLinq --ref $branchName -f config=SystemLinq
 ```
+
+> [!NOTE]
+> When running .NET 10 benchmarks. It need to add `-f framework=net10.0` input parameter
 
 Benchmark results are written to `GitHub Actions Job Summaries`.
 And archived as ZIP artifacts.

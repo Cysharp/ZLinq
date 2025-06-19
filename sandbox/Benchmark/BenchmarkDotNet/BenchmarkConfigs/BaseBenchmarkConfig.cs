@@ -35,7 +35,7 @@ public abstract class BaseBenchmarkConfig : ManualConfig
         // WithOptions(ConfigOptions.GenerateMSBuildBinLog);
     }
 
-    // Use Job.ShortRun based settings (LaunchCount=1  TargetCount=3 WarmupCount = 3)
+    // Use Job.ShortRun based settings (LaunchCount=1 IterationCount=3 WarmupCount = 3)
     protected virtual Job GetBaseJobConfig() =>
         Job.Default
            .WithLaunchCount(1)
