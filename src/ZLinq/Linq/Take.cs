@@ -127,6 +127,147 @@ namespace ZLinq.Linq
     }
 
     [StructLayout(LayoutKind.Auto)]
+    internal struct RangeProcessor(Range range)
+    {
+        public readonly Range Range = range;
+        public int SkipIndex = 0;
+        public int Remains = -2; // -2: uninitialized, -1: unknown count, >=0: known count
+        public int Index = 0;
+        public int FromEndQueueSize = 0;
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void Initialize(int? knownCount = null)
+        {
+            if (Remains != -2) return;
+
+            if (knownCount.HasValue)
+            {
+                InitializeWithKnownCount(knownCount.Value);
+            }
+            else if (!Range.Start.IsFromEnd && !Range.End.IsFromEnd)
+            {
+                InitializeBothFromStart();
+            }
+            else
+            {
+                InitializeWithUnknownCount();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        void InitializeBothFromStart()
+        {
+            SkipIndex = Range.Start.Value;
+            var length = Range.End.Value - Range.Start.Value;
+            Remains = Math.Max(0, length);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        void InitializeWithKnownCount(int count)
+        {
+            var start = Range.Start.IsFromEnd
+                ? Math.Max(0, count - Range.Start.Value)
+                : Range.Start.Value;
+            var end = Range.End.IsFromEnd
+                ? Math.Max(0, count - Range.End.Value)
+                : Range.End.Value;
+
+            SkipIndex = Math.Min(start, count);
+            Remains = Math.Max(0, Math.Min(end, count) - SkipIndex);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        void InitializeWithUnknownCount()
+        {
+            if (!Range.Start.IsFromEnd && Range.End.IsFromEnd)
+            {
+                SkipIndex = Range.Start.Value;
+                Remains = Range.End.Value == 0 ? int.MaxValue : -1;
+
+                if (Range.End.Value > 0)
+                {
+                    FromEndQueueSize = Range.End.Value;
+                }
+            }
+            else if (Range.Start.IsFromEnd && !Range.End.IsFromEnd)
+            {
+                SkipIndex = 0;
+                Remains = -1;
+                FromEndQueueSize = Math.Max(1, Range.Start.Value);
+            }
+            else
+            {
+                SkipIndex = 0;
+                var maxCount = Range.Start.Value - Range.End.Value;
+                Remains = maxCount <= 0 ? 0 : -1;
+
+                if (maxCount > 0)
+                {
+                    FromEndQueueSize = Math.Max(1, Range.Start.Value);
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void CalculateRemainsFromQueue(int totalCount, int queueCount)
+        {
+            var start = Range.Start.IsFromEnd
+                ? Math.Max(0, totalCount - Range.Start.Value)
+                : Range.Start.Value;
+            var end = Range.End.IsFromEnd
+                ? Math.Max(0, totalCount - Range.End.Value)
+                : Range.End.Value;
+
+            Remains = Math.Max(0, end - start);
+
+            var currentPosition = totalCount - queueCount;
+            var toSkip = Math.Max(0, start - currentPosition);
+
+            Remains = Math.Min(Remains - toSkip, queueCount - toSkip);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public int GetQueueSkipCount(int totalCount, int queueCount)
+        {
+            var start = Range.Start.IsFromEnd
+                ? Math.Max(0, totalCount - Range.Start.Value)
+                : Range.Start.Value;
+
+            var currentPosition = totalCount - queueCount;
+            return Math.Max(0, start - currentPosition);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public (int offsetInRange, int elementsToCopy) CalculateCopyParameters(
+            int totalCount, int destinationLength, Index offset)
+        {
+            var effectiveRemains = Math.Min(Remains, Math.Max(0, totalCount - SkipIndex));
+            if (effectiveRemains <= 0)
+                return (-1, 0);
+
+            var offsetInRange = offset.GetOffset(effectiveRemains);
+            if (offsetInRange < 0 || offsetInRange >= effectiveRemains)
+                return (-1, 0);
+
+            var elementsToCopy = Math.Min(effectiveRemains - offsetInRange, destinationLength);
+            return (offsetInRange, elementsToCopy);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public void SkipQueue<TSource>(ref ValueQueue<TSource> queue)
+        {
+            CalculateRemainsFromQueue(Index, queue.Count);
+
+            var toSkip = GetQueueSkipCount(Index, queue.Count);
+            while (toSkip > 0 && queue.Count > 0)
+            {
+                queue.Dequeue();
+                toSkip--;
+            }
+        }
+    }
+
+    [StructLayout(LayoutKind.Auto)]
     [EditorBrowsable(EditorBrowsableState.Never)]
 #if NET9_0_OR_GREATER
     public ref
@@ -141,97 +282,47 @@ namespace ZLinq.Linq
 #endif
     {
         TEnumerator source = source;
-        readonly Range range = range;
-
-        int index;
-        int remains;
-        int skipIndex;
-        int fromEndQueueCount; // 0 is not use q
+        RangeProcessor rangeProcessor = new(range);
         RefBox<ValueQueue<TSource>>? q;
-        bool isInitialized;
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         void Init()
         {
-            if (isInitialized)
-            {
-                return;
-            }
-            isInitialized = true;
-
-            this.fromEndQueueCount = 0;
-            this.remains = -1; // unknown
+            if (rangeProcessor.Remains != -2) return;
 
             if (source.TryGetNonEnumeratedCount(out var count))
             {
-                var start = Math.Max(0, range.Start.GetOffset(count));
-                var end = Math.Min(count, range.End.GetOffset(count));
-
-                this.skipIndex = start;
-                this.remains = end - start;
-                if (end <= 0 || remains < 0)
-                {
-                    this.remains = 0; // isEmpty
-                }
+                rangeProcessor.Initialize(count);
             }
             else
             {
-                if (!range.Start.IsFromEnd && !range.End.IsFromEnd) // both fromstart
-                {
-                    this.skipIndex = range.Start.Value;
-                    this.remains = range.End.Value - range.Start.Value;
-                    if (remains < 0)
-                    {
-                        this.remains = 0; // isEmpty
-                    }
-                }
-                else if (!range.Start.IsFromEnd && range.End.IsFromEnd) // end-fromend
-                {
-                    // unknown remains
-                    this.skipIndex = range.Start.Value;
-                    if (range.End.Value == 0)
-                    {
-                        this.remains = int.MaxValue; // get all
-                        return;
-                    }
+                rangeProcessor.Initialize();
+            }
 
-                    this.fromEndQueueCount = int.MaxValue; // unknown queue count
-                    this.q = new(new(4));
-                }
-                else if (range.Start.IsFromEnd && !range.End.IsFromEnd) // start-fromend
-                {
-                    // unknown skipIndex and remains
-                    this.skipIndex = 0;
-                    this.fromEndQueueCount = range.Start.Value; //queue size is fixed from end-of-start
-                    if (this.fromEndQueueCount == 0) fromEndQueueCount = 1;
-                    this.q = new(new(4));
-                }
-                else if (range.Start.IsFromEnd && range.End.IsFromEnd) // both fromend
-                {
-                    // unknown skipIndex and remains but maxCount can calc
-                    this.skipIndex = 0;
-                    var maxCount = range.Start.Value - range.End.Value; // maxCount but remains is unknown.
-                    if (maxCount <= 0)
-                    {
-                        // empty
-                        this.remains = 0;
-                        return;
-                    }
-                    this.fromEndQueueCount = range.Start.Value;
-                    if (this.fromEndQueueCount == 0) fromEndQueueCount = 1;
-                    this.q = new(new(4));
-                }
+            if (rangeProcessor.FromEndQueueSize > 0)
+            {
+                q = new(new(Math.Min(rangeProcessor.FromEndQueueSize, 16)));
             }
         }
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
-            Init();
-
-            if (source.TryGetNonEnumeratedCount(out _))
+            if (!source.TryGetNonEnumeratedCount(out count))
             {
-                count = remains;
+                return false;
+            }
+
+            if (rangeProcessor.Remains == -2)
+            {
+                rangeProcessor.Initialize(count);
+            }
+
+            if (rangeProcessor.Remains >= 0)
+            {
+                count = rangeProcessor.Remains;
                 return true;
             }
+
             count = default;
             return false;
         }
@@ -240,9 +331,9 @@ namespace ZLinq.Linq
         {
             Init();
 
-            if (source.TryGetSpan(out span))
+            if (rangeProcessor.Remains >= 0 && source.TryGetSpan(out span))
             {
-                span = span.Slice(skipIndex, remains);
+                span = span.Slice(rangeProcessor.SkipIndex, rangeProcessor.Remains);
                 return true;
             }
 
@@ -254,127 +345,118 @@ namespace ZLinq.Linq
         {
             Init();
 
-            if (source.TryGetNonEnumeratedCount(out var totalCount))
-            {
-                var effectiveRemains = skipIndex < totalCount
-                    ? Math.Min(remains, totalCount - skipIndex)
-                    : 0;
+            if (rangeProcessor.Remains < 0 || !source.TryGetNonEnumeratedCount(out var totalCount))
+                return false;
 
-                if (effectiveRemains <= 0)
-                {
-                    return false;
-                }
+            var (offsetInRange, elementsToCopy) = rangeProcessor.CalculateCopyParameters(
+                totalCount, destination.Length, offset);
 
-                var offsetInRange = offset.GetOffset(effectiveRemains);
+            if (elementsToCopy <= 0)
+                return false;
 
-                if (offsetInRange < 0 || offsetInRange >= effectiveRemains)
-                {
-                    return false;
-                }
-
-                var sourceOffset = skipIndex + offsetInRange;
-
-                var elementsAvailable = effectiveRemains - offsetInRange;
-
-                var elementsToCopy = Math.Min(elementsAvailable, destination.Length);
-
-                if (elementsToCopy <= 0)
-                {
-                    return false;
-                }
-
-                return source.TryCopyTo(destination.Slice(0, elementsToCopy), sourceOffset);
-            }
-
-            return false;
+            return source.TryCopyTo(destination[..elementsToCopy],rangeProcessor.SkipIndex + offsetInRange);
         }
 
         public bool TryGetNext(out TSource current)
         {
-            Init();
+            var remains = rangeProcessor.Remains;
+            if (remains == -2)
+            {
+                Init();
+            }
 
             if (remains == 0)
+            {
+                Unsafe.SkipInit(out current);
+                return false;
+            }
+
+            return q == null
+                ? TryGetNextSimple(out current)
+                : TryGetNextWithQueue(out current);
+        }
+
+        bool TryGetNextSimple(out TSource current)
+        {
+            ref var rangeProcessor = ref this.rangeProcessor;
+            while (rangeProcessor.Index < rangeProcessor.SkipIndex)
+            {
+                if (!source.TryGetNext(out _))
+                {
+                    rangeProcessor.Remains = 0;
+                    Unsafe.SkipInit(out current);
+                    return false;
+                }
+
+                rangeProcessor.Index++;
+            }
+
+            if (rangeProcessor.Remains > 0)
+            {
+                if (source.TryGetNext(out current))
+                {
+                    if (rangeProcessor.Remains != int.MaxValue)
+                        rangeProcessor.Remains--;
+                    return true;
+                }
+            }
+
+            rangeProcessor.Remains = 0;
+            Unsafe.SkipInit(out current);
+            return false;
+        }
+
+        bool TryGetNextWithQueue(out TSource current)
+        {
+            ref var rangeProcessor = ref this.rangeProcessor;
+            ref var queue = ref q!.GetValueRef();
+
+            // Fast path: dequeue from processed queue
+            if (rangeProcessor.Remains > 0 && queue.Count > 0)
+            {
+                goto DEQUEUE_RETURN;
+            }
+
+            // Fill queue from source
+            var useSlidingWindow = !rangeProcessor.Range.Start.IsFromEnd && rangeProcessor.Range.End.IsFromEnd;
+
+            while (source.TryGetNext(out current))
+            {
+                if (rangeProcessor.Index++ < rangeProcessor.SkipIndex)
+                    continue;
+
+                if (queue.Count == rangeProcessor.FromEndQueueSize)
+                {
+                    var result = queue.Dequeue();
+                    if (useSlidingWindow)
+                    {
+                        // Sliding window: return oldest element immediately
+                        queue.Enqueue(current);
+                        current = result;
+                        return true;
+                    }
+                }
+                queue.Enqueue(current);
+            }
+
+            if (queue.Count == 0 || useSlidingWindow)
             {
                 goto END;
             }
 
-        DEQUEUE:
-            if (q != null && q.GetValueRef().Count != 0)
+            if (rangeProcessor.Remains == -1)
+                rangeProcessor.SkipQueue(ref queue);
+
+        DEQUEUE_RETURN:
+            if (rangeProcessor.Remains > 0)
             {
-                if (remains == -1)
-                {
-                    // calculate remains
-                    var count = index;
-                    var start = Math.Max(0, range.Start.GetOffset(count));
-                    var end = Math.Min(count, range.End.GetOffset(count));
-
-                    this.remains = end - start;
-                    if (remains < 0)
-                    {
-                        goto END;
-                    }
-
-                    // q.Count is fromEnd
-                    var offset = count - q.GetValueRef().Count;
-                    var skipIndex = Math.Max(0, start - offset);
-                    while (skipIndex > 0)
-                    {
-                        q.GetValueRef().Dequeue();
-                        skipIndex--;
-                    }
-                }
-
-                if (remains-- > 0)
-                {
-                    current = q.GetValueRef().Dequeue();
-                    return true;
-                }
-                else
-                {
-                    goto END;
-                }
-            }
-
-            while (source.TryGetNext(out current))
-            {
-                if (q == null)
-                {
-                    if (index++ < skipIndex)
-                    {
-                        continue; // skip
-                    }
-
-                    // take
-                    if (remains > 0)
-                    {
-                        remains--;
-                        return true;
-                    }
-                    return false;
-                }
-                else
-                {
-                    // from-last
-                    if (index++ < skipIndex)
-                    {
-                        continue;
-                    }
-
-                    if (q.GetValueRef().Count == fromEndQueueCount)
-                    {
-                        q.GetValueRef().Dequeue();
-                    }
-                    q.GetValueRef().Enqueue(current);
-                }
-            }
-
-            if (q != null && q.GetValueRef().Count != 0)
-            {
-                goto DEQUEUE;
+                current = queue.Dequeue();
+                rangeProcessor.Remains--;
+                return true;
             }
 
         END:
-            this.remains = 0;
+            rangeProcessor.Remains = 0;
             Unsafe.SkipInit(out current);
             return false;
         }
@@ -386,6 +468,7 @@ namespace ZLinq.Linq
         }
     }
 
+
     [StructLayout(LayoutKind.Auto)]
     [EditorBrowsable(EditorBrowsableState.Never)]
 #if NET9_0_OR_GREATER
@@ -393,7 +476,7 @@ namespace ZLinq.Linq
 #else
     public
 #endif
-    struct TakeSkip<TEnumerator, TSource>(TEnumerator source, Int32 takeCount, Int32 skipCount)
+        struct TakeSkip<TEnumerator, TSource>(TEnumerator source, Int32 takeCount, Int32 skipCount)
         : IValueEnumerator<TSource>
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
