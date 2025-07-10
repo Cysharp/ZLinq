@@ -1,5 +1,4 @@
-﻿using Benchmark.ZLinq;
-using ZLinq;
+﻿using ZLinq;
 
 namespace Benchmark;
 

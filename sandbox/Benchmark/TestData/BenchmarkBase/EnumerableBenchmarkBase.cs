@@ -1,6 +1,6 @@
 ﻿using ZLinq;
 
-namespace Benchmark.ZLinq;
+namespace Benchmark;
 
 /// <summary>
 /// Base class for benchmarks that use various enumerable types.

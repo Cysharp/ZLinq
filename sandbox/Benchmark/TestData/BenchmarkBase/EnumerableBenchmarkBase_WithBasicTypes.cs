@@ -1,4 +1,4 @@
-﻿namespace Benchmark.ZLinq;
+﻿namespace Benchmark;
 
 ////[GenericTypeArguments(typeof(bool))]
 ////[GenericTypeArguments(typeof(sbyte))]
