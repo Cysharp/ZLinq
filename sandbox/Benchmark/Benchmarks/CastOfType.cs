@@ -33,7 +33,7 @@ namespace Benchmark
             return _testArray.AsValueEnumerable().OfType<TextMessage>().ToArray();
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         [BenchmarkCategory(Categories.LINQ)]
         public object LinqOfTypeToArray()
         {

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using BenchmarkDotNet.Analysers;
 using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.InProcess.Emit;
@@ -25,5 +26,13 @@ public class InProcessMonitoringBenchmarkConfig : BaseBenchmarkConfig
 
         // Configure additional settings.
         AddConfigurations();
+    }
+
+    protected override void AddAnalyzers()
+    {
+        AddAnalyser(DefaultConfig.Instance
+                                 .GetAnalysers()
+                                 .Where(x => x is not MinIterationTimeAnalyser) // Remove MinIterationTimeAnalyser
+                                 .ToArray());
     }
 }
