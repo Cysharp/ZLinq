@@ -1,0 +1,62 @@
+name: Benchmark on release
+run-name: Start benchmarks on release (${{ github.ref_name }})
+on:
+  workflow_dispatch:
+  release:
+    types: [released]
+
+jobs:
+  benchmarks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - name: Invoke benchmark workflows
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          try {
+            // Define base options that shared between createWorkflowDispatch
+            const baseOptions = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'benchmark.yaml',
+              ref: '${{ github.ref_name }}',
+              framework: 'net10.0'
+            }
+
+            // 1. Start `Default` benchmark
+            await github.rest.actions.createWorkflowDispatch({
+              ...baseOptions,
+              inputs: {
+                config: 'Default'
+              }
+            })
+
+            // 2. Start `NuGetVersions` benchmark (Compare latest 2 versions)
+            await github.rest.actions.createWorkflowDispatch({
+              ...baseOptions,
+              inputs: {
+                config: 'NuGetVersions'
+              }
+            })
+
+            // 3. Start `SystemLinq` benchmarks
+            await github.rest.actions.createWorkflowDispatch({
+              ...baseOptions,
+              inputs: {
+                config: 'SystemLinq'
+              }
+            })
+
+            // 4. Start `TargetFrameworks` benchmarks
+            await github.rest.actions.createWorkflowDispatch({
+              ...baseOptions,
+              inputs: {
+                config: 'TargetFrameworks'
+              }
+            })
+          }
+          catch(error) {
+            console.error(error)
+            core.setFailed(error)
+          }
