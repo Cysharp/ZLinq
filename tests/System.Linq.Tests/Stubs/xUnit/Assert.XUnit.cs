@@ -1,10 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using ZLinq;
 using ZLinq.Linq;
 
 namespace ZLinq.Tests;
@@ -25,6 +19,9 @@ public static partial class Assert
 
     public static void Equal<T>(IEnumerable<T> expected, IEnumerable<T> actual, IEqualityComparer<T> comparer)
         => Xunit.Assert.Equal(expected, actual, comparer);
+
+    public static void Equal(float expected, float actual, int precision)
+        => Xunit.Assert.Equal(expected, actual, precision);
 
     public static void NotEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual)
         => Xunit.Assert.NotEqual(expected, actual);

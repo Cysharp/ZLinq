@@ -1,7 +1,5 @@
-using System.Linq;
-using ZLinq;
+using System.Numerics;
 using ZLinq.Linq;
-
 
 namespace ZLinq.Tests;
 
@@ -366,6 +364,21 @@ public static partial class Assert
     internal static void Equal<T>(
         ValueEnumerable<GroupBy<FromArray<T>, T, string>, IGrouping<string, T>> expected,
         IGrouping<string, T>[] actual)
+    {
+        Xunit.Assert.Equal(expected.ToArray(), actual.ToArray());
+    }
+
+    internal static void Equal<T>(
+        IEnumerable<T> expected,
+        ValueEnumerable<Take<FromInfiniteSequence<T>, T>, T> actual)
+            where T : IAdditionOperators<T, T, T>
+    {
+        Xunit.Assert.Equal(expected, actual.ToArray());
+    }
+
+    internal static void Equal(
+        ValueEnumerable<FromRange, int> expected,
+        ValueEnumerable<Take<FromRange, int>, int> actual)
     {
         Xunit.Assert.Equal(expected.ToArray(), actual.ToArray());
     }
