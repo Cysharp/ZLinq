@@ -8,7 +8,6 @@
             , allows ref struct
 #endif
             => new(new(source.Enumerator, count));
-
     }
 }
 
@@ -30,7 +29,9 @@ namespace ZLinq.Linq
     {
         TEnumerator source = source;
         readonly int takeCount = Math.Max(0, count);
-        RefBox<ValueQueue<TSource>>? q;
+        int state = 0; // 0: Initial, 1: Enumerating, 2: Dequeue, 3: Completed
+        RentedRingBuffer<TSource>? ringBuffer;
+
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -93,42 +94,69 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TSource current)
         {
+            switch (state)
+            {
+                case 0:
+                    return TryGetNextFirstPath(out current);
+                case 1:
+                    return source.TryGetNext(out current);
+                case 2:
+                    return ringBuffer!.TryDequeue(out current);
+                default:
+                    Unsafe.SkipInit(out current);
+                    return false;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        bool TryGetNextFirstPath(out TSource current)
+        {
+            Unsafe.SkipInit(out current);
             if (takeCount == 0)
             {
-                Unsafe.SkipInit(out current);
+                state = 3;
                 return false;
             }
 
-            if (q == null)
+            if (source.TryGetNonEnumeratedCount(out var totalCount))
             {
-                q = new(new(4));
-            }
-
-        DEQUEUE:
-            if (q.GetValueRef().Count != 0)
-            {
-                current = q.GetValueRef().Dequeue();
-                return true;
-            }
-
-            while (source.TryGetNext(out current))
-            {
-                if (q.GetValueRef().Count == takeCount)
+                var skipCount = Math.Max(0, totalCount - takeCount);
+                while (source.TryGetNext(out current))
                 {
-                    q.GetValueRef().Dequeue();
+                    if (--skipCount >= 0) continue;
+                    state = 1; // Mark as enumerating
+                    return true;
                 }
-                q.GetValueRef().Enqueue(current);
+
+                // Source exhausted
+                state = 3;
+                return false;
             }
+            else
+            {
 
-            if (q.GetValueRef().Count != 0) goto DEQUEUE;
+                var buffer =  ringBuffer = new(takeCount); // Use a reasonable default capacity;
 
-            Unsafe.SkipInit(out current);
-            return false;
+                while (source.TryGetNext(out var item))
+                {
+                    buffer.Enqueue(item);
+                }
+
+                state = 2; // Mark as collected
+
+                if (buffer.TryDequeue(out current))
+                {
+                    return true;
+                }
+
+                state = 3;
+                return false;
+            }
         }
 
         public void Dispose()
         {
-            q?.Dispose();
+            ringBuffer?.Dispose();
             source.Dispose();
         }
     }

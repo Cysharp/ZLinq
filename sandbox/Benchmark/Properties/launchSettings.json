@@ -58,6 +58,8 @@
       // "commandLineArgs": "--filter Benchmark.SimdSumUnsigned.*",
       // "commandLineArgs": "--filter Benchmark.StringJoinBenchmark.*",
       // "commandLineArgs": "--filter Benchmark.VectorizableUpdate.*",
+      // "commandLineArgs": "--filter Benchmark.TakeRangeBench.*",
+      // "commandLineArgs": "--filter Benchmark.TakeLastBenchmark.*",
       "workingDirectory": "."
     },
     "Select Benchmark": {
