@@ -18,7 +18,7 @@ public class AverageBenchmark<T> : EnumerableBenchmarkBase<T>
 #if !USE_SYSTEM_LINQ
         _ = source.Default
                   .AsValueEnumerable()
-                  .Average(x => x / T.CreateChecked(source.Length));
+                  .Average();
 #else
         _ = source.Default
                   .Cast<double>() // Cast<double> is required for System.Linq. It don't have Average<T>() overload.
