@@ -530,12 +530,24 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            var length = source.Length;
+#if NET8_0_OR_GREATER
+            ref var firstElement = ref MemoryMarshal.GetArrayDataReference(source);
+
+            if ((uint)index < (uint)length)
+            {
+                current = Unsafe.Add(ref firstElement, index);
+                index++;
+                return true;
+            }
+#else
+            if ((uint)index < (uint)length)
             {
                 current = source[index];
                 index++;
                 return true;
             }
+#endif
 
             Unsafe.SkipInit(out current);
             return false;

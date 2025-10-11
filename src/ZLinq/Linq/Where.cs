@@ -233,7 +233,22 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TSource current)
         {
-            while (index < source.Length)
+            var length = source.Length;
+#if NET8_0_OR_GREATER
+            ref var firstElement = ref MemoryMarshal.GetArrayDataReference(source);
+
+            while ((uint)index < (uint)length)
+            {
+                var value = Unsafe.Add(ref firstElement, index);
+                index++;
+                if (predicate(value))
+                {
+                    current = value;
+                    return true;
+                }
+            }
+#else
+            while ((uint)index < (uint)length)
             {
                 var value = source[index];
                 index++;
@@ -243,6 +258,7 @@ namespace ZLinq.Linq
                     return true;
                 }
             }
+#endif
 
             Unsafe.SkipInit(out current);
             return false;
@@ -289,7 +305,22 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            while (index < source.Length)
+            var length = source.Length;
+#if NET8_0_OR_GREATER
+            ref var firstElement = ref MemoryMarshal.GetArrayDataReference(source);
+
+            while ((uint)index < (uint)length)
+            {
+                var value = Unsafe.Add(ref firstElement, index);
+                index++;
+                if (predicate(value))
+                {
+                    current = selector(value);
+                    return true;
+                }
+            }
+#else
+            while ((uint)index < (uint)length)
             {
                 var value = source[index];
                 index++;
@@ -299,6 +330,7 @@ namespace ZLinq.Linq
                     return true;
                 }
             }
+#endif
 
             Unsafe.SkipInit(out current);
             return false;
