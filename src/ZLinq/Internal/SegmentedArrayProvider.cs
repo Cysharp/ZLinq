@@ -303,7 +303,7 @@ internal static class InlineArrayMarshal
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static ref TElement ElementRef<TBuffer, TElement>(ref TBuffer buffer, int index)
     {
-        return ref Unsafe.Add(ref Unsafe.As<TBuffer, TElement>(ref buffer), index);
+        return ref Unsafe.Add(ref Unsafe.As<TBuffer, TElement>(ref buffer), (nint)(uint)index);
     }
 }
 
