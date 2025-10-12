@@ -536,7 +536,7 @@ namespace ZLinq.Linq
 
             if ((uint)index < (uint)length)
             {
-                current = Unsafe.Add(ref firstElement, index);
+                current = Unsafe.Add(ref firstElement, (nint)(uint)index);
                 index++;
                 return true;
             }

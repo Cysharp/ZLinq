@@ -352,7 +352,7 @@ namespace ZLinq.Linq
 
             if ((uint)index < (uint)length)
             {
-                current = selector(Unsafe.Add(ref firstElement, index++)); // must be index++
+                current = selector(Unsafe.Add(ref firstElement, (nint)(uint)index++)); // must be index++
                 return true;
             }
 #else
@@ -416,7 +416,7 @@ namespace ZLinq.Linq
 
             while ((uint)index < (uint)length)
             {
-                current = selector(Unsafe.Add(ref firstElement, index++));
+                current = selector(Unsafe.Add(ref firstElement, (nint)(uint)index++));
                 if (predicate(current))
                 {
                     return true;

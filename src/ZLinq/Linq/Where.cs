@@ -239,7 +239,7 @@ namespace ZLinq.Linq
 
             while ((uint)index < (uint)length)
             {
-                var value = Unsafe.Add(ref firstElement, index);
+                var value = Unsafe.Add(ref firstElement, (nint)(uint)index);
                 index++;
                 if (predicate(value))
                 {
@@ -311,7 +311,7 @@ namespace ZLinq.Linq
 
             while ((uint)index < (uint)length)
             {
-                var value = Unsafe.Add(ref firstElement, index);
+                var value = Unsafe.Add(ref firstElement, (nint)(uint)index);
                 index++;
                 if (predicate(value))
                 {
