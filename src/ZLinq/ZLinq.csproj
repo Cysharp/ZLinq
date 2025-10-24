@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
     <RootNamespace>ZLinq</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);1701;1702;9124;0436</NoWarn>
-    <LangVersion>13</LangVersion>
+    <LangVersion>14</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- NuGet Packaging -->
@@ -20,10 +20,12 @@
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
 
-  <!-- Add .NET 10 support if .NET 10 or later version of MSBuild is used. -->
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreAppMaximumVersion)','10.0'))">
-    <TargetFrameworks>$(TargetFrameworks);net10.0</TargetFrameworks>
+  <!-- Add .NET 11 support if .NET 11 or later version of MSBuild is used. -->
+  <!--
+  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreAppMaximumVersion)','11.0'))">
+    <TargetFrameworks>$(TargetFrameworks);net11.0</TargetFrameworks>
   </PropertyGroup>
+  -->
 
   <PropertyGroup Condition="$(TargetFramework.StartsWith(`netstandard`))">
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>

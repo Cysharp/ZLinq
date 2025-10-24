@@ -17,7 +17,7 @@ public class SimdAggregate
     {
         numbers = new int[100000];
         var rand = new Random();
-        rand.NextBytes(MemoryMarshal.Cast<int, byte>(numbers));
+        rand.NextBytes(MemoryMarshal.Cast<int, byte>(numbers).ToArray());
     }
 
     [Benchmark]

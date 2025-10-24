@@ -147,3 +147,13 @@ public class Net90OptimizedBenchmark
                      .Sum();
     }
 }
+
+#if !NET10_0_OR_GREATER
+// Workaround code for breaking changes that introduced .NET 10 with LangVersion:14.
+// See: https://learn.microsoft.com/en-us/dotnet/core/compatibility/core-libraries/10.0/csharp-overload-resolution
+file static class ExtensionMethods
+{
+    public static IEnumerable<T> Reverse<T>(this T[] source)
+        => Enumerable.Reverse(source);
+}
+#endif

@@ -9,7 +9,6 @@ using Cathei.LinqGen;
 using Kokuban;
 using Microsoft.DiagnosticsHub;
 using Perfolizer.Horology;
-using SpanLinq;
 using System.Diagnostics;
 using ZLinq;
 using ZLinq.Internal;

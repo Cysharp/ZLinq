@@ -21,7 +21,7 @@ on:
       framework:
         type: choice
         description: Specify target framework for benchmark
-        default: net9.0
+        default: net10.0
         options:
           - net9.0
           - net10.0
@@ -35,11 +35,12 @@ jobs:
     steps:
       - uses: Cysharp/Actions/.github/actions/checkout@main
       - uses: Cysharp/Actions/.github/actions/setup-dotnet@main
-
-      - uses: Cysharp/Actions/.github/actions/setup-dotnet@main
-        if: ${{ inputs.framework == 'net10.0' }}
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            9.0.x
+            10.0.x
 
       - run: dotnet build -c Release
 

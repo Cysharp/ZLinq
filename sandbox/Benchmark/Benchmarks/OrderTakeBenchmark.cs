@@ -21,7 +21,7 @@ public class OrderTakeBenchmark
     {
         var rand = new Random(42);
         array = new int[N];
-        rand.NextBytes(MemoryMarshal.Cast<int, byte>(array));
+        rand.NextBytes(MemoryMarshal.Cast<int, byte>(array).ToArray());
     }
 
     [Benchmark]

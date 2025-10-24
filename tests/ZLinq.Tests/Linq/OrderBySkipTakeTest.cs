@@ -207,7 +207,7 @@ public class OrderBySkipTakeTest
         for (int i = 100; i < 5000; i++)
         {
             var data = new int[i];
-            rand.NextBytes(MemoryMarshal.Cast<int, byte>(data));
+            rand.NextBytes(MemoryMarshal.Cast<int, byte>(data).ToArray());
 
             var skip = rand.Next(0, i);
             var take = rand.Next(0, i);
