@@ -27,7 +27,7 @@ public readonly ref struct SelectVectorizable<T, TResult>(ReadOnlySpan<T> source
 
     public void CopyTo(Span<TResult> destination)
     {
-        if (destination.Length < source.Length)
+        if ((uint)destination.Length < (uint)source.Length)
         {
             Throws.Argument(nameof(destination), "Destination span is too small to contain the result of the transformation.");
         }
@@ -46,7 +46,7 @@ public readonly ref struct SelectVectorizable<T, TResult>(ReadOnlySpan<T> source
             src = src.Slice(vectors.Length * Vector<T>.Count);
         }
 
-        for (int i = 0; i < src.Length; i++)
+        for (int i = 0; (uint)i < (uint)src.Length; i++)
         {
             destination[i] = selector(src[i]);
         }

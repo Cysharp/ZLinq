@@ -42,7 +42,7 @@ namespace ZLinq
             var count = 0;
             if (enumeratorSource.TryGetSpan(out var span))
             {
-                for (int i = 0; i < span.Length; i++)
+                for (int i = 0; (uint)i < (uint)span.Length; i++)
                 {
                     if (predicate(span[i]))
                     {
@@ -71,7 +71,7 @@ namespace ZLinq
             var span = (ReadOnlySpan<TSource>)array;
 
             var count = 0;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -89,7 +89,7 @@ namespace ZLinq
 
             var span = CollectionsMarshal.AsSpan(list);
             var count = 0;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -112,7 +112,7 @@ namespace ZLinq
             var count = 0;
             if (enumerator.TryGetSpan(out var span))
             {
-                for (int i = 0; i < span.Length; i++)
+                for (int i = 0; (uint)i < (uint)span.Length; i++)
                 {
                     if (predicate(span[i]))
                     {
@@ -150,7 +150,7 @@ namespace ZLinq
             // The assembly output differs slightly when iterating through array and span.
             // According to microbenckmark results, iterating through span was faster for the logic passed to predicate.
             var span = (ReadOnlySpan<TSource>)array;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -164,7 +164,7 @@ namespace ZLinq
             static int Count(TSource[] array, Func<TSource, Boolean> predicate)
             {
                 var count = 0;
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; (uint)i < (uint)array.Length; i++)
                 {
                     if (predicate(array[i]))
                     {
@@ -184,7 +184,7 @@ namespace ZLinq
             var count = 0;
 
             var span = CollectionsMarshal.AsSpan(list);
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {

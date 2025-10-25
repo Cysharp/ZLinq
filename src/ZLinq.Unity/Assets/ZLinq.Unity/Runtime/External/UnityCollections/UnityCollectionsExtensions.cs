@@ -152,7 +152,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;
@@ -373,7 +373,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;
@@ -416,7 +416,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;
@@ -459,7 +459,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;
@@ -502,7 +502,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;
@@ -545,7 +545,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out T current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = source[index++];
                 return true;

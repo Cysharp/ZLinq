@@ -73,7 +73,7 @@ namespace ZLinq.Linq
             {
                 if (EnumeratorHelper.TryGetSlice(span, offset, destination.Length, out var slice))
                 {
-                    for (var i = 0; i < slice.Length; i++)
+                    for (var i = 0; (uint)i < (uint)slice.Length; i++)
                     {
                         destination[i] = selector(slice[i]);
                     }
@@ -334,7 +334,7 @@ namespace ZLinq.Linq
 
             if (EnumeratorHelper.TryGetSlice<TSource>(source.AsSpan(), offset, destination.Length, out var slice))
             {
-                for (var i = 0; i < slice.Length; i++)
+                for (var i = 0; (uint)i < (uint)slice.Length; i++)
                 {
                     destination[i] = selector(slice[i]);
                 }
@@ -346,7 +346,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            if (index < source.Length)
+            if ((uint)index < (uint)source.Length)
             {
                 current = selector(source[index++]); // must be index++
                 return true;
@@ -399,7 +399,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            while (index < source.Length)
+            while ((uint)index < (uint)source.Length)
             {
                 current = selector(source[index++]);
                 if (predicate(current))
@@ -446,7 +446,7 @@ namespace ZLinq.Linq
         {
             if (EnumeratorHelper.TryGetSlice<TSource>(CollectionsMarshal.AsSpan(source), offset, destination.Length, out var slice))
             {
-                for (var i = 0; i < slice.Length; i++)
+                for (var i = 0; (uint)i < (uint)slice.Length; i++)
                 {
                     destination[i] = selector(slice[i]);
                 }
@@ -458,7 +458,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            if (index < source.Count)
+            if ((uint)index < (uint)source.Count)
             {
                 current = selector(source[index++]);
                 return true;
@@ -512,7 +512,7 @@ namespace ZLinq.Linq
         public bool TryGetNext(out TResult current)
         {
             var span = CollectionsMarshal.AsSpan(source);
-            while (index < span.Length)
+            while ((uint)index < (uint)span.Length)
             {
                 current = selector(span[index++]);
                 if (predicate(current))

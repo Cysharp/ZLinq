@@ -96,7 +96,7 @@
 #endif
                 var span = CollectionsMarshal.AsSpan(list);
 
-                for (int i = 0; i < sourceSpan.Length; i++)
+                for (int i = 0; (uint)i < (uint)sourceSpan.Length; i++)
                 {
                     span[i] = selector(sourceSpan[i]);
                 }
@@ -160,7 +160,7 @@
 #endif
             var span = CollectionsMarshal.AsSpan(list);
 
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 span[i] = selector(value);
                 value++;
@@ -182,7 +182,7 @@
 #endif
             var span = CollectionsMarshal.AsSpan(list);
 
-            for (int i = 0; i < sourceArray.Length; i++)
+            for (int i = 0; (uint)i < (uint)sourceArray.Length; i++)
             {
                 span[i] = selector(sourceArray[i]);
             }
@@ -203,7 +203,7 @@
 #endif
             var span = CollectionsMarshal.AsSpan(list);
 
-            for (int i = 0; i < sourceArray.Length; i++)
+            for (int i = 0; (uint)i < (uint)sourceArray.Length; i++)
             {
                 span[i] = selector(sourceArray[i]);
             }

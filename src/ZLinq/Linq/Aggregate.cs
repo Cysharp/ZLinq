@@ -20,7 +20,7 @@ partial class ValueEnumerableExtensions
                 }
 
                 var result = span[0];
-                for (int i = 1; i < span.Length; i++)
+                for (int i = 1; (uint)i < (uint)span.Length; i++)
                 {
                     result = func(result, span[i]);
                 }

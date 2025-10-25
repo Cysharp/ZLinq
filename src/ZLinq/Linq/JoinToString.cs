@@ -58,7 +58,7 @@ partial class ValueEnumerableExtensions
 
             if (separator.Length == 0)
             {
-                for (int i = 0; i < span.Length; i++)
+                for (int i = 0; (uint)i < (uint)span.Length; i++)
                 {
                     result.Append(span[i]);
                 }
@@ -68,7 +68,7 @@ partial class ValueEnumerableExtensions
                 var separatorChar = separator[0];
 
                 result.Append(span[0]);
-                for (int i = 1; i < span.Length; i++)
+                for (int i = 1; (uint)i < (uint)span.Length; i++)
                 {
                     result.Append(separatorChar);
                     result.Append(span[i]);
@@ -77,7 +77,7 @@ partial class ValueEnumerableExtensions
             else
             {
                 result.Append(span[0]);
-                for (int i = 1; i < span.Length; i++)
+                for (int i = 1; (uint)i < (uint)span.Length; i++)
                 {
                     result.Append(separator);
                     result.Append(span[i]);
@@ -147,7 +147,7 @@ partial class ValueEnumerableExtensions
 
         // calculate final length
         var finalLength = 0;
-        for (int i = 0; i < source.Length; i++)
+        for (int i = 0; (uint)i < (uint)source.Length; i++)
         {
             finalLength += (source[i]?.Length ?? 0);
         }
@@ -166,7 +166,7 @@ partial class ValueEnumerableExtensions
 
                 if (separator.Length == 0)
                 {
-                    for (int i = 1; i < source.Length; i++)
+                    for (int i = 1; (uint)i < (uint)source.Length; i++)
                     {
                         source[i]?.CopyTo(dest);
                         dest = dest.Slice(source[i]?.Length ?? 0);
@@ -175,7 +175,7 @@ partial class ValueEnumerableExtensions
                 else if (separator.Length == 1)
                 {
                     var charSeparator = separator[0];
-                    for (int i = 1; i < source.Length; i++)
+                    for (int i = 1; (uint)i < (uint)source.Length; i++)
                     {
                         dest[0] = charSeparator;
                         source[i]?.CopyTo(dest.Slice(1));
@@ -184,7 +184,7 @@ partial class ValueEnumerableExtensions
                 }
                 else
                 {
-                    for (int i = 1; i < source.Length; i++)
+                    for (int i = 1; (uint)i < (uint)source.Length; i++)
                     {
                         separator.CopyTo(dest);
                         dest = dest.Slice(separator.Length);
@@ -231,7 +231,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(span[i]);
             }
@@ -241,7 +241,7 @@ partial class ValueEnumerableExtensions
             var separatorChar = separator[0];
 
             result.Append(span[0]);
-            for (int i = 1; i < span.Length; i++)
+            for (int i = 1; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separatorChar);
                 result.Append(span[i]);
@@ -250,7 +250,7 @@ partial class ValueEnumerableExtensions
         else
         {
             result.Append(span[0]);
-            for (int i = 1; i < span.Length; i++)
+            for (int i = 1; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separator);
                 result.Append(span[i]);
@@ -293,7 +293,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(span[i]);
             }
@@ -303,7 +303,7 @@ partial class ValueEnumerableExtensions
             var separatorChar = separator[0];
 
             result.Append(span[0]);
-            for (int i = 1; i < span.Length; i++)
+            for (int i = 1; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separatorChar);
                 result.Append(span[i]);
@@ -312,7 +312,7 @@ partial class ValueEnumerableExtensions
         else
         {
             result.Append(span[0]);
-            for (int i = 1; i < span.Length; i++)
+            for (int i = 1; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separator);
                 result.Append(span[i]);
@@ -355,7 +355,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(selector(span[i]));
             }
@@ -363,7 +363,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(charSeparator);
                 result.Append(selector(span[i]));
@@ -371,7 +371,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separator);
                 result.Append(selector(span[i]));
@@ -405,7 +405,7 @@ partial class ValueEnumerableExtensions
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
         var i = 0;
-        for (; i < span.Length; i++)
+        for (; (uint)i < (uint)span.Length; i++)
         {
             if (predicate(span[i]))
             {
@@ -417,7 +417,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -428,7 +428,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -439,7 +439,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -477,7 +477,7 @@ partial class ValueEnumerableExtensions
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
         var i = 0;
-        for (; i < span.Length; i++)
+        for (; (uint)i < (uint)span.Length; i++)
         {
             if (predicate(span[i]))
             {
@@ -489,7 +489,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -500,7 +500,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -511,7 +511,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -559,7 +559,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(selector(span[i]));
             }
@@ -567,7 +567,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(charSeparator);
                 result.Append(selector(span[i]));
@@ -575,7 +575,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 result.Append(separator);
                 result.Append(selector(span[i]));
@@ -611,7 +611,7 @@ partial class ValueEnumerableExtensions
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
         var i = 0;
-        for (; i < span.Length; i++)
+        for (; (uint)i < (uint)span.Length; i++)
         {
             if (predicate(span[i]))
             {
@@ -623,7 +623,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -634,7 +634,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -645,7 +645,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -685,7 +685,7 @@ partial class ValueEnumerableExtensions
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
         var i = 0;
-        for (; i < span.Length; i++)
+        for (; (uint)i < (uint)span.Length; i++)
         {
             if (predicate(span[i]))
             {
@@ -697,7 +697,7 @@ partial class ValueEnumerableExtensions
 
         if (separator.Length == 0)
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -708,7 +708,7 @@ partial class ValueEnumerableExtensions
         else if (separator.Length == 1)
         {
             var charSeparator = separator[0];
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -719,7 +719,7 @@ partial class ValueEnumerableExtensions
         }
         else
         {
-            for (; i < span.Length; i++)
+            for (; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {

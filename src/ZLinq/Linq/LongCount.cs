@@ -74,7 +74,7 @@
             var longCount = 0;
 
             var span = (ReadOnlySpan<TSource>)array;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -88,7 +88,7 @@
             static Int64 LongCount(TSource[] array, Func<TSource, Boolean> predicate)
             {
                 var longCount = 0;
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; (uint)i < (uint)array.Length; i++)
                 {
                     if (predicate(array[i]))
                     {

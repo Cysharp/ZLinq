@@ -255,7 +255,7 @@ namespace ZLinq.Linq
         {
             InitBuffer();
 
-            if (index < buffer.Length)
+            if ((uint)index < (uint)buffer.Length)
             {
                 current = buffer.UnsafeGetAt(index);
                 index++;
@@ -401,7 +401,7 @@ namespace ZLinq.Linq
 
                 if (EnumeratorHelper.TryGetSlice<int>(indexSlice, offset, destination.Length, out var slice))
                 {
-                    for (var i = 0; i < slice.Length; i++)
+                    for (var i = 0; (uint)i < (uint)slice.Length; i++)
                     {
                         destination[i] = buffer.UnsafeGetAt(slice[i]);
                     }
@@ -529,7 +529,7 @@ namespace ZLinq.Linq
         public OrderByComparer(ReadOnlySpan<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey> comparer, IOrderByComparer? childComparer, bool descending)
         {
             var tempArray = ArrayPool<TKey>.Shared.Rent(source.Length);
-            for (var i = 0; i < source.Length; i++)
+            for (var i = 0; (uint)i < (uint)source.Length; i++)
             {
                 tempArray[i] = keySelector(source[i]);
             }

@@ -94,7 +94,7 @@ partial class ValueEnumerableExtensions
 
             var array = GC.AllocateUninitializedArray<TResult>(sourceSpan.Length);
 
-            for (int i = 0; i < sourceSpan.Length; i++)
+            for (int i = 0; (uint)i < (uint)sourceSpan.Length; i++)
             {
                 array[i] = selector(sourceSpan[i]);
             }
@@ -153,7 +153,7 @@ partial class ValueEnumerableExtensions
         }
 
         var array = GC.AllocateUninitializedArray<TResult>(count);
-        for (int i = 0; i < array.Length; i++)
+        for (int i = 0; (uint)i < (uint)array.Length; i++)
         {
             array[i] = selector(value);
             value++;
@@ -174,7 +174,7 @@ partial class ValueEnumerableExtensions
 
         var array = GC.AllocateUninitializedArray<TResult>(sourceArray.Length);
 
-        for (int i = 0; i < sourceArray.Length; i++)
+        for (int i = 0; (uint)i < (uint)sourceArray.Length; i++)
         {
             array[i] = selector(sourceArray[i]);
         }

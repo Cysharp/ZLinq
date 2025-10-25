@@ -50,7 +50,7 @@ public static class VectorizableExtensions
         if (Vector.IsHardwareAccelerated && Vector<T>.IsSupported && source.Length >= Vector<T>.Count)
         {
             var vectors = MemoryMarshal.Cast<T, Vector<T>>(source);
-            for (int i = 0; i < vectors.Length; i++)
+            for (int i = 0; (uint)i < (uint)vectors.Length; i++)
             {
                 vectors[i] = vectorFunc(vectors[i]);
             }
@@ -58,7 +58,7 @@ public static class VectorizableExtensions
             source = source.Slice(vectors.Length * Vector<T>.Count);
         }
 
-        for (int i = 0; i < source.Length; i++)
+        for (int i = 0; (uint)i < (uint)source.Length; i++)
         {
             source[i] = func(source[i]);
         }

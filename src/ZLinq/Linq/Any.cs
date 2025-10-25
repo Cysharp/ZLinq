@@ -70,7 +70,7 @@ namespace ZLinq
             // The assembly output differs slightly when iterating through array and span.
             // According to microbenckmark results, iterating through span was faster for the logic passed to predicate.
             var span = (ReadOnlySpan<TSource>)array;
-            for (int i = 0; i < span.Length; i++)
+            for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
                 if (predicate(span[i]))
                 {
@@ -83,7 +83,7 @@ namespace ZLinq
             [MethodImpl(MethodImplOptions.NoInlining)]
             static Boolean Any(TSource[] array, Func<TSource, Boolean> predicate)
             {
-                for (int i = 0; i < array.Length; i++)
+                for (int i = 0; (uint)i < (uint)array.Length; i++)
                 {
                     if (predicate(array[i]))
                     {

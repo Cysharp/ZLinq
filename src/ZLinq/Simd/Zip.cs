@@ -37,7 +37,7 @@ public readonly ref struct ZipVectorizable<T, TResult>(ReadOnlySpan<T> first, Re
         var secondSrc = second;
 
         var smallerLength = Math.Min(firstSrc.Length, secondSrc.Length);
-        if (destination.Length < smallerLength)
+        if ((uint)destination.Length < (uint)smallerLength)
         {
             Throws.Argument(nameof(destination), $"Destination span is too small. Required at least {smallerLength} elements but has {destination.Length} elements.");
         }
@@ -48,7 +48,7 @@ public readonly ref struct ZipVectorizable<T, TResult>(ReadOnlySpan<T> first, Re
             var secondVector = MemoryMarshal.Cast<T, Vector<T>>(secondSrc);
 
             var smallerVectorLength = Math.Min(firstVector.Length, secondVector.Length);
-            for (int i = 0; i < smallerVectorLength; i++)
+            for (int i = 0; (uint)i < (uint)smallerVectorLength; i++)
             {
                 var v = vectorSelector(firstVector[i], secondVector[i]);
                 v.CopyTo(destination);
@@ -60,7 +60,7 @@ public readonly ref struct ZipVectorizable<T, TResult>(ReadOnlySpan<T> first, Re
         }
 
         var min = Math.Min(firstSrc.Length, secondSrc.Length);
-        for (int i = 0; i < min; i++)
+        for (int i = 0; (uint)i < (uint)min; i++)
         {
             destination[i] = selector(firstSrc[i], secondSrc[i]);
         }
@@ -88,7 +88,7 @@ public readonly ref struct Zip3Vectorizable<T, TResult>(ReadOnlySpan<T> first, R
         var thirdSrc = third;
 
         var smallerLength = Math.Min(Math.Min(firstSrc.Length, secondSrc.Length), third.Length);
-        if (destination.Length < smallerLength)
+        if ((uint)destination.Length < (uint)smallerLength)
         {
             Throws.Argument(nameof(destination), $"Destination span is too small. Required at least {smallerLength} elements but has {destination.Length} elements.");
         }
@@ -100,7 +100,7 @@ public readonly ref struct Zip3Vectorizable<T, TResult>(ReadOnlySpan<T> first, R
             var thirdVector = MemoryMarshal.Cast<T, Vector<T>>(thirdSrc);
 
             var smallerVectorLength = Math.Min(Math.Min(firstVector.Length, secondVector.Length), thirdVector.Length);
-            for (int i = 0; i < smallerVectorLength; i++)
+            for (int i = 0; (uint)i < (uint)smallerVectorLength; i++)
             {
                 var v = vectorSelector(firstVector[i], secondVector[i], thirdVector[i]);
                 v.CopyTo(destination);
@@ -113,7 +113,7 @@ public readonly ref struct Zip3Vectorizable<T, TResult>(ReadOnlySpan<T> first, R
         }
 
         var min = Math.Min(Math.Min(firstSrc.Length, secondSrc.Length), thirdSrc.Length);
-        for (int i = 0; i < min; i++)
+        for (int i = 0; (uint)i < (uint)min; i++)
         {
             destination[i] = selector(firstSrc[i], secondSrc[i], thirdSrc[i]);
         }

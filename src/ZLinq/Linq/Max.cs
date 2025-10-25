@@ -202,7 +202,7 @@ partial class ValueEnumerableExtensions
             var index = 0;
             do
             {
-                if (!(index < span.Length))
+                if (!((uint)index < (uint)span.Length))
                 {
                     return value;
                 }
@@ -210,7 +210,7 @@ partial class ValueEnumerableExtensions
             }
             while (value is null);
 
-            while (index < span.Length)
+            while ((uint)index < (uint)span.Length)
             {
                 // compare both(left, right) non-null
                 if (span[index] is not null && comparer.Compare(span[index], value) > 0)
@@ -235,7 +235,7 @@ partial class ValueEnumerableExtensions
             // optimize for default comparer
             if (comparer == Comparer<TSource>.Default)
             {
-                while (index < span.Length)
+                while ((uint)index < (uint)span.Length)
                 {
                     if (Comparer<TSource>.Default.Compare(span[index], value) > 0)
                     {
@@ -248,7 +248,7 @@ partial class ValueEnumerableExtensions
             }
             else
             {
-                while (index < span.Length)
+                while ((uint)index < (uint)span.Length)
                 {
                     if (comparer.Compare(span[index], value) > 0)
                     {
@@ -301,7 +301,7 @@ partial class ValueEnumerableExtensions
         else
         {
             var result = span[0];
-            for (int i = 1; i < span.Length; i++)
+            for (int i = 1; (uint)i < (uint)span.Length; i++)
             {
                 if (span[i] > result)
                 {
