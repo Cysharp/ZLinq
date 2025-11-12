@@ -89,6 +89,56 @@ public class OrderBySkipTakeTest
     }
 
     [Fact]
+    public void Issue227_Order_Skip0_Take0_Should_Return_Empty()
+    {
+        var data = new int[] { 1, 2, 3 };
+        var skip = 0;
+        var take = 0;
+
+        // System.Linq behavior (expected)
+        var expected = data.AsEnumerable()
+                           .Order()
+                           .Skip(skip)
+                           .Take(take)
+                           .ToArray();
+
+        // ZLinq behavior (actual)
+        var results = data.AsValueEnumerable()
+                          .Order()
+                          .Skip(skip)
+                          .Take(take)
+                          .ToArray();
+
+        results.Length.ShouldBe(expected.Length);
+        results.ShouldBe(expected);
+    }
+
+    [Fact]
+    public void Issue227_Order_Skip1_Take0_Should_Return_Empty()
+    {
+        var data = new int[] { 1, 2, 3 };
+        var skip = 1;
+        var take = 0;
+
+        // System.Linq behavior (expected)
+        var expected = data.AsEnumerable()
+                           .Order()
+                           .Skip(skip)
+                           .Take(take)
+                           .ToArray();
+
+        // ZLinq behavior (actual)
+        var results = data.AsValueEnumerable()
+                          .Order()
+                          .Skip(skip)
+                          .Take(take)
+                          .ToArray();
+
+        results.Length.ShouldBe(expected.Length);
+        results.ShouldBe(expected);
+    }
+
+    [Fact]
     public void OrderBy_Skip_TryGetNonEnumeratedCount()
     {
         var source = new[] { 5, 2, 8, 1, 9, 3, 7, 4, 6 };
