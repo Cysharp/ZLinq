@@ -115,6 +115,11 @@ namespace ZLinq
 #endif
         {
             count = Math.Max(0, count);
+            if (count == 0)
+            {
+                // Empty case: return an OrderBySkipTake that represents an empty result
+                return new(new(source.Enumerator, 0, -1));
+            }
             return new(new(source.Enumerator, 0, count - 1));
         }
 
@@ -373,7 +378,7 @@ namespace ZLinq.Linq
         {
             if (source.TryGetNonEnumeratedCount(out count))
             {
-                if (count <= minIndexInclusive)
+                if (count <= minIndexInclusive || maxIndexInclusive < minIndexInclusive)
                 {
                     count = 0;
                     return true;
@@ -394,6 +399,12 @@ namespace ZLinq.Linq
 
         public bool TryCopyTo(scoped Span<TSource> destination, Index offset)
         {
+            if (maxIndexInclusive < minIndexInclusive)
+            {
+                // Empty case: no elements to copy
+                return destination.Length == 0;
+            }
+
             InitBuffer();
             if (indexMap != null)
             {
@@ -413,6 +424,13 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TSource current)
         {
+            if (maxIndexInclusive < minIndexInclusive)
+            {
+                // Empty case: no elements to return
+                Unsafe.SkipInit(out current);
+                return false;
+            }
+
             var buf = buffer;
             if (buf == null)
             {
@@ -454,7 +472,7 @@ namespace ZLinq.Linq
         void Sort(ReadOnlySpan<TSource> span) // not sort element, only indexes
         {
             var count = span.Length;
-            if (count > minIndexInclusive)
+            if (count > minIndexInclusive && maxIndexInclusive >= minIndexInclusive)
             {
                 maxIndex = maxIndexInclusive;
                 if (count <= maxIndex)
@@ -485,6 +503,13 @@ namespace ZLinq.Linq
 
         internal OrderBySkipTake<TEnumerator, TSource, TKey> Take(int count)
         {
+            count = Math.Max(0, count);
+            if (count == 0)
+            {
+                // Empty case: return OrderBySkipTake that represents empty result
+                return new OrderBySkipTake<TEnumerator, TSource, TKey>(source, comparable, 0, -1);
+            }
+
             var maxIndex = minIndexInclusive + count - 1;
             if ((uint)maxIndex >= (uint)maxIndexInclusive)
             {
