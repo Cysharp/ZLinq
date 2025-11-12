@@ -210,5 +210,448 @@
 
             return list;
         }
+
+        // filtering(Where/OfType) -> ToList is frequently case so optimize it.
+
+        public static List<TSource> ToList<TEnumerator, TSource>(this ValueEnumerable<Where<TEnumerator, TSource>, TSource> source)
+           where TEnumerator : struct, IValueEnumerator<TSource>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            using var enumerator = whereEnumerator.GetSource(); // using only where source enumerator
+
+#if NETSTANDARD2_0
+            Span<TSource> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TSource>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+
+            if (enumerator.TryGetSpan(out var sourceSpan))
+            {
+                foreach (var item in sourceSpan)
+                {
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = item;
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+            else
+            {
+                while (enumerator.TryGetNext(out var item))
+                {
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = item;
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+
+            var count = arrayBuilder.Count;
+            var list = new List<TSource>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TSource> ToList<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source)
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            var sourceArray = whereEnumerator.GetSource();
+
+#if NETSTANDARD2_0
+            Span<TSource> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TSource>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+            foreach (var item in sourceArray)
+            {
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = item;
+                    i++;
+                }
+            }
+            arrayBuilder.Advance(i);
+
+            var count = arrayBuilder.Count;
+            var list = new List<TSource>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TSource> ToList<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source)
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            var sourceArray = CollectionsMarshal.AsSpan(whereEnumerator.GetSource());
+
+#if NETSTANDARD2_0
+            Span<TSource> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TSource>);
+            Span<TSource> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TSource>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+            foreach (var item in sourceArray)
+            {
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = item;
+                    i++;
+                }
+            }
+            arrayBuilder.Advance(i);
+
+            var count = arrayBuilder.Count;
+            var list = new List<TSource>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TResult> ToList<TEnumerator, TSource, TResult>(this ValueEnumerable<WhereSelect<TEnumerator, TSource, TResult>, TResult> source)
+            where TEnumerator : struct, IValueEnumerator<TSource>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            var selector = whereEnumerator.Selector;
+            using var enumerator = whereEnumerator.GetSource(); // using only where source enumerator
+
+#if NETSTANDARD2_0
+            Span<TResult> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TResult>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+
+            if (enumerator.TryGetSpan(out var sourceSpan))
+            {
+                foreach (var item in sourceSpan)
+                {
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = selector(item);
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+            else
+            {
+                while (enumerator.TryGetNext(out var item))
+                {
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = selector(item);
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+
+            var count = arrayBuilder.Count;
+            var list = new List<TResult>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> source)
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            var selector = whereEnumerator.Selector;
+            var sourceArray = whereEnumerator.GetSource();
+
+#if NETSTANDARD2_0
+            Span<TResult> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TResult>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+
+            foreach (var item in sourceArray)
+            {
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = selector(item);
+                    i++;
+                }
+            }
+            arrayBuilder.Advance(i);
+
+            var count = arrayBuilder.Count;
+            var list = new List<TResult>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> source)
+        {
+            var whereEnumerator = source.Enumerator; // no needs dispose(using)
+            var predicate = whereEnumerator.Predicate;
+            var selector = whereEnumerator.Selector;
+            var sourceArray = CollectionsMarshal.AsSpan(whereEnumerator.GetSource());
+
+#if NETSTANDARD2_0
+            Span<TResult> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TResult>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+            foreach (var item in sourceArray)
+            {
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = selector(item);
+                    i++;
+                }
+            }
+            arrayBuilder.Advance(i);
+
+            var count = arrayBuilder.Count;
+            var list = new List<TResult>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
+
+        public static List<TResult> ToList<TEnumerator, TSource, TResult>(this ValueEnumerable<OfType<TEnumerator, TSource, TResult>, TResult> source)
+           where TEnumerator : struct, IValueEnumerator<TSource>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        {
+            var ofTypeEnumerator = source.Enumerator; // no needs dispose(using)
+            using var enumerator = ofTypeEnumerator.GetSource(); // using only ofType source enumerator
+
+#if NETSTANDARD2_0
+            Span<TResult> initialBufferSpan = default;
+#elif NET8_0_OR_GREATER
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer;
+#else
+            var initialBuffer = default(InlineArray16<TResult>);
+            Span<TResult> initialBufferSpan = initialBuffer.AsSpan();
+#endif
+            var arrayBuilder = new SegmentedArrayProvider<TResult>(initialBufferSpan);
+            var span = arrayBuilder.GetSpan();
+            var i = 0;
+
+            if (enumerator.TryGetSpan(out var sourceSpan))
+            {
+                foreach (var value in sourceSpan)
+                {
+                    if (value is TResult item)
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = item;
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+            else
+            {
+                while (enumerator.TryGetNext(out var value))
+                {
+                    if (value is TResult item)
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
+
+                        span[i] = item;
+                        i++;
+                    }
+                }
+                arrayBuilder.Advance(i);
+            }
+
+            var count = arrayBuilder.Count;
+            var list = new List<TResult>(count);
+#if NET8_0_OR_GREATER
+            CollectionsMarshal.SetCount(list, count);
+#else
+            CollectionsMarshal.UnsafeSetCount(list, count);
+#endif
+
+            if (count != 0)
+            {
+                var listSpan = CollectionsMarshal.AsSpan(list);
+                arrayBuilder.CopyToAndClear(listSpan);
+            }
+            return list;
+        }
     }
 }
