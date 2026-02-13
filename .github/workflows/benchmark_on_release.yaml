@@ -56,6 +56,15 @@ jobs:
                 config: 'TargetFrameworks',
               }
             })
+
+            // 5. Start `Default` benchmarks on `main` branch to update README.md benchmark report link.
+            await github.rest.actions.createWorkflowDispatch({
+              ...baseOptions,
+              ref: 'main',
+              inputs: {
+                config: 'Default',
+              }
+            })
           }
           catch(error) {
             console.error(error)
