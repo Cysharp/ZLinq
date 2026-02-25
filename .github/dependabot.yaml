@@ -5,6 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly" # Check for updates to GitHub Actions every week
+    groups:
+      dependencies:
+        patterns:
+          - "*"
     cooldown:
       default-days: 14 # Wait 14 days before creating another PR for the same dependency. This will prevent vulnerability on the package impact.
     ignore:
