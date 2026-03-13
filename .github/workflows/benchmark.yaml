@@ -49,7 +49,7 @@ jobs:
         run: dotnet run -c Release --framework ${{ inputs.framework }} --no-build --no-launch-profile -- --filter "${{ inputs.filter }}" -- ${{ inputs.config }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f #v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f #v7.0.0
         with:
           name: BenchmarkDotNet.Artifacts
           path: sandbox/Benchmark/BenchmarkDotNet.Artifacts/
