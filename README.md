@@ -9,7 +9,7 @@ Zero allocation LINQ with LINQ to Span, LINQ to SIMD, and LINQ to Tree (FileSyst
 
 ![](img/benchmarkhead.jpg)
 
-Unlike regular LINQ, ZLinq doesn't increase allocations when adding more method chains, and it also has higher basic performance. You can check various benchmark patterns at [GitHub Actions/Benchmark](https://github.com/Cysharp/ZLinq/actions/runs/19324633887). ZLinq shows high performance in almost all patterns, with some benchmarks showing overwhelming differences.
+Unlike regular LINQ, `ZLinq` doesn't increase allocations when adding more method chains, and it also has higher basic performance. You can check various benchmark patterns at [GitHub Actions/Benchmark](https://github.com/Cysharp/ZLinq/actions/runs/19324633887). `ZLinq` shows high performance in almost all patterns, with some benchmarks showing overwhelming differences.
 
 As a bonus, LINQ operators and optimizations equivalent to .NET 10 can be used in .NET Framework 4.8 (netstandard2.0) and Unity (netstandard2.1).
 
@@ -35,11 +35,11 @@ foreach (var item in seq) { }
 * **LINQ to SIMD** to automatic application of SIMD where possible and customizable arbitrary operations
 * Optional **Drop-in replacement** Source Generator to automatically accelerate all LINQ methods
 
-In ZLinq, we have proven high compatibility and performance by running [dotnet/runtime's System.Linq.Tests](https://github.com/Cysharp/ZLinq/tree/main/tests/System.Linq.Tests) as a drop-in replacement, passing 9000 tests.
+In `ZLinq`, we have proven high compatibility and performance by running [dotnet/runtime's System.Linq.Tests](https://github.com/Cysharp/ZLinq/tree/main/tests/System.Linq.Tests) as a drop-in replacement, passing 9000 tests.
 
 ![](img/testrun.png)
 
-Previously, value type-based LINQ implementations were often experimental, but ZLinq fully implements all methods to completely replace standard LINQ in production use, delivering high performance suitable even for demanding applications like games. The performance aspects are based on my experience with previous LINQ implementations ([linq.js](https://github.com/neuecc/linq.js/), [SimdLinq](https://github.com/Cysharp/SimdLinq/), [UniRx](https://github.com/neuecc/UniRx), [R3](https://github.com/Cysharp/R3)), zero-allocation implementations ([ZString](https://github.com/Cysharp/ZString), [ZLogger](https://github.com/Cysharp/ZLogger)), and high-performance serializers ([MessagePack-CSharp](https://github.com/MessagePack-CSharp/MessagePack-CSharp/), [MemoryPack](https://github.com/Cysharp/MemoryPack)).
+Previously, value type-based LINQ implementations were often experimental, but `ZLinq` fully implements all methods to completely replace standard LINQ in production use, delivering high performance suitable even for demanding applications like games. The performance aspects are based on my experience with previous LINQ implementations ([linq.js](https://github.com/neuecc/linq.js/), [SimdLinq](https://github.com/Cysharp/SimdLinq/), [UniRx](https://github.com/neuecc/UniRx), [R3](https://github.com/Cysharp/R3)), zero-allocation implementations ([ZString](https://github.com/Cysharp/ZString), [ZLogger](https://github.com/Cysharp/ZLogger)), and high-performance serializers ([MessagePack-CSharp](https://github.com/MessagePack-CSharp/MessagePack-CSharp/), [MemoryPack](https://github.com/Cysharp/MemoryPack)).
 
 ZLinq achieves zero-allocation LINQ implementation using the following structs and interfaces.
 
@@ -68,7 +68,7 @@ public static ValueEnumerable<Where<TEnumerator, TSource>, TSource> Where<TEnume
     where TEnumerator : struct, IValueEnumerator<TSource>, allows ref struct
 ````
 
-Operators have this method signature. C# cannot infer types from generic constraints([dotnet/csharplang#6930](https://github.com/dotnet/csharplang/discussions/6930)). Therefore, the traditional Struct LINQ approach required implementing all operator combinations as instance methods, resulting in [100,000+ methods and massive assembly sizes](https://kevinmontrose.com/2018/01/17/linqaf-replacing-linq-and-not-allocating/). However, in ZLinq, we've successfully avoided all the boilerplate method implementations by devising an approach that properly conveys types to C# compiler.
+Operators have this method signature. C# cannot infer types from generic constraints ([dotnet/csharplang#6930](https://github.com/dotnet/csharplang/discussions/6930)). Therefore, the traditional Struct LINQ approach required implementing all operator combinations as instance methods, resulting in [100,000+ methods and massive assembly sizes](https://kevinmontrose.com/2018/01/17/linqaf-replacing-linq-and-not-allocating/). However, in `ZLinq`, we've successfully avoided all the boilerplate method implementations by devising an approach that properly conveys types to C# compiler.
 
 Additionally, `TryGetNonEnumeratedCount(out int count)`, `TryGetSpan(out ReadOnlySpan<T> span)`, and `TryCopyTo(Span<T> destination, Index offset)` defined in the interface itself enable flexible optimizations. To minimize assembly size, we've designed the library to achieve maximum optimization with minimal method additions. For example, `TryCopyTo` works efficiently with methods like `ToArray` when combined with `TryGetNonEnumeratedCount`. However, it also allows copying to smaller-sized destinations. By combining this with Index, we can optimize `First`, `Last`, and `ElementAt` using just `TryCopyTo` by passing a single-element Span along with an Index.
 
@@ -76,13 +76,13 @@ If you're interested in architecture, please read my blog post [**"ZLinq", a Zer
 
 Getting Started
 ---
-You can install package from [NuGet/ZLinq](https://www.nuget.org/packages/ZLinq). For Unity usage, refer to the [Unity section](#unity). For Godot usage, refer to the [Godot section](#godot).
+You can install the package from [NuGet/ZLinq](https://www.nuget.org/packages/ZLinq). For Unity usage, refer to the [Unity section](#unity). For Godot usage, refer to the [Godot section](#godot).
 
 ```bash
 dotnet add package ZLinq
 ```
 
-Use `using ZLinq;` and call `AsValueEnumerable()` on any iterable type to use ZLinq's zero-allocation LINQ.
+Use `using ZLinq;` and call `AsValueEnumerable()` on any iterable type to use `ZLinq`'s zero-allocation LINQ.
 
 ```csharp
 using ZLinq;
@@ -99,19 +99,19 @@ var seq2 = span.AsValueEnumerable().Select(x => x * x);
 
 Even if it's netstandard 2.0 or below .NET 10, all operators up to .NET 10 are available.
 
-You can method chain and foreach like regular LINQ, but there are some limitations. Please see [Difference and Limitation](#difference-and-limitation) for details. ZLinq has drop-in replacements that apply ZLinq without needing to call `AsValueEnumerable()`. For more information, see [Drop-in replacement](#drop-in-replacement). Detailed information about [LINQ to Tree](#linq-to-tree) for LINQ-ifying tree structures (FileSystems and JSON) and [LINQ to SIMD](#linq-to-simd) for expanding SIMD application range can be found in their respective sections.
+You can method chain and foreach like regular LINQ, but there are some limitations. Please see [Difference and Limitation](#difference-and-limitation) for details. `ZLinq` has drop-in replacements that apply `ZLinq` without needing to call `AsValueEnumerable()`. For more information, see [Drop-in replacement](#drop-in-replacement). Detailed information about [LINQ to Tree](#linq-to-tree) for LINQ-ifying tree structures (FileSystems and JSON) and [LINQ to SIMD](#linq-to-simd) for expanding SIMD application range can be found in their respective sections.
 
 Additional Operators
 ---
-In ZLinq, we prioritize compatibility, so we try to minimize adding custom operators. However, the following methods have been added to enable efficient processing with zero allocation:
+In `ZLinq`, we prioritize compatibility, so we try to minimize adding custom operators. However, the following methods have been added to enable efficient processing with zero allocation:
 
 ### `AsValueEnumerable()`
 
-Converts existing collections to a type that can be chained with ZLinq. Any `IEnumerable<T>` can be converted, but for the following types, conversion is done with zero allocation without `IEnumerable<T>.GetEnumerator()` allocation. Standard supported types are `T[]`, `List<T>`, `ArraySegment<T>`, `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `Dictionary<TKey, TValue>`, `Queue<T>`, `Stack<T>`, `LinkedList<T>`, `HashSet<T>`, `ImmutableArray<T>`, `Span<T>`, `ReadOnlySpan<T>`. However, conversion from `ImmutableArray<T>` requires `.NET 8` or higher, and conversion from `Span<T>`, `ReadOnlySpan<T>` requires `.NET 9` or higher.
+Converts existing collections to a type that can be chained with `ZLinq`. Any `IEnumerable<T>` can be converted, but for the following types, conversion is done with zero allocation without `IEnumerable<T>.GetEnumerator()` allocation. Standard supported types are `T[]`, `List<T>`, `ArraySegment<T>`, `Memory<T>`, `ReadOnlyMemory<T>`, `ReadOnlySequence<T>`, `Dictionary<TKey, TValue>`, `Queue<T>`, `Stack<T>`, `LinkedList<T>`, `HashSet<T>`, `ImmutableArray<T>`, `Span<T>`, `ReadOnlySpan<T>`. However, conversion from `ImmutableArray<T>` requires `.NET 8` or higher, and conversion from `Span<T>`, `ReadOnlySpan<T>` requires `.NET 9` or higher.
 
 When a type is declared as `IEnumerable<T>` or `ICollection<T>` rather than concrete types like `T[]` or `List<T>`, generally additional allocations occur when using foreach. In `ZLinq`, even when these interfaces are declared, if the actual type is `T[]` or `List<T>`, processing is performed with zero allocation.
 
-Convert from `System.Collections.IEnumerable` is also supported. In that case, using `AsValueEnumerable()` without specifying a type converts to `ValueEnumerable<, object>`, but you can also cast it simultaneously by `AsValueEnumerable<T>()`.
+Converting from `System.Collections.IEnumerable` is also supported. In that case, using `AsValueEnumerable()` without specifying a type converts to `ValueEnumerable<, object>`, but you can also cast it simultaneously by `AsValueEnumerable<T>()`.
 
 ```csharp
 IEnumerable nonGenericCollection = default!;
@@ -125,11 +125,11 @@ nonGenericCollection.AsValueEnumerable<int>(); // ValueEnumerable<, int>
 
 ### `Sequence`, `InfiniteSequence` for all .NET Platforms
 
-`Sequence` and `InfiniteSequence` were added in .NET 10. They require `INumber<T>`, but `INumber<T>` was introduced in `.NET 7`. `ZLinq` implements `INumber<T>` methods the same as standard LINQ, but additionaly adds primitive type overloads(`byte/sbyte/ushort/char/short/uint/int/ulong/long/float/double/decimal`) to support all .NET Platforms(includes .NET Standard 2.0). Additionaly, as a bonus, `DateTime` and `DateTimeOffset` overload exists.
+`Sequence` and `InfiniteSequence` were added in .NET 10. They require `INumber<T>`, but `INumber<T>` was introduced in `.NET 7`. `ZLinq` implements `INumber<T>` methods the same as standard LINQ, but additionally adds primitive type overloads (`byte/sbyte/ushort/char/short/uint/int/ulong/long/float/double/decimal`) to support all .NET Platforms (includes .NET Standard 2.0). Additionally, as a bonus, `DateTime` and `DateTimeOffset` overloads exist.
 
 ### `Average() : where INumber<T>`, `Sum() : where INumber<T>`
 
-System.Linq's `Average` and `Sum` are limited to certain primitive types, but ZLinq extends them to all `INumber<T>` types. In `.NET 8` or higher, where constraints are included, but for others (netstandard2.0, 2.1), runtime errors will occur when called with non-primitive target types.
+System.Linq's `Average` and `Sum` are limited to certain primitive types, but `ZLinq` extends them to all `INumber<T>` types. In `.NET 8` or higher, where constraints are included, but for others (netstandard2.0, 2.1), runtime errors will occur when called with non-primitive target types.
 
 ### `SumUnchecked()`
 
@@ -137,7 +137,7 @@ System.Linq's `Average` and `Sum` are limited to certain primitive types, but ZL
 
 ### `AggregateBy`, `CountBy` constraints
 
-.NET 9 `AggregateBy` and `CountBy` has `TKey : notnull` constraints. However, this is due to internal implementation considerations, and it lacks consistency with traditional operators such as Lookup and Join. Therefore, in ZLinq, the notnull constraint was removed.
+.NET 9 `AggregateBy` and `CountBy` has `TKey : notnull` constraints. However, this is due to internal implementation considerations, and it lacks consistency with traditional operators such as Lookup and Join. Therefore, in `ZLinq`, the notnull constraint was removed.
 
 ### `int CopyTo(Span<T> destination)`, `void CopyTo(List<T> list)`
 
@@ -168,9 +168,9 @@ Since `ZLinq` is not `IEnumerable<T>`, it cannot be passed to `String.Join`. `Jo
 
 Range and Sequence
 ---
-In .NET 10, `Enumerable.Sequence` and `Enumerable.InfiniteSequence` have been added, improving the expressiveness of Range operations. ZLinq also implements these, so they can be used. However, since they require `INumber<T>` and `IAdditionalOperator<T>`, they are limited to .NET 8 and above. ZLinq makes `Sequence` and `InfiniteSequence` available on all .NET Platforms (including .NET Standard 2.0) by adding primitive type overloads (`byte/sbyte/ushort/char/short/uint/int/ulong/long/float/double/decimal`).
+In .NET 10, `Enumerable.Sequence` and `Enumerable.InfiniteSequence` have been added, improving the expressiveness of Range operations. `ZLinq` also implements these, so they can be used. However, since they require `INumber<T>` and `IAdditionalOperator<T>`, they are limited to .NET 8 and above. `ZLinq` makes `Sequence` and `InfiniteSequence` available on all .NET Platforms (including .NET Standard 2.0) by adding primitive type overloads (`byte/sbyte/ushort/char/short/uint/int/ulong/long/float/double/decimal`).
 
-In ZLinq, for .NET 8 and above, `Range` also supports `INumber<T>`, and step overloads have been added.
+In `ZLinq`, for .NET 8 and above, `Range` also supports `INumber<T>`, and step overloads have been added.
 
 ```csharp
 public static ValueEnumerable<FromRange<T, T>, T> Range<T>(T start, int count)
@@ -213,7 +213,7 @@ Since `ValueEnumerable<T>` is not an `IEnumerable<T>`, it cannot be passed to me
 
 `String.Join` has overloads for both `IEnumerable<string>` and `params object[]`. Passing `ValueEnumerable<T>` directly will select the `object[]` overload, which may not give the desired result. In this case, use the `JoinToString` operator instead.
 
-`ValueEnumerable<T>` is a struct, and its size increases slightly with each method chain. With many chained methods, copy costs can become significant. When iterating over small collections, these copy costs can outweigh the benefits, causing performance to be worse than standard LINQ. However, this is only an issue with extremely long method chains and small iteration counts, so it's rarely a practical concern.
+`ValueEnumerable<T>` is a struct, and its size increases slightly with each method in the chain. With many chained methods, copy costs can become significant. When iterating over small collections, these copy costs can outweigh the benefits, causing performance to be worse than standard LINQ. However, this is only an issue with extremely long method chains and small iteration counts, so it's rarely a practical concern.
 
 `ValueEnumerable<T>` is `ref struct` in .NET 9 or above, this means that it cannot span across yield or await. Using yield or await inside foreach also fails and shows compilation errors. If enumeration is needed, please materialize the data using methods like [ToArrayPool](#pooledarraytsource-toarraypool).
 
@@ -223,7 +223,7 @@ In .NET 8 and above, the `Sum` and `Average` methods for `double` use SIMD proce
 
 Drop-in replacement
 ---
-When introducing `ZLinq.DropInGenerator`, you can automatically use ZLinq for all LINQ methods without calling `AsValueEnumerable()`.
+When introducing `ZLinq.DropInGenerator`, you can automatically use `ZLinq` for all LINQ methods without calling `AsValueEnumerable()`.
 
 ```bash
 dotnet add package ZLinq.DropInGenerator
@@ -250,7 +250,7 @@ For example:
 [assembly: ZLinq.ZLinqDropInAttribute("", ZLinq.DropInGenerateTypes.Everything)]
 ```
 
-This is the most aggressive configuration, causing all LINQ methods to be processed by ZLinq, and making it impossible to use normal LINQ methods (if Enumerable is not included, you can call AsEnumerable() to execute with System.Linq).
+This is the most aggressive configuration, causing all LINQ methods to be processed by `ZLinq`, and making it impossible to use normal LINQ methods (if Enumerable is not included, you can call `AsEnumerable()` to execute with System.Linq).
 
 It's better to use application's default namespace rather than globally, as this allows you to switch between normal LINQ using namespaces. This approach is recommended when you need to target `Enumerable`.
 
@@ -362,7 +362,7 @@ For types that support `IValueEnumerator<T>` through `AsValueEnumerable()`, spec
 [assembly: ZLinqDropInExternalExtension("ZLinq", "System.Collections.Immutable.ImmutableArray`1", "ZLinq.Linq.FromImmutableArray`1")]
 ```
 
-This allows all operators to be processed by ZLinq using an optimized type.
+This allows all operators to be processed by `ZLinq` using an optimized type.
 
 If you want to make your custom collection types DropIn compatible, you can embed them in your assembly using `[ZLinqDropInExtension]`.
 
@@ -379,14 +379,14 @@ public class AddOnlyIntList : IEnumerable<int>
 }
 ```
 
-This generates a `public static partial class AddOnlyIntListZLinqDropInExtensions` in the same namespace, overriding all LINQ operators with ZLinq. This works with generic types as well:
+This generates a `public static partial class AddOnlyIntListZLinqDropInExtensions` in the same namespace, overriding all LINQ operators with `ZLinq`. This works with generic types as well:
 
 ```csharp
 [ZLinqDropInExtension]
 public class AddOnlyList<T> : IEnumerable<T>
 ```
 
-While `[ZLinqDropInExtension]` works with classes implementing `IEnumerable<T>`, implementing `IValueEnumerable<TEnumerator, T>` provides zero-allocation optimization for ZLinq:
+While `[ZLinqDropInExtension]` works with classes implementing `IEnumerable<T>`, implementing `IValueEnumerable<TEnumerator, T>` provides zero-allocation optimization for `ZLinq`:
 
 ```csharp
 [ZLinqDropInExtension]
@@ -454,7 +454,7 @@ In this case, implementing `IEnumerable<T>` is not necessary. If a collection im
 
 LINQ to Tree
 ---
-LINQ to XML introduced the concept of querying around axes to C#. Even if you don't use XML, similar APIs are incorporated into Roslyn and effectively used for exploring SyntaxTrees. ZLinq extends this concept to make it applicable to anything that can be considered a Tree, allowing `Ancestors`, `Children`, `Descendants`, `BeforeSelf`, and `AfterSelf` to be applied.
+LINQ to XML introduced the concept of querying around axes to C#. Even if you don't use XML, similar APIs are incorporated into Roslyn and effectively used for exploring SyntaxTrees. `ZLinq` extends this concept to make it applicable to anything that can be considered a Tree, allowing `Ancestors`, `Children`, `Descendants`, `BeforeSelf`, and `AfterSelf` to be applied.
 
 ![](img/axis.jpg)
 
@@ -611,7 +611,7 @@ From `int[]` or `Span<int>`, you can call `VectorizedFillRange`. This is equival
 
 ### `VectorizedUpdate`
 
-In ZLinq, you can perform relatively flexible vectorized loop processing using `Func`. With `T[]` and `Span<T>`, you can use the `VectorizedUpdate` method. By writing two lambda expressions - `Func<Vector<T>, Vector<T>> vectorFunc` for vector operations and `Func<T, T> func` for handling remainder elements - you can perform loop update processing at SIMD width.
+In `ZLinq`, you can perform relatively flexible vectorized loop processing using `Func`. With `T[]` and `Span<T>`, you can use the `VectorizedUpdate` method. By writing two lambda expressions - `Func<Vector<T>, Vector<T>> vectorFunc` for vector operations and `Func<T, T> func` for handling remainder elements - you can perform loop update processing at SIMD width.
 
 ```csharp
 using ZLinq.Simd; // needs using
@@ -716,7 +716,7 @@ Open Window from NuGet -> Manage NuGet Packages, Search "ZLinq" and Press Instal
 https://github.com/Cysharp/ZLinq.git?path=src/ZLinq.Unity/Assets/ZLinq.Unity
 ```
 
-With the help of the Unity package, in addition to the standard ZLinq, LINQ to GameObject functionality becomes available for exploring GameObject/Transform.
+With the help of the Unity package, in addition to the standard `ZLinq`, LINQ to GameObject functionality becomes available for exploring GameObject/Transform.
 
 ![](img/axis.jpg)
 
@@ -747,13 +747,13 @@ public class SampleScript : MonoBehaviour
 }
 ```
 
-You can chain query(LINQ to Objects). Also, you can filter by component using the `OfComponent<T>` helper.
+You can chain query (LINQ to Objects). Also, you can filter by component using the `OfComponent<T>` helper.
 
 ```csharp
 // all filtered(tag == "foobar") objects
 var foobars = root.Descendants().Where(x => x.tag == "foobar");
 
-// get FooScript under self childer objects and self
+// get FooScript under self children objects and self
 var fooScripts = root.ChildrenAndSelf().OfComponent<FooScript>();
 ```
 
@@ -798,7 +798,7 @@ public static class ZLinqExtensions
 }
 ```
 
-In Unity, you can convert `NativeArray`, `NativeSlice` using `AsEnumerable()` to write queries with ZLinq. If Unity Collections(`com.unity.collections`) package version is `2.1.1` or above,  `NativeQueue`, `NativeHashSet`, `NativeText`, `FixedList32Bytes`, `FixedList64Bytes`, `FixedList128Bytes`, `FixedList512Bytes`, `FixedList4096Bytes`, `FixedString32Bytes`, `FixedString64Bytes`, `FixedString128Bytes`, `FixedString512Bytes`, and `FixedString4096Bytes` support `AsValueEnumerable()`.
+In Unity, you can convert `NativeArray`, `NativeSlice` using `AsEnumerable()` to write queries with `ZLinq`. If Unity Collections(`com.unity.collections`) package version is `2.1.1` or above,  `NativeQueue`, `NativeHashSet`, `NativeText`, `FixedList32Bytes`, `FixedList64Bytes`, `FixedList128Bytes`, `FixedList512Bytes`, `FixedList4096Bytes`, `FixedString32Bytes`, `FixedString64Bytes`, `FixedString128Bytes`, `FixedString512Bytes`, and `FixedString4096Bytes` support `AsValueEnumerable()`.
 
 You can also use drop-in replacement. Add `ZLinq.DropInGenerator` from NuGetForUnity. If you want to use DropInGenerator, the minimum supported Unity version will be `2022.3.12f1`, as it is necessary to support C# Incremental Source Generator(Compiler Version, 4.3.0).
 
@@ -821,7 +821,7 @@ To support Native Collections in addition to regular DropIn types, you can use `
 [assembly: ZLinqDropInExternalExtension("ZLinq", "Unity.Collections.NativeList`1", "ZLinq.Linq.FromNativeList`1")]
 ```
 
-This is not just about Unity, but using `AsValueEnumerable()` even if only for foreach on `IEnumerable<T>` can sometimes reduce allocations. If the actual implementation of `IEnumerable<T>` is a `T[]` or `List<T>`, ZLinq will process it appropriately without allocations.
+This is not just about Unity, but using `AsValueEnumerable()` even if only for foreach on `IEnumerable<T>` can sometimes reduce allocations. If the actual implementation of `IEnumerable<T>` is a `T[]` or `List<T>`, `ZLinq` will process it appropriately without allocations.
 
 ![](img/unityforeach.png)
 
@@ -855,7 +855,7 @@ You can install ZLinq.Godot package via NuGet.
 dotnet add package ZLinq.Godot
 ```
 
-In addition to the standard ZLinq, LINQ to Node functionality is available.
+In addition to the standard `ZLinq`, LINQ to Node functionality is available.
 
 ![](img/godot.jpg)
 
@@ -888,12 +888,12 @@ public partial class SampleScript : Node2D
 
 ```
 
-You can chain query(LINQ to Objects). Also, you can filter by node type using the `OfType()`.
+You can chain query (LINQ to Objects). Also, you can filter by node type using the `OfType()`.
 
 ```csharp
 // get ancestors under a Window
 var ancestors = root.Ancestors().TakeWhile(x => x is not Window);
-// get FooScript under self childer objects and self
+// get FooScript under self children objects and self
 var fooScripts = root.ChildrenAndSelf().OfType<FooScript>();
 ```
 
