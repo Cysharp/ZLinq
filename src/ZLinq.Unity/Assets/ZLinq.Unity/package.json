@@ -1,6 +1,6 @@
 {
     "name": "com.cysharp.zlinq",
-    "displayName": "ZLinq",
+    "displayName": "ZLinq.Unity",
     "author": { "name": "Cysharp, Inc.", "url": "https://cysharp.co.jp/en/" },
     "version": "1.5.6",
     "unity": "2021.3",
