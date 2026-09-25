@@ -356,4 +356,84 @@ public class JoinTest
         // Assert
         result.ShouldBeFalse();
     }
+
+    // key is the second character, e.g. "a1" -> "1"
+    static string KeyOf(string s) => s.Substring(1);
+
+    // key is null if the second character is '-'
+    static string? NullableKeyOf(string s) => s[1] == '-' ? null : s.Substring(1);
+
+    /// <summary>
+    /// Verifies that Join without resultSelector yields only matched (Outer, Inner) pairs in outer order,
+    /// for both IEnumerable and ValueEnumerable inner sources.
+    /// </summary>
+    [Fact]
+    public void Join_Tuple_ReturnsMatchedPairs()
+    {
+        var outer = new[] { "a1", "b2", "c3" };
+        var inner = new[] { "x2", "y1", "z2", "w4" };
+
+        var expected = new[] { ("a1", "y1"), ("b2", "x2"), ("b2", "z2") };
+
+        outer.AsValueEnumerable().Join(inner, KeyOf, KeyOf).ToArray().ShouldBe(expected);
+        outer.AsValueEnumerable().Join(inner.AsValueEnumerable(), KeyOf, KeyOf).ToArray().ShouldBe(expected);
+    }
+
+    /// <summary>
+    /// Verifies that the tuple elements of Join without resultSelector are accessible by the names Outer and Inner.
+    /// </summary>
+    [Fact]
+    public void Join_Tuple_HasNamedElements()
+    {
+        var outer = new[] { "a1" };
+        var inner = new[] { "x1" };
+
+        var actual = outer.AsValueEnumerable().Join(inner, KeyOf, KeyOf).ToArray();
+
+        actual.Length.ShouldBe(1);
+        actual[0].Outer.ShouldBe("a1");
+        actual[0].Inner.ShouldBe("x1");
+    }
+
+    /// <summary>
+    /// Verifies that Join without resultSelector uses the specified comparer to match keys.
+    /// </summary>
+    [Fact]
+    public void Join_Tuple_WithComparer()
+    {
+        var outer = new[] { "A", "B", "C" };
+        var inner = new[] { "a", "b", "b", "d" };
+
+        var actual = outer.AsValueEnumerable().Join(inner, o => o, i => i, StringComparer.OrdinalIgnoreCase).ToArray();
+
+        actual.ShouldBe(new[] { ("A", "a"), ("B", "b"), ("B", "b") });
+    }
+
+    /// <summary>
+    /// Verifies that Join without resultSelector never matches null keys, which is the behavior of System.Linq's Join.
+    /// </summary>
+    [Fact]
+    public void Join_Tuple_IgnoresNullKeys()
+    {
+        var outer = new[] { "o1", "o-" };
+        var inner = new[] { "i-", "i1" };
+
+        var actual = outer.AsValueEnumerable().Join(inner, NullableKeyOf, NullableKeyOf).ToArray();
+
+        actual.ShouldBe(new[] { ("o1", "i1") });
+    }
+
+    /// <summary>
+    /// Verifies that Join without resultSelector throws ArgumentNullException for null inner and key selectors.
+    /// </summary>
+    [Fact]
+    public void Join_Tuple_NullArguments_Throw()
+    {
+        var outer = new[] { "a1" };
+        var inner = new[] { "x1" };
+
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().Join((IEnumerable<string>)null!, KeyOf, KeyOf));
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().Join(inner, null!, KeyOf));
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().Join(inner, KeyOf, null!));
+    }
 }

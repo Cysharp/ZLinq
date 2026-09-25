@@ -472,4 +472,86 @@ public class LeftJoinTest
     //    actual[1].ShouldBe("2:null");
     //    actual[2].ShouldBe("3:null");
     //}
+
+    // key is the second character, e.g. "a1" -> "1"
+    static string KeyOf(string s) => s.Substring(1);
+
+    // key is null if the second character is '-'
+    static string? NullableKeyOf(string s) => s[1] == '-' ? null : s.Substring(1);
+
+    /// <summary>
+    /// Verifies that LeftJoin without resultSelector yields matched pairs and unmatched outer elements with default inner,
+    /// in outer order, for both IEnumerable and ValueEnumerable inner sources.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_ReturnsMatchedAndUnmatchedOuter()
+    {
+        var outer = new[] { "a1", "b2", "c3" };
+        var inner = new[] { "x2", "y1", "z2", "w4" };
+
+        var expected = new (string, string?)[] { ("a1", "y1"), ("b2", "x2"), ("b2", "z2"), ("c3", null) };
+
+        outer.AsValueEnumerable().LeftJoin(inner, KeyOf, KeyOf).ToArray().ShouldBe(expected);
+        outer.AsValueEnumerable().LeftJoin(inner.AsValueEnumerable(), KeyOf, KeyOf).ToArray().ShouldBe(expected);
+    }
+
+    /// <summary>
+    /// Verifies that the tuple elements of LeftJoin without resultSelector are accessible by the names Outer and Inner.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_HasNamedElements()
+    {
+        var outer = new[] { "a1", "b2" };
+        var inner = new[] { "x1" };
+
+        var actual = outer.AsValueEnumerable().LeftJoin(inner, KeyOf, KeyOf).ToArray();
+
+        actual.Length.ShouldBe(2);
+        actual[0].Outer.ShouldBe("a1");
+        actual[0].Inner.ShouldBe("x1");
+        actual[1].Outer.ShouldBe("b2");
+        actual[1].Inner.ShouldBeNull();
+    }
+
+    /// <summary>
+    /// Verifies that LeftJoin without resultSelector uses the specified comparer to match keys.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_WithComparer()
+    {
+        var outer = new[] { "A", "B", "C" };
+        var inner = new[] { "a", "b", "b", "d" };
+
+        var actual = outer.AsValueEnumerable().LeftJoin(inner, o => o, i => i, StringComparer.OrdinalIgnoreCase).ToArray();
+
+        actual.ShouldBe(new (string, string?)[] { ("A", "a"), ("B", "b"), ("B", "b"), ("C", null) });
+    }
+
+    /// <summary>
+    /// Verifies that an outer element with a null key never matches and is yielded with default inner.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_NullOuterKey_YieldsDefaultInner()
+    {
+        var outer = new[] { "o1", "o-" };
+        var inner = new[] { "i-", "i1" };
+
+        var actual = outer.AsValueEnumerable().LeftJoin(inner, NullableKeyOf, NullableKeyOf).ToArray();
+
+        actual.ShouldBe(new (string, string?)[] { ("o1", "i1"), ("o-", null) });
+    }
+
+    /// <summary>
+    /// Verifies that LeftJoin without resultSelector throws ArgumentNullException for null inner and key selectors.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_NullArguments_Throw()
+    {
+        var outer = new[] { "a1" };
+        var inner = new[] { "x1" };
+
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin((IEnumerable<string>)null!, KeyOf, KeyOf));
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin(inner, null!, KeyOf));
+        Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin(inner, KeyOf, null!));
+    }
 }

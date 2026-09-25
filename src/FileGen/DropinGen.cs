@@ -190,7 +190,7 @@ internal static partial class ZLinqDropInExtensions
         var returnType = BuildType(methodInfo, methodInfo.ReturnType, dropInType.Replacement) + IsNullableReturnParameter(methodInfo);
         var name = methodInfo.Name;
         var genericsTypes = string.Join(", ", methodInfo.GetGenericArguments().Skip(1).Select(x => x.Name).ToArray());
-        var parameters = string.Join(", ", methodInfo.GetParameters().Skip(1).Select(x => $"{BuildParameterType(methodInfo, x, dropInType.Replacement)} {x.Name}").ToArray());
+        var parameters = string.Join(", ", methodInfo.GetParameters().Skip(1).Select(x => $"{BuildParameterType(methodInfo, x, dropInType.Replacement)} {x.Name}{BuildDefaultValue(x)}").ToArray());
         if (parameters != "") parameters = $", {parameters}";
         var parameterNames = string.Join(", ", methodInfo.GetParameters().Skip(1).Select(x => BuildParameterName(x)).ToArray());
         var sourceType = BuildSourceType(methodInfo, dropInType.Name, dropInType.IsArray);
@@ -213,6 +213,10 @@ internal static partial class ZLinqDropInExtensions
         else if (signature.Contains("LeftJoin"))
         {
             signature = signature.Replace("Func<TOuter, TInner, TResult> resultSelector", "Func<TOuter, TInner?, TResult> resultSelector");
+        }
+        else if (signature.Contains("FullJoin"))
+        {
+            signature = signature.Replace("Func<TOuter, TInner, TResult> resultSelector", "Func<TOuter?, TInner?, TResult> resultSelector");
         }
         else if (signature.Contains("Where<FromArray<TSource>, TSource>"))
         {
@@ -336,6 +340,21 @@ internal static partial class ZLinqDropInExtensions
         return param.Name!;
     }
 
+    string BuildDefaultValue(ParameterInfo param)
+    {
+        if (!param.HasDefaultValue)
+        {
+            return "";
+        }
+
+        if (param.DefaultValue is not null)
+        {
+            throw new InvalidOperationException("Default value other than null is not supported:" + param.Name);
+        }
+
+        return " = null";
+    }
+
     string BuildType(MethodInfo methodInfo, Type type, string replacement)
     {
         var sourceGenericTypeName = methodInfo.GetGenericArguments().FirstOrDefault(x => !x.Name.Contains("Enumerator"))?.Name;
@@ -395,6 +414,22 @@ internal static partial class ZLinqDropInExtensions
                 {
                     builder.Append("(TFirst First, TSecond Second)");
                 }
+            }
+            else if (currentString.Contains("LeftJoin"))
+            {
+                builder.Append("(TOuter Outer, TInner? Inner)");
+            }
+            else if (currentString.Contains("RightJoin"))
+            {
+                builder.Append("(TOuter? Outer, TInner Inner)");
+            }
+            else if (currentString.Contains("FullJoin"))
+            {
+                builder.Append("(TOuter? Outer, TInner? Inner)");
+            }
+            else if (currentString.Contains("Join"))
+            {
+                builder.Append("(TOuter Outer, TInner Inner)");
             }
             else if (currentString == "") // ToArrayPool
             {
@@ -539,7 +574,7 @@ internal static partial class ZLinqDropInExtensions
 """;
         }
 
-        if (methodInfo.Name is "GroupJoin" or "Join" or "LeftJoin" or "RightJoin")
+        if (methodInfo.Name is "GroupJoin" or "Join" or "LeftJoin" or "RightJoin" or "FullJoin")
         {
             if (!methodInfo.GetGenericArguments().Any(x => x.Name == "TEnumerator2"))
             {
