@@ -73,6 +73,52 @@ namespace System.Linq.Tests
             Assert.Equal(expected, outer.FullJoin(inner, e => e.custID, e => e.custID, createJoinRec));
         }
 
+        /// <summary>
+        /// Verifies that inner elements are yielded in their source order (not grouped by key) when outer is an empty array.
+        /// </summary>
+        [Fact]
+        public void OuterEmptyArrayInnerWithInterleavedKeys()
+        {
+            CustomerRec[] outer = [];
+            OrderRec[] inner =
+            [
+                new OrderRec{ orderID = 45321, custID = 98022, total = 50 },
+                new OrderRec{ orderID = 97865, custID = 32103, total = 25 },
+                new OrderRec{ orderID = 12345, custID = 98022, total = 10 }
+            ];
+            JoinRec[] expected =
+            [
+                new JoinRec{ name = null, orderID = 45321, total = 50 },
+                new JoinRec{ name = null, orderID = 97865, total = 25 },
+                new JoinRec{ name = null, orderID = 12345, total = 10 }
+            ];
+
+            Assert.Equal(expected, outer.FullJoin(inner, e => e.custID, e => e.custID, createJoinRec));
+        }
+
+        /// <summary>
+        /// Verifies that inner elements are yielded grouped by key when outer is empty but not an array.
+        /// </summary>
+        [Fact]
+        public void OuterEmptyNonArrayInnerWithInterleavedKeys()
+        {
+            List<CustomerRec> outer = [];
+            OrderRec[] inner =
+            [
+                new OrderRec{ orderID = 45321, custID = 98022, total = 50 },
+                new OrderRec{ orderID = 97865, custID = 32103, total = 25 },
+                new OrderRec{ orderID = 12345, custID = 98022, total = 10 }
+            ];
+            JoinRec[] expected =
+            [
+                new JoinRec{ name = null, orderID = 45321, total = 50 },
+                new JoinRec{ name = null, orderID = 12345, total = 10 },
+                new JoinRec{ name = null, orderID = 97865, total = 25 }
+            ];
+
+            Assert.Equal(expected, outer.FullJoin(inner, e => e.custID, e => e.custID, createJoinRec));
+        }
+
         [Fact]
         public void OuterNonEmptyInnerEmpty()
         {

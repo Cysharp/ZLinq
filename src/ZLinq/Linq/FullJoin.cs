@@ -70,6 +70,7 @@ namespace ZLinq.Linq
         TOuter currentOuter = default!;
         Grouping<TKey, TInner>? nextUnmatchedGroup;
         bool outerCompleted;
+        bool streamingInner;
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -89,6 +90,19 @@ namespace ZLinq.Linq
         {
             if (innerLookup == null)
             {
+                if (streamingInner || FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
+                {
+                    streamingInner = true;
+                    if (inner.TryGetNext(out var value))
+                    {
+                        current = resultSelector(default, value);
+                        return true;
+                    }
+
+                    Unsafe.SkipInit(out current);
+                    return false;
+                }
+
                 try
                 {
                     // FullJoin needs to preserve inner elements with null keys so they can be emitted
@@ -224,6 +238,7 @@ namespace ZLinq.Linq
         TOuter currentOuter = default!;
         Grouping<TKey, TInner>? nextUnmatchedGroup;
         bool outerCompleted;
+        bool streamingInner;
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -243,6 +258,19 @@ namespace ZLinq.Linq
         {
             if (innerLookup == null)
             {
+                if (streamingInner || FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
+                {
+                    streamingInner = true;
+                    if (inner.TryGetNext(out var value))
+                    {
+                        current = (default, value);
+                        return true;
+                    }
+
+                    Unsafe.SkipInit(out current);
+                    return false;
+                }
+
                 try
                 {
                     // FullJoin needs to preserve inner elements with null keys so they can be emitted
@@ -347,6 +375,30 @@ namespace ZLinq.Linq
                 inner.Dispose();
             }
             source.Dispose();
+        }
+    }
+
+    internal static class FullJoinHelper
+    {
+        // Enumerable.FullJoin yields inner elements in source order (without building a lookup)
+        // only when outer is an empty array, so the same condition is used here to keep the order compatible.
+        public static bool IsEmptyArray<TEnumerator, TOuter>(ref TEnumerator source)
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        {
+            if (typeof(TEnumerator) == typeof(FromArray<TOuter>))
+            {
+                return Unsafe.As<TEnumerator, FromArray<TOuter>>(ref source).GetSource().Length == 0;
+            }
+
+            if (typeof(TEnumerator) == typeof(FromEnumerable<TOuter>))
+            {
+                return Unsafe.As<TEnumerator, FromEnumerable<TOuter>>(ref source).GetSource() is TOuter[] { Length: 0 };
+            }
+
+            return false;
         }
     }
 }

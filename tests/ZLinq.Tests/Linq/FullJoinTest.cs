@@ -132,6 +132,122 @@ public class FullJoinTest
     }
 
     /// <summary>
+    /// Verifies that FullJoin yields inner elements in their source order (not grouped by key) when outer is an empty array,
+    /// which is the same order as System.Linq's FullJoin, for both overloads and for both IEnumerable and ValueEnumerable inner sources.
+    /// </summary>
+    [Fact]
+    public void FullJoin_EmptyOuterArray_YieldsInnerInSourceOrder()
+    {
+        var outer = Array.Empty<string>();
+        var inner = new[] { "p9", "q8", "r9" };
+
+        var expected = new (string?, string?)[] { (null, "p9"), (null, "q8"), (null, "r9") };
+
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf).ToArray().ShouldBe(expected);
+        outer.AsValueEnumerable().FullJoin(inner.AsValueEnumerable(), KeyOf, KeyOf).ToArray().ShouldBe(expected);
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray().ShouldBe(new[] { ":p9", ":q8", ":r9" });
+    }
+
+    /// <summary>
+    /// Verifies that FullJoin also yields inner elements in their source order when outer is an empty array
+    /// typed as IEnumerable, because System.Linq's FullJoin checks the runtime type of outer.
+    /// </summary>
+    [Fact]
+    public void FullJoin_EmptyOuterArrayAsEnumerable_YieldsInnerInSourceOrder()
+    {
+        IEnumerable<string> outer = Array.Empty<string>();
+        var inner = new[] { "p9", "q8", "r9" };
+
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf).ToArray()
+            .ShouldBe(new (string?, string?)[] { (null, "p9"), (null, "q8"), (null, "r9") });
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray()
+            .ShouldBe(new[] { ":p9", ":q8", ":r9" });
+    }
+
+    /// <summary>
+    /// Verifies that FullJoin yields inner elements grouped by key when outer is empty but not an array,
+    /// which is the same order as System.Linq's FullJoin (it only special-cases empty arrays).
+    /// </summary>
+    [Fact]
+    public void FullJoin_EmptyOuterNonArray_YieldsInnerGroupedByKey()
+    {
+        var outer = new List<string>();
+        var inner = new[] { "p9", "q8", "r9" };
+
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf).ToArray()
+            .ShouldBe(new (string?, string?)[] { (null, "p9"), (null, "r9"), (null, "q8") });
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray()
+            .ShouldBe(new[] { ":p9", ":r9", ":q8" });
+    }
+
+    /// <summary>
+    /// Verifies that FullJoin does not invoke the key selectors when outer is an empty array,
+    /// which is the same behavior as System.Linq's FullJoin.
+    /// </summary>
+    [Fact]
+    public void FullJoin_EmptyOuterArray_DoesNotInvokeKeySelectors()
+    {
+        var outer = Array.Empty<string>();
+        var inner = new[] { "p9", "q8" };
+        var invoked = 0;
+
+        string CountingKeyOf(string s)
+        {
+            invoked++;
+            return KeyOf(s);
+        }
+
+        outer.AsValueEnumerable().FullJoin(inner, CountingKeyOf, CountingKeyOf).ToArray();
+        outer.AsValueEnumerable().FullJoin(inner, CountingKeyOf, CountingKeyOf, (o, i) => $"{o}:{i}").ToArray();
+
+        invoked.ShouldBe(0);
+    }
+
+    /// <summary>
+    /// Verifies that FullJoin disposes both sources when outer is an empty array and inner is streamed without building a lookup,
+    /// both after full enumeration and after early termination, for both overloads.
+    /// </summary>
+    [Fact]
+    public void FullJoin_EmptyOuterArray_DisposesInner()
+    {
+        var innerDisposed = false;
+
+        IEnumerable<string> GetInnerSequence()
+        {
+            try
+            {
+                yield return "p9";
+                yield return "q8";
+            }
+            finally
+            {
+                innerDisposed = true;
+            }
+        }
+
+        var outer = Array.Empty<string>();
+
+        outer.AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf).ToArray();
+        innerDisposed.ShouldBeTrue();
+
+        innerDisposed = false;
+        outer.AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray();
+        innerDisposed.ShouldBeTrue();
+
+        innerDisposed = false;
+        var tupleQuery = outer.AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf);
+        tupleQuery.First().ShouldBe(((string?)null, "p9"));
+        TestUtil.Dispose(tupleQuery);
+        innerDisposed.ShouldBeTrue();
+
+        innerDisposed = false;
+        var selectorQuery = outer.AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf, (o, i) => $"{o}:{i}");
+        selectorQuery.First().ShouldBe(":p9");
+        TestUtil.Dispose(selectorQuery);
+        innerDisposed.ShouldBeTrue();
+    }
+
+    /// <summary>
     /// Verifies that FullJoin yields all outer elements when inner is empty.
     /// </summary>
     [Fact]
