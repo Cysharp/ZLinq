@@ -228,7 +228,7 @@ namespace ZLinq.Linq
 
         public int Count => elements.Count;
 
-        // we needs IList implementation for System.Linq internal optimization usage
+        // we need an IList implementation for System.Linq internal optimization usage
 
         public bool IsReadOnly => true;
 
