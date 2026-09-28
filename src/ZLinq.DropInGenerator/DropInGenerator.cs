@@ -373,7 +373,7 @@ namespace {{attribute.GenerateNamespace}}
                 code = code.Replace("<TEnumerator2, TSource>", "<TEnumerator2>");
                 code = code.Replace("<TEnumerator2, TOuter, ", "<TEnumerator2, ");
                 code = code.Replace("Func<TOuter, TInner", $"Func<{element}, TInner");
-                code = code.Replace("Func<TOuter?, TInner", $"Func<{element}{(extension.IsElementValueType ? "" : "?")}, TInner"); // for RightJoin
+                code = code.Replace("Func<TOuter?, TInner", $"Func<{element}{(extension.IsElementValueType ? "" : "?")}, TInner"); // for RightJoin, FullJoin
                 code = code.Replace("IGrouping<TOuter, TInner>", $"IGrouping<{element}, TInner>"); // for GroupJoin without resultSelector
                 code = code.Replace("(TOuter Outer, ", $"({element} Outer, "); // for Join, LeftJoin without resultSelector
                 code = code.Replace("(TOuter? Outer, ", $"({element}{(extension.IsElementValueType ? "" : "?")} Outer, "); // for RightJoin, FullJoin without resultSelector
@@ -405,7 +405,7 @@ namespace {{attribute.GenerateNamespace}}
             }
             else
             {
-                // for RightJoin, remove ? annotation where T:struct
+                // for RightJoin, FullJoin, remove ? annotation where T:struct
                 if (extension.ElementConstraint.Contains(": struct") || extension.ElementConstraint.Contains(": unmanaged"))
                 {
                     code = code.Replace("Func<TOuter?, TInner", $"Func<{element}{(extension.IsElementValueType ? "" : "?")}, TInner");

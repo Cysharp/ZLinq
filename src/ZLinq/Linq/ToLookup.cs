@@ -390,6 +390,7 @@ namespace ZLinq.Linq
         public int Count => count;
 
         // groups are linked circularly in add order, last.NextGroupInAddOrder is the first group.
+        internal Grouping<TKey, TElement>? FirstGroup => last?.NextGroupInAddOrder;
         internal Grouping<TKey, TElement>? LastGroup => last;
 
         // Lookup method

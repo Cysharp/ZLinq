@@ -63,14 +63,13 @@ namespace ZLinq.Linq
         TEnumerator source = source;
         TEnumerator2 inner = inner;
 
-        Lookup<TKey, TInner>? innerLookup;
-        HashSet<Grouping<TKey, TInner>>? matchedGroups;
+        FullJoinState state;
+        Lookup<TKey, TInner>? innerLookup; // non-null once the state has moved to Outer
+        HashSet<Grouping<TKey, TInner>>? matchedGroups; // allocated on the first match
+        TOuter currentOuter = default!;
         Grouping<TKey, TInner>? currentGroup;
         int currentGroupIndex;
-        TOuter currentOuter = default!;
         Grouping<TKey, TInner>? nextUnmatchedGroup;
-        bool outerCompleted;
-        bool streamingInner;
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -88,112 +87,110 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            if (innerLookup == null)
+            switch (state)
             {
-                if (streamingInner || FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
-                {
-                    streamingInner = true;
-                    if (inner.TryGetNext(out var value))
+                case FullJoinState.Initial:
+                    if (FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
                     {
-                        current = resultSelector(default, value);
+                        state = FullJoinState.EmptyOuterArray;
+                        goto case FullJoinState.EmptyOuterArray;
+                    }
+
+                    try
+                    {
+                        // FullJoin needs to preserve inner elements with null keys so they can be emitted
+                        // as unmatched rows, even though null keys still never participate in matches.
+                        innerLookup = Lookup.CreateForFullJoin(ref inner, innerKeySelector, comparer);
+                    }
+                    finally
+                    {
+                        inner.Dispose();
+                    }
+
+                    state = FullJoinState.Outer;
+                    goto case FullJoinState.Outer;
+
+                case FullJoinState.EmptyOuterArray:
+                    if (inner.TryGetNext(out var innerValue))
+                    {
+                        current = resultSelector(default, innerValue);
                         return true;
                     }
 
-                    Unsafe.SkipInit(out current);
-                    return false;
-                }
+                    state = FullJoinState.Completed;
+                    break;
 
-                try
-                {
-                    // FullJoin needs to preserve inner elements with null keys so they can be emitted
-                    // as unmatched rows, even though null keys still never participate in matches.
-                    innerLookup = Lookup.CreateForFullJoin(ref inner, innerKeySelector, comparer);
-                }
-                finally
-                {
-                    inner.Dispose();
-                }
-
-                if (innerLookup.Count != 0)
-                {
-                    matchedGroups = new HashSet<Grouping<TKey, TInner>>();
-                }
-            }
-
-            if (!outerCompleted)
-            {
-            // iterating matched group
-            ITERATE_OUTER:
-                if (currentGroup != null)
-                {
-                    if (currentGroupIndex < currentGroup.Count)
+                case FullJoinState.Outer:
+                    if (currentGroup != null)
                     {
-                        current = resultSelector(currentOuter, currentGroup[currentGroupIndex]);
-                        currentGroupIndex++;
-                        return true;
-                    }
-                    else
-                    {
+                        if (currentGroupIndex < currentGroup.Count)
+                        {
+                            current = resultSelector(currentOuter, currentGroup[currentGroupIndex]);
+                            currentGroupIndex++;
+                            return true;
+                        }
+
                         currentGroup = null;
                     }
-                }
 
-                while (source.TryGetNext(out var value))
-                {
-                    var key = outerKeySelector(value);
-                    var group = key is null ? null : innerLookup.GetGroup(key);
-                    if (group != null)
+                    while (source.TryGetNext(out var value))
                     {
-                        matchedGroups!.Add(group);
-                        currentOuter = value;
-                        currentGroup = group;
-                        currentGroupIndex = 0;
-                        goto ITERATE_OUTER;
-                    }
-                    else
-                    {
+                        var key = outerKeySelector(value);
+
+                        // the lookup contains the null-key group, which must not be matched.
+                        var group = key is null ? null : innerLookup!.GetGroup(key);
+                        if (group != null)
+                        {
+                            (matchedGroups ??= new HashSet<Grouping<TKey, TInner>>()).Add(group);
+                            currentOuter = value;
+                            currentGroup = group;
+                            currentGroupIndex = 0;
+                            goto case FullJoinState.Outer;
+                        }
+
                         current = resultSelector(value, default);
                         return true;
                     }
-                }
 
-                outerCompleted = true;
-                currentOuter = default!;
+                    currentOuter = default!;
 
-                // prepare to yield inner elements that had no matching outer element.
-                if (matchedGroups != null && matchedGroups.Count < innerLookup.Count)
-                {
-                    nextUnmatchedGroup = innerLookup.LastGroup!.NextGroupInAddOrder; // as first.
-                }
-            }
+                    // prepare to yield inner elements that had no matching outer element.
+                    if ((matchedGroups?.Count ?? 0) < innerLookup!.Count)
+                    {
+                        nextUnmatchedGroup = innerLookup.FirstGroup;
+                    }
 
-        // iterating unmatched group
-        ITERATE_INNER:
-            if (currentGroup != null)
-            {
-                if (currentGroupIndex < currentGroup.Count)
-                {
-                    current = resultSelector(default, currentGroup[currentGroupIndex]);
-                    currentGroupIndex++;
-                    return true;
-                }
-                else
-                {
-                    currentGroup = null;
-                }
-            }
+                    state = FullJoinState.UnmatchedInner;
+                    goto case FullJoinState.UnmatchedInner;
 
-            while (nextUnmatchedGroup != null)
-            {
-                var group = nextUnmatchedGroup;
-                nextUnmatchedGroup = (group == innerLookup.LastGroup) ? null : group.NextGroupInAddOrder;
+                case FullJoinState.UnmatchedInner:
+                    if (currentGroup != null)
+                    {
+                        if (currentGroupIndex < currentGroup.Count)
+                        {
+                            current = resultSelector(default, currentGroup[currentGroupIndex]);
+                            currentGroupIndex++;
+                            return true;
+                        }
 
-                if (!matchedGroups!.Contains(group))
-                {
-                    currentGroup = group;
-                    currentGroupIndex = 0;
-                    goto ITERATE_INNER;
-                }
+                        currentGroup = null;
+                    }
+
+                    while (nextUnmatchedGroup != null)
+                    {
+                        var group = nextUnmatchedGroup;
+                        nextUnmatchedGroup = (group == innerLookup!.LastGroup) ? null : group.NextGroupInAddOrder;
+
+                        if (matchedGroups == null || !matchedGroups.Contains(group))
+                        {
+                            currentGroup = group;
+                            currentGroupIndex = 0;
+                            goto case FullJoinState.UnmatchedInner;
+                        }
+                    }
+
+                    state = FullJoinState.Completed;
+                    break;
             }
 
             Unsafe.SkipInit(out current);
@@ -231,14 +228,13 @@ namespace ZLinq.Linq
         TEnumerator source = source;
         TEnumerator2 inner = inner;
 
-        Lookup<TKey, TInner>? innerLookup;
-        HashSet<Grouping<TKey, TInner>>? matchedGroups;
+        FullJoinState state;
+        Lookup<TKey, TInner>? innerLookup; // non-null once the state has moved to Outer
+        HashSet<Grouping<TKey, TInner>>? matchedGroups; // allocated on the first match
+        TOuter currentOuter = default!;
         Grouping<TKey, TInner>? currentGroup;
         int currentGroupIndex;
-        TOuter currentOuter = default!;
         Grouping<TKey, TInner>? nextUnmatchedGroup;
-        bool outerCompleted;
-        bool streamingInner;
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
@@ -256,112 +252,110 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out (TOuter? Outer, TInner? Inner) current)
         {
-            if (innerLookup == null)
+            switch (state)
             {
-                if (streamingInner || FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
-                {
-                    streamingInner = true;
-                    if (inner.TryGetNext(out var value))
+                case FullJoinState.Initial:
+                    if (FullJoinHelper.IsEmptyArray<TEnumerator, TOuter>(ref source))
                     {
-                        current = (default, value);
+                        state = FullJoinState.EmptyOuterArray;
+                        goto case FullJoinState.EmptyOuterArray;
+                    }
+
+                    try
+                    {
+                        // FullJoin needs to preserve inner elements with null keys so they can be emitted
+                        // as unmatched rows, even though null keys still never participate in matches.
+                        innerLookup = Lookup.CreateForFullJoin(ref inner, innerKeySelector, comparer);
+                    }
+                    finally
+                    {
+                        inner.Dispose();
+                    }
+
+                    state = FullJoinState.Outer;
+                    goto case FullJoinState.Outer;
+
+                case FullJoinState.EmptyOuterArray:
+                    if (inner.TryGetNext(out var innerValue))
+                    {
+                        current = (default, innerValue);
                         return true;
                     }
 
-                    Unsafe.SkipInit(out current);
-                    return false;
-                }
+                    state = FullJoinState.Completed;
+                    break;
 
-                try
-                {
-                    // FullJoin needs to preserve inner elements with null keys so they can be emitted
-                    // as unmatched rows, even though null keys still never participate in matches.
-                    innerLookup = Lookup.CreateForFullJoin(ref inner, innerKeySelector, comparer);
-                }
-                finally
-                {
-                    inner.Dispose();
-                }
-
-                if (innerLookup.Count != 0)
-                {
-                    matchedGroups = new HashSet<Grouping<TKey, TInner>>();
-                }
-            }
-
-            if (!outerCompleted)
-            {
-            // iterating matched group
-            ITERATE_OUTER:
-                if (currentGroup != null)
-                {
-                    if (currentGroupIndex < currentGroup.Count)
+                case FullJoinState.Outer:
+                    if (currentGroup != null)
                     {
-                        current = (currentOuter, currentGroup[currentGroupIndex]);
-                        currentGroupIndex++;
-                        return true;
-                    }
-                    else
-                    {
+                        if (currentGroupIndex < currentGroup.Count)
+                        {
+                            current = (currentOuter, currentGroup[currentGroupIndex]);
+                            currentGroupIndex++;
+                            return true;
+                        }
+
                         currentGroup = null;
                     }
-                }
 
-                while (source.TryGetNext(out var value))
-                {
-                    var key = outerKeySelector(value);
-                    var group = key is null ? null : innerLookup.GetGroup(key);
-                    if (group != null)
+                    while (source.TryGetNext(out var value))
                     {
-                        matchedGroups!.Add(group);
-                        currentOuter = value;
-                        currentGroup = group;
-                        currentGroupIndex = 0;
-                        goto ITERATE_OUTER;
-                    }
-                    else
-                    {
+                        var key = outerKeySelector(value);
+
+                        // the lookup contains the null-key group, which must not be matched.
+                        var group = key is null ? null : innerLookup!.GetGroup(key);
+                        if (group != null)
+                        {
+                            (matchedGroups ??= new HashSet<Grouping<TKey, TInner>>()).Add(group);
+                            currentOuter = value;
+                            currentGroup = group;
+                            currentGroupIndex = 0;
+                            goto case FullJoinState.Outer;
+                        }
+
                         current = (value, default);
                         return true;
                     }
-                }
 
-                outerCompleted = true;
-                currentOuter = default!;
+                    currentOuter = default!;
 
-                // prepare to yield inner elements that had no matching outer element.
-                if (matchedGroups != null && matchedGroups.Count < innerLookup.Count)
-                {
-                    nextUnmatchedGroup = innerLookup.LastGroup!.NextGroupInAddOrder; // as first.
-                }
-            }
+                    // prepare to yield inner elements that had no matching outer element.
+                    if ((matchedGroups?.Count ?? 0) < innerLookup!.Count)
+                    {
+                        nextUnmatchedGroup = innerLookup.FirstGroup;
+                    }
 
-        // iterating unmatched group
-        ITERATE_INNER:
-            if (currentGroup != null)
-            {
-                if (currentGroupIndex < currentGroup.Count)
-                {
-                    current = (default, currentGroup[currentGroupIndex]);
-                    currentGroupIndex++;
-                    return true;
-                }
-                else
-                {
-                    currentGroup = null;
-                }
-            }
+                    state = FullJoinState.UnmatchedInner;
+                    goto case FullJoinState.UnmatchedInner;
 
-            while (nextUnmatchedGroup != null)
-            {
-                var group = nextUnmatchedGroup;
-                nextUnmatchedGroup = (group == innerLookup.LastGroup) ? null : group.NextGroupInAddOrder;
+                case FullJoinState.UnmatchedInner:
+                    if (currentGroup != null)
+                    {
+                        if (currentGroupIndex < currentGroup.Count)
+                        {
+                            current = (default, currentGroup[currentGroupIndex]);
+                            currentGroupIndex++;
+                            return true;
+                        }
 
-                if (!matchedGroups!.Contains(group))
-                {
-                    currentGroup = group;
-                    currentGroupIndex = 0;
-                    goto ITERATE_INNER;
-                }
+                        currentGroup = null;
+                    }
+
+                    while (nextUnmatchedGroup != null)
+                    {
+                        var group = nextUnmatchedGroup;
+                        nextUnmatchedGroup = (group == innerLookup!.LastGroup) ? null : group.NextGroupInAddOrder;
+
+                        if (matchedGroups == null || !matchedGroups.Contains(group))
+                        {
+                            currentGroup = group;
+                            currentGroupIndex = 0;
+                            goto case FullJoinState.UnmatchedInner;
+                        }
+                    }
+
+                    state = FullJoinState.Completed;
+                    break;
             }
 
             Unsafe.SkipInit(out current);
@@ -376,6 +370,15 @@ namespace ZLinq.Linq
             }
             source.Dispose();
         }
+    }
+
+    internal enum FullJoinState : byte
+    {
+        Initial,
+        EmptyOuterArray, // outer is an empty array, so inner is yielded in source order without building a lookup
+        Outer, // yielding outer elements, each paired with the elements of its matched group or with default
+        UnmatchedInner, // yielding inner elements whose group matched no outer element
+        Completed,
     }
 
     internal static class FullJoinHelper

@@ -202,7 +202,7 @@ namespace ZLinq.Linq
                 // Enumerable.GroupJoin allows null unlike Join
                 var group = innerLookup.GetGroup(key);
                 // return empty grouping if there is no matching group
-                current = new GroupJoinGrouping<TOuter, TInner>(value, group != null ? group : []);
+                current = new GroupJoinGrouping<TOuter, TInner>(value, group != null ? group : Array.Empty<TInner>());
                 return true;
             }
 
@@ -221,12 +221,42 @@ namespace ZLinq.Linq
     }
 
     // IGrouping for GroupJoin without resultSelector, the key is the outer element.
-    internal sealed class GroupJoinGrouping<TKey, TElement>(TKey key, IEnumerable<TElement> elements) : IGrouping<TKey, TElement>
+    // elements may be shared by outer elements with the same key, so it is exposed as read-only.
+    internal sealed class GroupJoinGrouping<TOuter, TElement>(TOuter key, IList<TElement> elements) : IGrouping<TOuter, TElement>, IList<TElement>, IReadOnlyList<TElement>
     {
-        public TKey Key => key;
+        public TOuter Key => key;
+
+        public int Count => elements.Count;
+
+        // we needs IList implementation for System.Linq internal optimization usage
+
+        public bool IsReadOnly => true;
+
+        public TElement this[int index]
+        {
+            get => elements[index];
+            set => throw new NotSupportedException();
+        }
 
         public IEnumerator<TElement> GetEnumerator() => elements.GetEnumerator();
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public int IndexOf(TElement item) => elements.IndexOf(item);
+
+        // use IndexOf because Grouping.Contains searches the unused capacity of its buffer as well
+        public bool Contains(TElement item) => elements.IndexOf(item) >= 0;
+
+        public void CopyTo(TElement[] array, int arrayIndex) => elements.CopyTo(array, arrayIndex);
+
+        public void Insert(int index, TElement item) => throw new NotSupportedException();
+
+        public void RemoveAt(int index) => throw new NotSupportedException();
+
+        public void Add(TElement item) => throw new NotSupportedException();
+
+        public void Clear() => throw new NotSupportedException();
+
+        public bool Remove(TElement item) => throw new NotSupportedException();
     }
 }

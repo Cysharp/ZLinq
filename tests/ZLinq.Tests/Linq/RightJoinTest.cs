@@ -454,7 +454,7 @@ public class RightJoinTest
         actual[3].Outer.ShouldBe(0);
     }
 
-    // key is the second character, e.g. "a1" -> "1"
+    // key is the substring after the first character, e.g. "a1" -> "1"
     static string KeyOf(string s) => s.Substring(1);
 
     // key is null if the second character is '-'
@@ -534,5 +534,72 @@ public class RightJoinTest
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().RightJoin((IEnumerable<string>)null!, KeyOf, KeyOf));
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().RightJoin(inner, null!, KeyOf));
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().RightJoin(inner, KeyOf, null!));
+    }
+
+    /// <summary>
+    /// Verifies that RightJoin without resultSelector disposes both outer and inner sources,
+    /// both after full enumeration and after early termination while inner is still being enumerated.
+    /// RightJoin builds the lookup from outer and streams inner, so the roles of the sources are the reverse of Join.
+    /// </summary>
+    [Fact]
+    public void RightJoin_Tuple_DisposesBothSources()
+    {
+        var outerDisposed = false;
+        var innerDisposed = false;
+
+        IEnumerable<string> GetOuterSequence()
+        {
+            try
+            {
+                yield return "a1";
+                yield return "b3";
+            }
+            finally
+            {
+                outerDisposed = true;
+            }
+        }
+
+        IEnumerable<string> GetInnerSequence()
+        {
+            try
+            {
+                yield return "x1";
+                yield return "y2";
+            }
+            finally
+            {
+                innerDisposed = true;
+            }
+        }
+
+        GetOuterSequence().AsValueEnumerable().RightJoin(GetInnerSequence(), KeyOf, KeyOf).ToArray();
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+
+        outerDisposed = false;
+        innerDisposed = false;
+        using (var e = GetOuterSequence().AsValueEnumerable().RightJoin(GetInnerSequence(), KeyOf, KeyOf).Enumerator)
+        {
+            e.TryGetNext(out _).ShouldBeTrue();
+        }
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that RightJoin without resultSelector does not report a non-enumerated count, span, or copy capability,
+    /// because the result count cannot be known without joining.
+    /// </summary>
+    [Fact]
+    public void RightJoin_Tuple_OptimizationMethods_ReturnFalse()
+    {
+        var outer = new[] { "a1" };
+        var inner = new[] { "x1" };
+
+        var query = outer.AsValueEnumerable().RightJoin(inner, KeyOf, KeyOf);
+        query.TryGetNonEnumeratedCount(out _).ShouldBeFalse();
+        query.TryGetSpan(out _).ShouldBeFalse();
+        query.TryCopyTo(new (string?, string)[1].AsSpan(), 0).ShouldBeFalse();
     }
 }

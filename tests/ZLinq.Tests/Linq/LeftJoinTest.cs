@@ -473,7 +473,7 @@ public class LeftJoinTest
     //    actual[2].ShouldBe("3:null");
     //}
 
-    // key is the second character, e.g. "a1" -> "1"
+    // key is the substring after the first character, e.g. "a1" -> "1"
     static string KeyOf(string s) => s.Substring(1);
 
     // key is null if the second character is '-'
@@ -553,5 +553,71 @@ public class LeftJoinTest
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin((IEnumerable<string>)null!, KeyOf, KeyOf));
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin(inner, null!, KeyOf));
         Should.Throw<ArgumentNullException>(() => outer.AsValueEnumerable().LeftJoin(inner, KeyOf, null!));
+    }
+
+    /// <summary>
+    /// Verifies that LeftJoin without resultSelector disposes both outer and inner sources,
+    /// both after full enumeration and after early termination while outer is still being enumerated.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_DisposesBothSources()
+    {
+        var outerDisposed = false;
+        var innerDisposed = false;
+
+        IEnumerable<string> GetOuterSequence()
+        {
+            try
+            {
+                yield return "a1";
+                yield return "b2";
+            }
+            finally
+            {
+                outerDisposed = true;
+            }
+        }
+
+        IEnumerable<string> GetInnerSequence()
+        {
+            try
+            {
+                yield return "x1";
+                yield return "y3";
+            }
+            finally
+            {
+                innerDisposed = true;
+            }
+        }
+
+        GetOuterSequence().AsValueEnumerable().LeftJoin(GetInnerSequence(), KeyOf, KeyOf).ToArray();
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+
+        outerDisposed = false;
+        innerDisposed = false;
+        using (var e = GetOuterSequence().AsValueEnumerable().LeftJoin(GetInnerSequence(), KeyOf, KeyOf).Enumerator)
+        {
+            e.TryGetNext(out _).ShouldBeTrue();
+        }
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that LeftJoin without resultSelector does not report a non-enumerated count, span, or copy capability,
+    /// because the result count cannot be known without joining.
+    /// </summary>
+    [Fact]
+    public void LeftJoin_Tuple_OptimizationMethods_ReturnFalse()
+    {
+        var outer = new[] { "a1" };
+        var inner = new[] { "x1" };
+
+        var query = outer.AsValueEnumerable().LeftJoin(inner, KeyOf, KeyOf);
+        query.TryGetNonEnumeratedCount(out _).ShouldBeFalse();
+        query.TryGetSpan(out _).ShouldBeFalse();
+        query.TryCopyTo(new (string, string?)[1].AsSpan(), 0).ShouldBeFalse();
     }
 }

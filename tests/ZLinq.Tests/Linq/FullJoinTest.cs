@@ -2,7 +2,7 @@
 
 public class FullJoinTest
 {
-    // key is the second character, e.g. "a1" -> "1"
+    // key is the substring after the first character, e.g. "a1" -> "1"
     static string KeyOf(string s) => s.Substring(1);
 
     // key is null if the second character is '-'
@@ -118,6 +118,23 @@ public class FullJoinTest
     }
 
     /// <summary>
+    /// Verifies that when multiple outer elements match the same inner group, the matched inner elements are not yielded again
+    /// as unmatched, while the other inner groups that no outer element matched are still yielded, for both overloads.
+    /// This guards the bookkeeping of matched groups, which must count each group once regardless of how many outer elements matched it.
+    /// </summary>
+    [Fact]
+    public void FullJoin_DuplicateOuterKeys_YieldsOnlyUnmatchedInner()
+    {
+        var outer = new[] { "a1", "b1" };
+        var inner = new[] { "x1", "y2" };
+
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf).ToArray()
+            .ShouldBe(new (string?, string?)[] { ("a1", "x1"), ("b1", "x1"), (null, "y2") });
+        outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray()
+            .ShouldBe(new[] { "a1:x1", "b1:x1", ":y2" });
+    }
+
+    /// <summary>
     /// Verifies that FullJoin yields all inner elements when outer is empty.
     /// </summary>
     [Fact]
@@ -146,6 +163,7 @@ public class FullJoinTest
         outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf).ToArray().ShouldBe(expected);
         outer.AsValueEnumerable().FullJoin(inner.AsValueEnumerable(), KeyOf, KeyOf).ToArray().ShouldBe(expected);
         outer.AsValueEnumerable().FullJoin(inner, KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray().ShouldBe(new[] { ":p9", ":q8", ":r9" });
+        outer.AsValueEnumerable().FullJoin(inner.AsValueEnumerable(), KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray().ShouldBe(new[] { ":p9", ":q8", ":r9" });
     }
 
     /// <summary>
@@ -204,7 +222,7 @@ public class FullJoinTest
     }
 
     /// <summary>
-    /// Verifies that FullJoin disposes both sources when outer is an empty array and inner is streamed without building a lookup,
+    /// Verifies that FullJoin disposes the inner source when outer is an empty array and inner is streamed without building a lookup,
     /// both after full enumeration and after early termination, for both overloads.
     /// </summary>
     [Fact]
@@ -245,6 +263,88 @@ public class FullJoinTest
         selectorQuery.First().ShouldBe(":p9");
         TestUtil.Dispose(selectorQuery);
         innerDisposed.ShouldBeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that FullJoin disposes both outer and inner sources when it builds a lookup from inner,
+    /// after full enumeration, after early termination while yielding outer elements,
+    /// and after early termination while yielding unmatched inner elements, for both overloads.
+    /// </summary>
+    [Fact]
+    public void FullJoin_DisposesBothSources()
+    {
+        var outerDisposed = false;
+        var innerDisposed = false;
+
+        IEnumerable<string> GetOuterSequence()
+        {
+            try
+            {
+                yield return "a1";
+                yield return "b2";
+            }
+            finally
+            {
+                outerDisposed = true;
+            }
+        }
+
+        IEnumerable<string> GetInnerSequence()
+        {
+            try
+            {
+                yield return "x1";
+                yield return "y3";
+                yield return "z4";
+            }
+            finally
+            {
+                innerDisposed = true;
+            }
+        }
+
+        // yields (a1, x1), (b2, null), (null, y3), (null, z4)
+        // count = 1 stops while yielding outer elements, count = 3 stops while yielding unmatched inner elements.
+        void EnumerateAndDispose(int count, bool withResultSelector)
+        {
+            outerDisposed = false;
+            innerDisposed = false;
+
+            if (withResultSelector)
+            {
+                using var e = GetOuterSequence().AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf, (o, i) => $"{o}:{i}").Enumerator;
+                for (var i = 0; i < count; i++)
+                {
+                    e.TryGetNext(out _).ShouldBeTrue();
+                }
+            }
+            else
+            {
+                using var e = GetOuterSequence().AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf).Enumerator;
+                for (var i = 0; i < count; i++)
+                {
+                    e.TryGetNext(out _).ShouldBeTrue();
+                }
+            }
+
+            outerDisposed.ShouldBeTrue();
+            innerDisposed.ShouldBeTrue();
+        }
+
+        GetOuterSequence().AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf).ToArray();
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+
+        outerDisposed = false;
+        innerDisposed = false;
+        GetOuterSequence().AsValueEnumerable().FullJoin(GetInnerSequence(), KeyOf, KeyOf, (o, i) => $"{o}:{i}").ToArray();
+        outerDisposed.ShouldBeTrue();
+        innerDisposed.ShouldBeTrue();
+
+        EnumerateAndDispose(1, withResultSelector: false);
+        EnumerateAndDispose(3, withResultSelector: false);
+        EnumerateAndDispose(1, withResultSelector: true);
+        EnumerateAndDispose(3, withResultSelector: true);
     }
 
     /// <summary>

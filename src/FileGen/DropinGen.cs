@@ -352,7 +352,9 @@ internal static partial class ZLinqDropInExtensions
             throw new InvalidOperationException("Default value other than null is not supported:" + param.Name);
         }
 
-        return " = null";
+        // null default of a value type (or an unconstrained type parameter) must be written as default
+        var type = param.ParameterType;
+        return (type.IsValueType || type.IsGenericParameter) ? " = default" : " = null";
     }
 
     string BuildType(MethodInfo methodInfo, Type type, string replacement)
