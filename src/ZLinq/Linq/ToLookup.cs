@@ -127,6 +127,33 @@ namespace ZLinq.Linq
 
             return lookupBuilder.BuildAndClear();
         }
+
+        // Enumerable.FullJoin preserves inner elements with null keys to emit them as unmatched,
+        // even though null keys never participate in matches.
+        public static Lookup<TKey, TSource> CreateForFullJoin<TEnumerator, TSource, TKey>(ref TEnumerator source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
+            where TEnumerator : struct, IValueEnumerator<TSource>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+        {
+            var lookupBuilder = new LookupBuilder<TKey, TSource>(comparer ?? EqualityComparer<TKey>.Default);
+            if (source.TryGetSpan(out var span))
+            {
+                foreach (var item in span)
+                {
+                    lookupBuilder.Add(keySelector(item), item);
+                }
+            }
+            else
+            {
+                while (source.TryGetNext(out var item))
+                {
+                    lookupBuilder.Add(keySelector(item), item);
+                }
+            }
+
+            return lookupBuilder.BuildAndClear();
+        }
     }
 
     [StructLayout(LayoutKind.Auto)]
@@ -361,6 +388,10 @@ namespace ZLinq.Linq
         }
 
         public int Count => count;
+
+        // groups are linked circularly in add order, last.NextGroupInAddOrder is the first group.
+        internal Grouping<TKey, TElement>? FirstGroup => last?.NextGroupInAddOrder;
+        internal Grouping<TKey, TElement>? LastGroup => last;
 
         // Lookup method
 

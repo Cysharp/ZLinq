@@ -89,6 +89,9 @@ public static partial class Assert
     internal static void Contains<T>(T expected, IEnumerable<T> collection, IEqualityComparer<T> comparer)
         => Xunit.Assert.Contains(expected, collection, comparer);
 
+    internal static void Contains<T>(IEnumerable<T> collection, Predicate<T> filter)
+        => Xunit.Assert.Contains(collection, filter);
+
     internal static void DoesNotContain<T>(T expected, IEnumerable<T> collection)
         => Xunit.Assert.DoesNotContain(expected, collection);
 

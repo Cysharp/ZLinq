@@ -39,6 +39,24 @@
             , allows ref struct
 #endif
             => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), Throws.IfNull(resultSelector), comparer));
+
+        public static ValueEnumerable<GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>, IGrouping<TOuter, TInner>> GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, ValueEnumerable<TEnumerator2, TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            where TEnumerator2 : struct, IValueEnumerator<TInner>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            => new(new(source.Enumerator, inner.Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), comparer));
+
+        public static ValueEnumerable<GroupJoin<TEnumerator, FromEnumerable<TInner>, TOuter, TInner, TKey>, IGrouping<TOuter, TInner>> GroupJoin<TEnumerator, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), comparer));
     }
 }
 
@@ -125,5 +143,120 @@ namespace ZLinq.Linq
             }
             source.Dispose();
         }
+    }
+
+    [StructLayout(LayoutKind.Auto)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+#if NET9_0_OR_GREATER
+    public ref
+#else
+    public
+#endif
+    struct GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>(TEnumerator source, TEnumerator2 inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer)
+        : IValueEnumerator<IGrouping<TOuter, TInner>>
+        where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+        , allows ref struct
+#endif
+        where TEnumerator2 : struct, IValueEnumerator<TInner>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+    {
+        TEnumerator source = source;
+        TEnumerator2 inner = inner;
+
+        Lookup<TKey, TInner>? innerLookup;
+
+        public bool TryGetNonEnumeratedCount(out int count)
+        {
+            count = 0;
+            return false;
+        }
+
+        public bool TryGetSpan(out ReadOnlySpan<IGrouping<TOuter, TInner>> span)
+        {
+            span = default;
+            return false;
+        }
+
+        public bool TryCopyTo(scoped Span<IGrouping<TOuter, TInner>> destination, Index offset) => false;
+
+        public bool TryGetNext(out IGrouping<TOuter, TInner> current)
+        {
+            if (innerLookup == null)
+            {
+                try
+                {
+                    innerLookup = Lookup.CreateForJoin(ref inner, innerKeySelector, comparer);
+                }
+                finally
+                {
+                    inner.Dispose();
+                }
+            }
+
+            if (source.TryGetNext(out var value))
+            {
+                var key = outerKeySelector(value);
+                // Enumerable.GroupJoin allows null unlike Join
+                var group = innerLookup.GetGroup(key);
+                // return empty grouping if there is no matching group
+                current = new GroupJoinGrouping<TOuter, TInner>(value, group != null ? group : Array.Empty<TInner>());
+                return true;
+            }
+
+            Unsafe.SkipInit(out current);
+            return false;
+        }
+
+        public void Dispose()
+        {
+            if (innerLookup == null)
+            {
+                inner.Dispose();
+            }
+            source.Dispose();
+        }
+    }
+
+    // IGrouping for GroupJoin without resultSelector, the key is the outer element.
+    // elements may be shared by outer elements with the same key, so it is exposed as read-only.
+    internal sealed class GroupJoinGrouping<TOuter, TElement>(TOuter key, IList<TElement> elements) : IGrouping<TOuter, TElement>, IList<TElement>, IReadOnlyList<TElement>
+    {
+        public TOuter Key => key;
+
+        public int Count => elements.Count;
+
+        // we need an IList implementation for System.Linq internal optimization usage
+
+        public bool IsReadOnly => true;
+
+        public TElement this[int index]
+        {
+            get => elements[index];
+            set => throw new NotSupportedException();
+        }
+
+        public IEnumerator<TElement> GetEnumerator() => elements.GetEnumerator();
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public int IndexOf(TElement item) => elements.IndexOf(item);
+
+        // use IndexOf because Grouping.Contains searches the unused capacity of its buffer as well
+        public bool Contains(TElement item) => elements.IndexOf(item) >= 0;
+
+        public void CopyTo(TElement[] array, int arrayIndex) => elements.CopyTo(array, arrayIndex);
+
+        public void Insert(int index, TElement item) => throw new NotSupportedException();
+
+        public void RemoveAt(int index) => throw new NotSupportedException();
+
+        public void Add(TElement item) => throw new NotSupportedException();
+
+        public void Clear() => throw new NotSupportedException();
+
+        public bool Remove(TElement item) => throw new NotSupportedException();
     }
 }
