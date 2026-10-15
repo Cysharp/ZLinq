@@ -569,7 +569,7 @@ namespace ZLinq.Linq
 
         public bool Contains(TElement item)
         {
-            return elements.Contains(item); // System.Linq Contains
+            return Array.IndexOf(elements, item, 0, count) >= 0;
         }
 
         public void CopyTo(TElement[] array, int arrayIndex)
