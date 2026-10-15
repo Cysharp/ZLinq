@@ -396,10 +396,9 @@ public class AddOnlyIntList2 : IValueEnumerable<AddOnlyIntList2.Enumerator, int>
 
     public void Add(int x) => list.Add(x);
 
-    public ValueEnumerable<FromValueEnumerable<Enumerator, int>, int> AsValueEnumerable()
+    public ValueEnumerable<Enumerator, int> AsValueEnumerable()
     {
-        // you need to write new(new(new())) magic.
-        return new(new(new(list)));
+        return new(new(list));
     }
 
     // `public` struct enumerator
@@ -972,7 +971,7 @@ public static class MyExtensions
         {
             if (e.TryGetNonEnumeratedCount(out var count))
             {
-                var array = GC.AllocateUninitializedArray<TSource>(count);
+                var array = GC.AllocateUninitializedArray<T>(count);
 
                 if (e.TryCopyTo(array, offset: 0))
                 {
@@ -991,7 +990,7 @@ public static class MyExtensions
             }
             else
             {
-                var builder = ImmutableArray.CreateBuilder<TSource>();
+                var builder = ImmutableArray.CreateBuilder<T>();
                 while (e.TryGetNext(out var current))
                 {
                     builder.Add(current);
