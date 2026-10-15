@@ -81,6 +81,22 @@ public class CopyToTest
     }
 
     [Fact]
+    public void CopyTo_Span_EmptyDestination_FilteredSource()
+    {
+        var source = new[] { 1, 2, 3 }.AsValueEnumerable().Where(x => x > 0);
+
+        source.CopyTo(Span<int>.Empty).ShouldBe(0);
+    }
+
+    [Fact]
+    public void CopyTo_Span_EmptyDestination_QueueSource()
+    {
+        var source = new Queue<int>(new[] { 1, 2, 3 }).AsValueEnumerable();
+
+        source.CopyTo(Span<int>.Empty).ShouldBe(0);
+    }
+
+    [Fact]
     public void CopyTo_Span_WithTryGetNonEnumeratedCount()
     {
         // Arrange - use a source that can report its count
