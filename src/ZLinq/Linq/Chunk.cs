@@ -50,7 +50,7 @@ namespace ZLinq.Linq
         {
             if (source.TryGetNonEnumeratedCount(out var sourceCount))
             {
-                count = (sourceCount + size - 1) / size; // Calculate the total number of chunks
+                count = sourceCount / size + (sourceCount % size == 0 ? 0 : 1);
                 return true;
             }
 
