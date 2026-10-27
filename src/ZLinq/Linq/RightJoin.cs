@@ -38,6 +38,24 @@
             , allows ref struct
 #endif
             => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), Throws.IfNull(resultSelector), comparer));
+
+        public static ValueEnumerable<RightJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>, (TOuter? Outer, TInner Inner)> RightJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, ValueEnumerable<TEnumerator2, TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            where TEnumerator2 : struct, IValueEnumerator<TInner>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            => new(new(source.Enumerator, inner.Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), comparer));
+
+        public static ValueEnumerable<RightJoin<TEnumerator, FromEnumerable<TInner>, TOuter, TInner, TKey>, (TOuter? Outer, TInner Inner)> RightJoin<TEnumerator, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), comparer));
     }
 }
 
@@ -131,6 +149,112 @@ namespace ZLinq.Linq
                 {
                     // The difference with Join is how nulls are handled.
                     current = resultSelector(default, value);
+                    return true;
+                }
+            }
+
+            Unsafe.SkipInit(out current);
+            return false;
+        }
+
+        public void Dispose()
+        {
+            if (outerLookup == null) // source is outer
+            {
+                source.Dispose();
+            }
+            inner.Dispose();
+        }
+    }
+
+    [StructLayout(LayoutKind.Auto)]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+#if NET9_0_OR_GREATER
+    public ref
+#else
+    public
+#endif
+    struct RightJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>(TEnumerator source, TEnumerator2 inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer)
+        : IValueEnumerator<(TOuter? Outer, TInner Inner)>
+            where TEnumerator : struct, IValueEnumerator<TOuter>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+            where TEnumerator2 : struct, IValueEnumerator<TInner>
+#if NET9_0_OR_GREATER
+            , allows ref struct
+#endif
+    {
+        TEnumerator source = source;
+        TEnumerator2 inner = inner;
+
+        Lookup<TKey, TOuter>? outerLookup;
+        Grouping<TKey, TOuter>? currentGroup;
+        int currentGroupIndex;
+        TInner currentInner = default!;
+
+        public bool TryGetNonEnumeratedCount(out int count)
+        {
+            count = 0;
+            return false;
+        }
+
+        public bool TryGetSpan(out ReadOnlySpan<(TOuter? Outer, TInner Inner)> span)
+        {
+            span = default;
+            return false;
+        }
+
+        public bool TryCopyTo(scoped Span<(TOuter? Outer, TInner Inner)> destination, Index offset) => false;
+
+        public bool TryGetNext(out (TOuter? Outer, TInner Inner) current)
+        {
+            if (outerLookup == null)
+            {
+                try
+                {
+                    // CreateForJoin excludes null.
+                    // If we want to accept null keys, we should create a lookup with null keys and join them.
+                    // However, this behavior matches the official dotnet implementation.
+                    outerLookup = Lookup.CreateForJoin(ref source, outerKeySelector, comparer);
+                }
+                finally
+                {
+                    source.Dispose();
+                }
+            }
+
+        // iterating group
+        ITERATE:
+            if (currentGroup != null)
+            {
+                if (currentGroupIndex < currentGroup.Count)
+                {
+                    current = (currentGroup[currentGroupIndex], currentInner);
+                    currentGroupIndex++;
+                    return true;
+                }
+                else
+                {
+                    currentGroup = null;
+                }
+            }
+
+            while (inner.TryGetNext(out var value))
+            {
+                var key = innerKeySelector(value);
+                var group = outerLookup.GetGroup(key);
+                if (group != null)
+                {
+                    currentInner = value;
+                    currentGroup = group;
+                    currentGroupIndex = 0;
+                    goto ITERATE;
+                }
+                else
+                {
+                    // The difference with Join is how nulls are handled.
+                    current = (default, value);
                     return true;
                 }
             }
