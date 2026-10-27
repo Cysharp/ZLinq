@@ -14,6 +14,11 @@ partial class ValueEnumerableExtensions
     {
         using var enumerator = source.Enumerator;
 
+        if (destination.IsEmpty)
+        {
+            return 0;
+        }
+
         if (enumerator.TryGetNonEnumeratedCount(out var count))
         {
             if (enumerator.TryCopyTo(destination, 0))
