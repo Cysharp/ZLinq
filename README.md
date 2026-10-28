@@ -9,7 +9,7 @@ Zero allocation LINQ with LINQ to Span, LINQ to SIMD, and LINQ to Tree (FileSyst
 
 ![](img/benchmarkhead.jpg)
 
-Unlike regular LINQ, ZLinq doesn't increase allocations when adding more method chains, and it also has higher basic performance. You can check various benchmark patterns at [GitHub Actions/Benchmark](https://github.com/Cysharp/ZLinq/actions/runs/19324633887). ZLinq shows high performance in almost all patterns, with some benchmarks showing overwhelming differences.
+Unlike regular LINQ, ZLinq doesn't increase allocations when adding more method chains, and it also has higher basic performance. You can check various benchmark patterns at [GitHub Actions/Benchmark](https://github.com/Cysharp/ZLinq/actions/runs/19324633887). ZLinq shows high performance in almost all patterns, with some benchmarks showing overwhelming differences. A third-party comparison with other LINQ libraries is also available at [.NET Matrix](https://matrix.dev-team.org/?category=linq-queries&library=ZLinq).
 
 As a bonus, LINQ operators and optimizations equivalent to .NET 10 can be used in .NET Framework 4.8 (netstandard2.0) and Unity (netstandard2.1).
 
