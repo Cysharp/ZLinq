@@ -3,7 +3,7 @@ ZLinq
 [![CI](https://github.com/Cysharp/ZLinq/actions/workflows/build-debug.yaml/badge.svg)](https://github.com/Cysharp/ZLinq/actions/workflows/build-debug.yaml)
 [![Benchmark](https://github.com/Cysharp/ZLinq/actions/workflows/benchmark.yaml/badge.svg)](https://github.com/Cysharp/ZLinq/actions/workflows/benchmark.yaml)
 [![NuGet](https://img.shields.io/nuget/v/ZLinq)](https://www.nuget.org/packages/ZLinq)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Cysharp/ZLinq)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-blue)](https://deepwiki.com/Cysharp/ZLinq)
 
 Zero allocation LINQ with LINQ to Span, LINQ to SIMD, and LINQ to Tree (FileSystem, JSON, GameObject, etc.) for all .NET platforms(netstandard2.0, 2.1, net8, net9) and Unity, Godot.
 
