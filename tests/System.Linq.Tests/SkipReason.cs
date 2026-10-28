@@ -81,13 +81,6 @@ public static class SkipReason
     public const string Issue0096 = "ZLinq don't support reuse variables if ValueEnumerable type is different. " +
                                     "See: https://github.com/Cysharp/ZLinq/issues/96";
 
-    /// <summary>
-    /// When using Count() with ICollection based collection.
-    /// OverflowException is not thrown as expected, and return wrong value.
-    /// </summary>
-    public const string Issue0242 = "Count() return wrong value when using ZLinq with ICollection<T> based collection. " +
-                                    "See: https://github.com/Cysharp/ZLinq/issues/242";
-
     // Dummy code.
     public const string ZLinq_IssueNNNN = "See: https://github.com/Cysharp/ZLinq/issues/{placeholder}";
 }

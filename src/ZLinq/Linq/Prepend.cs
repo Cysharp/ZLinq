@@ -33,9 +33,9 @@ namespace ZLinq.Linq
 
         public bool TryGetNonEnumeratedCount(out int count)
         {
-            if (source.TryGetNonEnumeratedCount(out count) && count < int.MaxValue)
+            if (source.TryGetNonEnumeratedCount(out count))
             {
-                count++;
+                count = checked(count + 1); // same as System.Linq (.NET 11), LongCount falls back to enumeration on overflow
                 return true;
             }
             count = 0;

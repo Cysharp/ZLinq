@@ -10,7 +10,20 @@
         {
             using (var enumerator = source.Enumerator)
             {
-                if (enumerator.TryGetNonEnumeratedCount(out var count))
+                bool hasCount;
+                int count;
+                try
+                {
+                    hasCount = enumerator.TryGetNonEnumeratedCount(out count);
+                }
+                catch (OverflowException)
+                {
+                    // the count exceeds int.MaxValue (e.g. Append, Concat), System.Linq's LongCount enumerates in this case.
+                    hasCount = false;
+                    count = 0;
+                }
+
+                if (hasCount)
                 {
                     return count;
                 }
