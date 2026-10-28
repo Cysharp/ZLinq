@@ -444,6 +444,7 @@ namespace ZLinq.Linq
 
         public bool TryCopyTo(scoped Span<TResult> destination, Index offset)
         {
+#if NET8_0_OR_GREATER
             if (EnumeratorHelper.TryGetSlice<TSource>(CollectionsMarshal.AsSpan(source), offset, destination.Length, out var slice))
             {
                 for (var i = 0; (uint)i < (uint)slice.Length; i++)
@@ -452,6 +453,16 @@ namespace ZLinq.Linq
                 }
                 return true;
             }
+#else
+            if (EnumeratorHelper.TryGetSliceRange(source.Count, offset, destination.Length, out var start, out var count))
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    destination[i] = selector(source[start + i]);
+                }
+                return true;
+            }
+#endif
 
             return false;
         }
@@ -511,7 +522,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            var span = CollectionsMarshal.AsSpan(source);
+            var span = ListMarshal.AsSpan(source);
             while ((uint)index < (uint)span.Length)
             {
                 current = selector(span[index++]);

@@ -291,18 +291,12 @@ namespace ZLinq.Linq
 
         public override bool TryGetSpan(IEnumerable<T> source, out ReadOnlySpan<T> span)
         {
-            span = CollectionsMarshal.AsSpan(Unsafe.As<IEnumerable<T>, List<T>>(ref source));
-            return true;
+            return ListMarshal.TryGetSpan(Unsafe.As<IEnumerable<T>, List<T>>(ref source), out span);
         }
 
         public override bool TryCopyTo(IEnumerable<T> source, Span<T> destination, Index offset)
         {
-            if (EnumeratorHelper.TryGetSlice<T>(CollectionsMarshal.AsSpan(Unsafe.As<IEnumerable<T>, List<T>>(ref source)), offset, destination.Length, out var slice))
-            {
-                slice.CopyTo(destination);
-                return true;
-            }
-            return false;
+            return ListMarshal.TryCopyTo(Unsafe.As<IEnumerable<T>, List<T>>(ref source), destination, offset);
         }
 
         public override bool TryGetNext(ref FromEnumerableContent content, out T current)
@@ -629,19 +623,12 @@ namespace ZLinq.Linq
 
         public bool TryGetSpan(out ReadOnlySpan<T> span)
         {
-            span = CollectionsMarshal.AsSpan(source);
-            return true;
+            return ListMarshal.TryGetSpan(source, out span);
         }
 
         public bool TryCopyTo(Span<T> destination, Index offset)
         {
-            var span = CollectionsMarshal.AsSpan(source);
-            if (EnumeratorHelper.TryGetSlice<T>(span, offset, destination.Length, out var slice))
-            {
-                slice.CopyTo(destination);
-                return true;
-            }
-            return false;
+            return ListMarshal.TryCopyTo(source, destination, offset);
         }
 
         public bool TryGetNext(out T current)

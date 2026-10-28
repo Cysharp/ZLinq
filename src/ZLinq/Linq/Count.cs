@@ -87,13 +87,29 @@ namespace ZLinq
             var list = source.Enumerator.GetSource();
             var predicate = source.Enumerator.Predicate;
 
-            var span = CollectionsMarshal.AsSpan(list);
             var count = 0;
-            for (int i = 0; (uint)i < (uint)span.Length; i++)
+            if (ListMarshal.UseChunks(list))
             {
-                if (predicate(span[i]))
+                foreach (var span in new ListChunks<TSource>(list))
                 {
-                    count++;
+                    for (int i = 0; (uint)i < (uint)span.Length; i++)
+                    {
+                        if (predicate(span[i]))
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var span = ListMarshal.AsSpan(list);
+                for (int i = 0; (uint)i < (uint)span.Length; i++)
+                {
+                    if (predicate(span[i]))
+                    {
+                        count++;
+                    }
                 }
             }
             return count;
@@ -183,12 +199,28 @@ namespace ZLinq
             var list = source.Enumerator.GetSource();
             var count = 0;
 
-            var span = CollectionsMarshal.AsSpan(list);
-            for (int i = 0; (uint)i < (uint)span.Length; i++)
+            if (ListMarshal.UseChunks(list))
             {
-                if (predicate(span[i]))
+                foreach (var span in new ListChunks<TSource>(list))
                 {
-                    count++;
+                    for (int i = 0; (uint)i < (uint)span.Length; i++)
+                    {
+                        if (predicate(span[i]))
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var span = ListMarshal.AsSpan(list);
+                for (int i = 0; (uint)i < (uint)span.Length; i++)
+                {
+                    if (predicate(span[i]))
+                    {
+                        count++;
+                    }
                 }
             }
 

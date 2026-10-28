@@ -12,13 +12,21 @@
 
             if (enumerator.TryGetNonEnumeratedCount(out var count))
             {
-                var list = new List<TSource>(count); // list with capacity set internal buffer as source size
-#if NET8_0_OR_GREATER
-                CollectionsMarshal.SetCount(list, count);
-#else
-                CollectionsMarshal.UnsafeSetCount(list, count);
+#if !NET8_0_OR_GREATER
+                if (ListMarshal.TryGetListSource<TEnumerator, TSource>(in enumerator, out var sourceList))
+                {
+                    return new List<TSource>(sourceList);
+                }
+
+                if (ListMarshal.TryGetArraySource<TEnumerator, TSource>(in enumerator, out var sourceArray))
+                {
+                    return new List<TSource>(sourceArray);
+                }
 #endif
-                var span = CollectionsMarshal.AsSpan(list);
+
+                using var filler = new ListFiller<TSource>(count);
+                var span = filler.Span;
+                var written = count;
                 if (!enumerator.TryCopyTo(span, 0))
                 {
                     var i = 0;
@@ -27,8 +35,9 @@
                         span[i] = current;
                         i++;
                     }
+                    written = i;
                 }
-                return list;
+                return filler.Commit(written);
             }
             else
             {
@@ -61,16 +70,9 @@
 
                 count = arrayBuilder.Count;
 
-                var list = new List<TSource>(count);
-#if NET8_0_OR_GREATER
-                CollectionsMarshal.SetCount(list, count);
-#else
-                CollectionsMarshal.UnsafeSetCount(list, count);
-#endif
-
-                var listSpan = CollectionsMarshal.AsSpan(list);
-                arrayBuilder.CopyToAndClear(listSpan);
-                return list;
+                using var filler = new ListFiller<TSource>(count);
+                arrayBuilder.CopyToAndClear(filler.Span);
+                return filler.Commit(count);
             }
         }
 
@@ -88,20 +90,15 @@
 
             if (enumerator.TryGetSpan(out var sourceSpan))
             {
-                var list = new List<TResult>(sourceSpan.Length);
-#if NET8_0_OR_GREATER
-                CollectionsMarshal.SetCount(list, sourceSpan.Length);
-#else
-                CollectionsMarshal.UnsafeSetCount(list, sourceSpan.Length);
-#endif
-                var span = CollectionsMarshal.AsSpan(list);
+                using var filler = new ListFiller<TResult>(sourceSpan.Length);
+                var span = filler.Span;
 
                 for (int i = 0; (uint)i < (uint)sourceSpan.Length; i++)
                 {
                     span[i] = selector(sourceSpan[i]);
                 }
 
-                return list;
+                return filler.Commit(sourceSpan.Length);
             }
             else
             {
@@ -133,16 +130,9 @@
 
                 var count = arrayBuilder.Count;
 
-                var list = new List<TResult>(count);
-#if NET8_0_OR_GREATER
-                CollectionsMarshal.SetCount(list, count);
-#else
-                CollectionsMarshal.UnsafeSetCount(list, count);
-#endif
-
-                var listSpan = CollectionsMarshal.AsSpan(list);
-                arrayBuilder.CopyToAndClear(listSpan);
-                return list;
+                using var filler = new ListFiller<TResult>(count);
+                arrayBuilder.CopyToAndClear(filler.Span);
+                return filler.Commit(count);
             }
         }
 
@@ -152,13 +142,8 @@
             var count = source.Enumerator.count;
             var selector = source.Enumerator.selector;
 
-            var list = new List<TResult>(count);
-#if NET8_0_OR_GREATER
-            CollectionsMarshal.SetCount(list, count);
-#else
-            CollectionsMarshal.UnsafeSetCount(list, count);
-#endif
-            var span = CollectionsMarshal.AsSpan(list);
+            using var filler = new ListFiller<TResult>(count);
+            var span = filler.Span;
 
             for (int i = 0; (uint)i < (uint)span.Length; i++)
             {
@@ -166,7 +151,7 @@
                 value++;
             }
 
-            return list;
+            return filler.Commit(count);
         }
 
         public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source)
@@ -174,41 +159,52 @@
             var sourceArray = source.Enumerator.source;
             var selector = source.Enumerator.selector;
 
-            var list = new List<TResult>(sourceArray.Length);
-#if NET8_0_OR_GREATER
-            CollectionsMarshal.SetCount(list, sourceArray.Length);
-#else
-            CollectionsMarshal.UnsafeSetCount(list, sourceArray.Length);
-#endif
-            var span = CollectionsMarshal.AsSpan(list);
+            using var filler = new ListFiller<TResult>(sourceArray.Length);
+            var span = filler.Span;
 
             for (int i = 0; (uint)i < (uint)sourceArray.Length; i++)
             {
                 span[i] = selector(sourceArray[i]);
             }
 
-            return list;
+            return filler.Commit(sourceArray.Length);
         }
 
         public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ListSelect<TSource, TResult>, TResult> source)
         {
-            var sourceArray = CollectionsMarshal.AsSpan(source.Enumerator.source);
+            var sourceList = source.Enumerator.source;
             var selector = source.Enumerator.selector;
 
-            var list = new List<TResult>(sourceArray.Length);
-#if NET8_0_OR_GREATER
-            CollectionsMarshal.SetCount(list, sourceArray.Length);
-#else
-            CollectionsMarshal.UnsafeSetCount(list, sourceArray.Length);
-#endif
-            var span = CollectionsMarshal.AsSpan(list);
+            var count = sourceList.Count;
 
-            for (int i = 0; (uint)i < (uint)sourceArray.Length; i++)
+            using var filler = new ListFiller<TResult>(count);
+            var span = filler.Span;
+
+            var written = 0;
+            if (ListMarshal.UseChunks(sourceList))
             {
-                span[i] = selector(sourceArray[i]);
+                // Stops early if the selector shrinks the list; Commit fills the rest with default.
+                foreach (var chunk in new ListChunks<TSource>(sourceList))
+                {
+                    var destination = span.Slice(written, chunk.Length);
+                    for (int i = 0; (uint)i < (uint)chunk.Length; i++)
+                    {
+                        destination[i] = selector(chunk[i]);
+                    }
+                    written += chunk.Length;
+                }
+            }
+            else
+            {
+                var elements = ListMarshal.AsSpan(sourceList);
+                for (int i = 0; (uint)i < (uint)elements.Length; i++)
+                {
+                    span[i] = selector(elements[i]);
+                }
+                written = elements.Length;
             }
 
-            return list;
+            return filler.Commit(written);
         }
     }
 }

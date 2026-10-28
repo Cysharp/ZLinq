@@ -334,7 +334,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TSource current)
         {
-            var span = CollectionsMarshal.AsSpan(source);
+            var span = ListMarshal.AsSpan(source);
             while ((uint)index < (uint)span.Length)
             {
                 var value = span[index];
@@ -391,7 +391,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            var span = CollectionsMarshal.AsSpan(source);
+            var span = ListMarshal.AsSpan(source);
             while ((uint)index < (uint)span.Length)
             {
                 var value = span[index];

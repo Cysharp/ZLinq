@@ -1,4 +1,6 @@
-﻿namespace ZLinq;
+﻿using System.Buffers;
+
+namespace ZLinq;
 
 partial class ValueEnumerableExtensions
 {
@@ -139,6 +141,31 @@ partial class ValueEnumerableExtensions
             return result.ToStringAndClear();
         }
     }
+
+#if !NET8_0_OR_GREATER
+
+    // netstandard cannot get the backing array of List<string>, so copy the elements into a pooled array
+    // to use the fast path for strings, which computes the final length before writing.
+    static string JoinToString(List<string> source, ReadOnlySpan<char> separator)
+    {
+        var count = source.Count;
+        if (count == 0) return "";
+        if (count == 1) return source[0];
+
+        var buffer = ArrayPool<string>.Shared.Rent(count);
+        try
+        {
+            source.CopyTo(0, buffer, 0, count);
+            return JoinToString(new ReadOnlySpan<string>(buffer, 0, count), separator);
+        }
+        finally
+        {
+            Array.Clear(buffer, 0, count);
+            ArrayPool<string>.Shared.Return(buffer);
+        }
+    }
+
+#endif
 
     static string JoinToString(ReadOnlySpan<string> source, ReadOnlySpan<char> separator)
     {
@@ -281,10 +308,14 @@ partial class ValueEnumerableExtensions
 
         if (typeof(TSource) == typeof(string))
         {
+#if NET8_0_OR_GREATER
             return JoinToString(CollectionsMarshal.AsSpan(Unsafe.As<List<TSource>, List<string>>(ref list)), separator);
+#else
+            return JoinToString(Unsafe.As<List<TSource>, List<string>>(ref list), separator);
+#endif
         }
 
-        var span = CollectionsMarshal.AsSpan(list);
+        var span = ListMarshal.AsSpan(list);
 
         if (span.Length == 0) return "";
         if (span.Length == 1) return span[0]!.ToString() ?? "";
@@ -548,7 +579,7 @@ partial class ValueEnumerableExtensions
         var list = source.Enumerator.source;
         var selector = source.Enumerator.selector;
 
-        var span = CollectionsMarshal.AsSpan(list);
+        var span = ListMarshal.AsSpan(list);
 
         if (span.Length == 0) return "";
         if (span.Length == 1) return selector(span[0])?.ToString() ?? "";
@@ -605,7 +636,7 @@ partial class ValueEnumerableExtensions
         var list = source.Enumerator.GetSource();
         var predicate = source.Enumerator.Predicate;
 
-        var span = CollectionsMarshal.AsSpan(list);
+        var span = ListMarshal.AsSpan(list);
 
         if (span.Length == 0) return "";
 
@@ -679,7 +710,7 @@ partial class ValueEnumerableExtensions
         var predicate = source.Enumerator.Predicate;
         var selector = source.Enumerator.Selector;
 
-        var span = CollectionsMarshal.AsSpan(list);
+        var span = ListMarshal.AsSpan(list);
 
         if (span.Length == 0) return "";
 

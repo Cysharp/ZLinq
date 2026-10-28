@@ -17,6 +17,13 @@ partial class ValueEnumerableExtensions
                 return Array.Empty<TSource>();
             }
 
+#if !NET8_0_OR_GREATER
+            if (ListMarshal.TryGetListSource<TEnumerator, TSource>(in enumerator, out var sourceList))
+            {
+                return sourceList.ToArray();
+            }
+#endif
+
             var array = GC.AllocateUninitializedArray<TSource>(count);
 
             if (enumerator.TryCopyTo(array.AsSpan(), 0))
@@ -429,7 +436,7 @@ partial class ValueEnumerableExtensions
     {
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
         var predicate = whereEnumerator.Predicate;
-        var sourceArray = CollectionsMarshal.AsSpan(whereEnumerator.GetSource());
+        var sourceList = whereEnumerator.GetSource();
 
 #if NETSTANDARD2_0
         Span<TSource> initialBufferSpan = default;
@@ -443,19 +450,46 @@ partial class ValueEnumerableExtensions
         var arrayBuilder = new SegmentedArrayProvider<TSource>(initialBufferSpan);
         var span = arrayBuilder.GetSpan();
         var i = 0;
-        foreach (var item in sourceArray)
+        if (ListMarshal.UseChunks(sourceList))
         {
-            if (predicate(item))
+            foreach (var chunk in new ListChunks<TSource>(sourceList))
             {
-                if (i == span.Length)
+                for (var j = 0; (uint)j < (uint)chunk.Length; j++)
                 {
-                    arrayBuilder.Advance(i);
-                    span = arrayBuilder.GetSpan();
-                    i = 0;
-                }
+                    var item = chunk[j];
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
 
-                span[i] = item;
-                i++;
+                        span[i] = item;
+                        i++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            var elements = ListMarshal.AsSpan(sourceList);
+            for (var j = 0; (uint)j < (uint)elements.Length; j++)
+            {
+                var item = elements[j];
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = item;
+                    i++;
+                }
             }
         }
         arrayBuilder.Advance(i);
@@ -476,7 +510,7 @@ partial class ValueEnumerableExtensions
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
         var predicate = whereEnumerator.Predicate;
         var selector = whereEnumerator.Selector;
-        var sourceArray = CollectionsMarshal.AsSpan(whereEnumerator.GetSource());
+        var sourceList = whereEnumerator.GetSource();
 
 #if NETSTANDARD2_0
         Span<TResult> initialBufferSpan = default;
@@ -491,19 +525,46 @@ partial class ValueEnumerableExtensions
         var span = arrayBuilder.GetSpan();
         var i = 0;
 
-        foreach (var item in sourceArray)
+        if (ListMarshal.UseChunks(sourceList))
         {
-            if (predicate(item))
+            foreach (var chunk in new ListChunks<TSource>(sourceList))
             {
-                if (i == span.Length)
+                for (var j = 0; (uint)j < (uint)chunk.Length; j++)
                 {
-                    arrayBuilder.Advance(i);
-                    span = arrayBuilder.GetSpan();
-                    i = 0;
-                }
+                    var item = chunk[j];
+                    if (predicate(item))
+                    {
+                        if (i == span.Length)
+                        {
+                            arrayBuilder.Advance(i);
+                            span = arrayBuilder.GetSpan();
+                            i = 0;
+                        }
 
-                span[i] = selector(item);
-                i++;
+                        span[i] = selector(item);
+                        i++;
+                    }
+                }
+            }
+        }
+        else
+        {
+            var elements = ListMarshal.AsSpan(sourceList);
+            for (var j = 0; (uint)j < (uint)elements.Length; j++)
+            {
+                var item = elements[j];
+                if (predicate(item))
+                {
+                    if (i == span.Length)
+                    {
+                        arrayBuilder.Advance(i);
+                        span = arrayBuilder.GetSpan();
+                        i = 0;
+                    }
+
+                    span[i] = selector(item);
+                    i++;
+                }
             }
         }
         arrayBuilder.Advance(i);

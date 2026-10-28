@@ -117,8 +117,13 @@ namespace ZLinq.Tests.Linq
             result.TryGetNonEnumeratedCount(out var count).ShouldBeTrue();
             count.ShouldBe(source.Count);
 
+#if NET8_0_OR_GREATER
             result.TryGetSpan(out var span).ShouldBeTrue();
             span.ToArray().ShouldBe(source.ToArray());
+#else
+            // netstandard builds have no public API to access the backing array of List<T>.
+            result.TryGetSpan(out _).ShouldBeFalse();
+#endif
 
             var array = result.ToArray();
             array.ShouldBe(source.ToArray());
@@ -137,8 +142,13 @@ namespace ZLinq.Tests.Linq
             result.TryGetNonEnumeratedCount(out var count).ShouldBeTrue();
             count.ShouldBe(0);
 
+#if NET8_0_OR_GREATER
             result.TryGetSpan(out var span).ShouldBeTrue();
             span.IsEmpty.ShouldBeTrue();
+#else
+            // netstandard builds have no public API to access the backing array of List<T>.
+            result.TryGetSpan(out _).ShouldBeFalse();
+#endif
 
             result.ToArray().ShouldBe(Array.Empty<int>());
         }
