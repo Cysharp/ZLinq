@@ -12,6 +12,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromByteSequence, Byte> Sequence(Byte start, Byte endInclusive, Byte step)
         {
 
@@ -202,6 +207,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromSByteSequence, SByte> Sequence(SByte start, SByte endInclusive, SByte step)
         {
 
@@ -392,6 +402,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromUInt16Sequence, UInt16> Sequence(UInt16 start, UInt16 endInclusive, UInt16 step)
         {
 
@@ -582,6 +597,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromInt16Sequence, Int16> Sequence(Int16 start, Int16 endInclusive, Int16 step)
         {
 
@@ -772,6 +792,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromUInt32Sequence, UInt32> Sequence(UInt32 start, UInt32 endInclusive, UInt32 step)
         {
 
@@ -962,6 +987,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromInt32Sequence, Int32> Sequence(Int32 start, Int32 endInclusive, Int32 step)
         {
 
@@ -1152,6 +1182,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromUInt64Sequence, UInt64> Sequence(UInt64 start, UInt64 endInclusive, UInt64 step)
         {
 
@@ -1342,6 +1377,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromInt64Sequence, Int64> Sequence(Int64 start, Int64 endInclusive, Int64 step)
         {
 
@@ -1532,6 +1572,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromCharSequence, Char> Sequence(Char start, Char endInclusive, Char step)
         {
 
@@ -1722,6 +1767,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromSingleSequence, Single> Sequence(Single start, Single endInclusive, Single step)
         {
             if (Single.IsNaN(start)) Throws.ArgumentOutOfRange(nameof(start));
@@ -1845,6 +1895,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromDoubleSequence, Double> Sequence(Double start, Double endInclusive, Double step)
         {
             if (Double.IsNaN(start)) Throws.ArgumentOutOfRange(nameof(start));
@@ -1968,6 +2023,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromDecimalSequence, Decimal> Sequence(Decimal start, Decimal endInclusive, Decimal step)
         {
 

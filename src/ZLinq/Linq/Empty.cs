@@ -2,6 +2,8 @@
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Returns an empty sequence.</summary>
+        /// <returns>An empty sequence.</returns>
         public static ValueEnumerable<FromEmpty<T>, T> Empty<T>()
         {
             return new(default);

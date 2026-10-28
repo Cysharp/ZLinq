@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns distinct elements from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence that contains distinct elements from the source sequence.</returns>
         public static ValueEnumerable<Distinct<TEnumerator, TSource>, TSource> Distinct<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -9,6 +12,10 @@
 #endif
             => new(new(source.Enumerator, null!));
 
+        /// <summary>Returns distinct elements from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="comparer">An equality comparer to compare values, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains distinct elements from the source sequence.</returns>
         public static ValueEnumerable<Distinct<TEnumerator, TSource>, TSource> Distinct<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IEqualityComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

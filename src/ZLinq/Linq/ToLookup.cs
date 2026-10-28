@@ -9,6 +9,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Creates a lookup from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A lookup that contains keys and values.</returns>
         public static ILookup<TKey, TSource> ToLookup<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -18,6 +22,11 @@ namespace ZLinq
             return ToLookup(source, keySelector, null);
         }
 
+        /// <summary>Creates a lookup from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A lookup that contains keys and values.</returns>
         public static ILookup<TKey, TSource> ToLookup<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -48,6 +57,11 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Creates a lookup from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <returns>A lookup that contains keys and values.</returns>
         public static ILookup<TKey, TElement> ToLookup<TEnumerator, TSource, TKey, TElement>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -57,6 +71,12 @@ namespace ZLinq
             return ToLookup(source, keySelector, elementSelector, null!);
         }
 
+        /// <summary>Creates a lookup from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A lookup that contains keys and values.</returns>
         public static ILookup<TKey, TElement> ToLookup<TEnumerator, TSource, TKey, TElement>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

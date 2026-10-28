@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns the elements of the specified sequence or the type parameter's default value in a singleton collection if the sequence is empty.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence that contains the default value if the source sequence is empty; otherwise, the source sequence.</returns>
         public static ValueEnumerable<DefaultIfEmpty<TEnumerator, TSource>, TSource> DefaultIfEmpty<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -9,6 +12,10 @@
 #endif
             => new(new(source.Enumerator, default!));
 
+        /// <summary>Returns the elements of the specified sequence or the specified value in a singleton collection if the sequence is empty.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="defaultValue">The value to return if the sequence is empty.</param>
+        /// <returns>A sequence that contains the specified value if the source sequence is empty; otherwise, the source sequence.</returns>
         public static ValueEnumerable<DefaultIfEmpty<TEnumerator, TSource>, TSource> DefaultIfEmpty<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource defaultValue)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

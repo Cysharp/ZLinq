@@ -4,6 +4,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns the number of elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The number of elements in the sequence.</returns>
+        /// <remarks>If the count can be determined without enumeration (e.g. arrays, lists and collections), the sequence is not enumerated.</remarks>
         public static Int32 Count<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -30,6 +34,10 @@ namespace ZLinq
 
         // Where Count
 
+        /// <summary>Returns the number of elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The number of elements in the sequence.</returns>
+        /// <remarks>If the count can be determined without enumeration (e.g. arrays, lists and collections), the sequence is not enumerated.</remarks>
         public static Int32 Count<TEnumerator, TSource>(this ValueEnumerable<Where<TEnumerator, TSource>, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -64,6 +72,10 @@ namespace ZLinq
             return count;
         }
 
+        /// <summary>Returns the number of elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The number of elements in the sequence.</returns>
+        /// <remarks>If the count can be determined without enumeration (e.g. arrays, lists and collections), the sequence is not enumerated.</remarks>
         public static Int32 Count<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source)
         {
             var array = source.Enumerator.GetSource();
@@ -82,6 +94,10 @@ namespace ZLinq
             return count;
         }
 
+        /// <summary>Returns the number of elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The number of elements in the sequence.</returns>
+        /// <remarks>If the count can be determined without enumeration (e.g. arrays, lists and collections), the sequence is not enumerated.</remarks>
         public static Int32 Count<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source)
         {
             var list = source.Enumerator.GetSource();
@@ -115,6 +131,10 @@ namespace ZLinq
             return count;
         }
 
+        /// <summary>Returns a number that represents how many elements in the specified sequence satisfy a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</returns>
         public static Int32 Count<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -150,6 +170,10 @@ namespace ZLinq
             return count;
         }
 
+        /// <summary>Returns a number that represents how many elements in the specified sequence satisfy a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int32 Count<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, Func<TSource, Boolean> predicate)
         {
@@ -191,6 +215,10 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns a number that represents how many elements in the specified sequence satisfy a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int32 Count<TSource>(this ValueEnumerable<FromList<TSource>, TSource> source, Func<TSource, Boolean> predicate)
         {

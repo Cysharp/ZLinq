@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Adds a value to the beginning of the sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="element">The value to prepend to the source sequence.</param>
+        /// <returns>A sequence that begins with the specified value.</returns>
         public static ValueEnumerable<Prepend<TEnumerator, TSource>, TSource> Prepend<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource element)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -12,46 +12,73 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromNonGenericEnumerable<object>, object> AsValueEnumerable(this IEnumerable source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromNonGenericEnumerable<T>, T> AsValueEnumerable<T>(this IEnumerable source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromEnumerable<T>, T> AsValueEnumerable<T>(this IEnumerable<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromArray<T>, T> AsValueEnumerable<T>(this T[] source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromList<T>, T> AsValueEnumerable<T>(this List<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromMemory<T>, T> AsValueEnumerable<T>(this ArraySegment<T> source)
         {
             return new(new(source));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromMemory<T>, T> AsValueEnumerable<T>(this Memory<T> source)
         {
             return new(new(source));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromMemory<T>, T> AsValueEnumerable<T>(this ReadOnlyMemory<T> source)
         {
             return new(new(source));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromReadOnlySequence<T>, T> AsValueEnumerable<T>(this ReadOnlySequence<T> source)
         {
             return new(new(source));
@@ -59,38 +86,59 @@ namespace ZLinq
 
         // for System.Collections.Generic
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromDictionary<TKey, TValue>, KeyValuePair<TKey, TValue>> AsValueEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
             where TKey : notnull
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromSortedDictionary<TKey, TValue>, KeyValuePair<TKey, TValue>> AsValueEnumerable<TKey, TValue>(this SortedDictionary<TKey, TValue> source)
             where TKey : notnull
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromQueue<T>, T> AsValueEnumerable<T>(this Queue<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromStack<T>, T> AsValueEnumerable<T>(this Stack<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromLinkedList<T>, T> AsValueEnumerable<T>(this LinkedList<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromHashSet<T>, T> AsValueEnumerable<T>(this HashSet<T> source)
         {
             return new(new(Throws.IfNull(source)));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromSortedSet<T>, T> AsValueEnumerable<T>(this SortedSet<T> source)
         {
             return new(new(Throws.IfNull(source)));
@@ -98,11 +146,17 @@ namespace ZLinq
 
 #if NET8_0_OR_GREATER
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromImmutableArray<T>, T> AsValueEnumerable<T>(this ImmutableArray<T> source)
         {
             return new(new(source));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromImmutableHashSet<T>, T> AsValueEnumerable<T>(this ImmutableHashSet<T> source)
         {
             return new(new(Throws.IfNull(source)));
@@ -112,11 +166,17 @@ namespace ZLinq
 
 #if NET9_0_OR_GREATER
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromSpan<T>, T> AsValueEnumerable<T>(this Span<T> source)
         {
             return new(new(source));
         }
 
+        /// <summary>Converts the source into a <see cref="ValueEnumerable{TEnumerator, T}"/> to apply ZLinq operators without allocations.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A <see cref="ValueEnumerable{TEnumerator, T}"/> that enumerates the source.</returns>
         public static ValueEnumerable<FromSpan<T>, T> AsValueEnumerable<T>(this ReadOnlySpan<T> source)
         {
             return new(new(source));

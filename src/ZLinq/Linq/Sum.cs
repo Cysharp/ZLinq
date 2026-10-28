@@ -8,6 +8,10 @@ partial class ValueEnumerableExtensions
     // ZLinq supports more types(using INumber<T> constraint)
     // And, added the SumUnchecked method.
 
+    /// <summary>Computes the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The sum of the projected values.</returns>
     public static TResult Sum<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TResult> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -37,6 +41,10 @@ partial class ValueEnumerableExtensions
 #endif
     }
 
+    /// <summary>Computes the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The sum of the projected values.</returns>
     public static Nullable<TResult> Sum<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Nullable<TResult>> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -69,6 +77,9 @@ partial class ValueEnumerableExtensions
 #endif
     }
 
+    /// <summary>Computes the sum of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The sum of the values in the sequence.</returns>
     public static Nullable<TSource> Sum<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, Nullable<TSource>> source)
         where TEnumerator : struct, IValueEnumerator<Nullable<TSource>>
 #if NET9_0_OR_GREATER
@@ -97,6 +108,9 @@ partial class ValueEnumerableExtensions
 #endif
     }
 
+    /// <summary>Computes the sum of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The sum of the values in the sequence.</returns>
     public static TSource Sum<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -295,6 +309,10 @@ partial class ValueEnumerableExtensions
 
 #if NET8_0_OR_GREATER
 
+    /// <summary>Computes the sum of a sequence of numeric values without overflow checking.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The sum of the values in the sequence.</returns>
+    /// <remarks>Unlike Sum, an arithmetic overflow is not detected, which allows faster SIMD computation.</remarks>
     public static TSource SumUnchecked<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

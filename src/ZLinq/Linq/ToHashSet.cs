@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Creates a <see cref="System.Collections.Generic.HashSet{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A hash set that contains distinct values from the sequence.</returns>
         public static HashSet<TSource> ToHashSet<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -11,6 +14,10 @@
             return ToHashSet<TEnumerator, TSource>(source, null);
         }
 
+        /// <summary>Creates a <see cref="System.Collections.Generic.HashSet{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="comparer">An equality comparer to compare values, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A hash set that contains distinct values from the sequence.</returns>
         public static HashSet<TSource> ToHashSet<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IEqualityComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -5,6 +5,9 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Sorts the elements of a sequence in ascending order.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence whose elements are sorted.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSource>, TSource> Order<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -12,6 +15,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, UnsafeFunctions<TSource, TSource>.Identity, null, null, descending: false));
 
+        /// <summary>Sorts the elements of a sequence in ascending order.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="comparer">A comparer to compare elements, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSource>, TSource> Order<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -19,6 +26,9 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, UnsafeFunctions<TSource, TSource>.Identity, comparer, null, descending: false));
 
+        /// <summary>Sorts the elements of a sequence in descending order.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence whose elements are sorted in descending order.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSource>, TSource> OrderDescending<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -26,6 +36,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, UnsafeFunctions<TSource, TSource>.Identity, null, null, descending: true));
 
+        /// <summary>Sorts the elements of a sequence in descending order.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="comparer">A comparer to compare elements, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted in descending order.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSource>, TSource> OrderDescending<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -33,6 +47,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, UnsafeFunctions<TSource, TSource>.Identity, comparer, null, descending: true));
 
+        /// <summary>Sorts the elements of a sequence in ascending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence whose elements are sorted according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> OrderBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -40,6 +58,11 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), null, null, false));
 
+        /// <summary>Sorts the elements of a sequence in ascending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">A comparer to compare keys, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> OrderBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -50,6 +73,10 @@ namespace ZLinq
             return new(new(source.Enumerator, keySelector, comparer, null, descending: false));
         }
 
+        /// <summary>Sorts the elements of a sequence in descending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence whose elements are sorted in descending order according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> OrderByDescending<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -57,6 +84,11 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), null, null, true));
 
+        /// <summary>Sorts the elements of a sequence in descending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">A comparer to compare keys, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted in descending order according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> OrderByDescending<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -69,6 +101,10 @@ namespace ZLinq
 
         // ThenBy
 
+        /// <summary>Performs a subsequent ordering of the elements in a sequence in ascending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence whose elements are sorted according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSecondKey>, TSource> ThenBy<TEnumerator, TSource, TKey, TSecondKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, Func<TSource, TSecondKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -76,6 +112,11 @@ namespace ZLinq
 #endif
             => new(source.Enumerator.ThenBy(Throws.IfNull(keySelector)));
 
+        /// <summary>Performs a subsequent ordering of the elements in a sequence in ascending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">A comparer to compare keys, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSecondKey>, TSource> ThenBy<TEnumerator, TSource, TKey, TSecondKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, Func<TSource, TSecondKey> keySelector, IComparer<TSecondKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -83,6 +124,10 @@ namespace ZLinq
 #endif
             => new(source.Enumerator.ThenBy(Throws.IfNull(keySelector), comparer));
 
+        /// <summary>Performs a subsequent ordering of the elements in a sequence in descending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence whose elements are sorted in descending order according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSecondKey>, TSource> ThenByDescending<TEnumerator, TSource, TKey, TSecondKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, Func<TSource, TSecondKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -90,6 +135,11 @@ namespace ZLinq
 #endif
             => new(source.Enumerator.ThenByDescending(Throws.IfNull(keySelector)));
 
+        /// <summary>Performs a subsequent ordering of the elements in a sequence in descending order according to a key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">A comparer to compare keys, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>A sequence whose elements are sorted in descending order according to a key.</returns>
         public static ValueEnumerable<OrderBy<TEnumerator, TSource, TSecondKey>, TSource> ThenByDescending<TEnumerator, TSource, TKey, TSecondKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, Func<TSource, TSecondKey> keySelector, IComparer<TSecondKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -99,6 +149,10 @@ namespace ZLinq
 
         // Skip Take Optimization
 
+        /// <summary>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to skip before returning the remaining elements.</param>
+        /// <returns>A sequence that contains the elements that occur after the specified index in the source sequence.</returns>
         public static ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> Skip<TEnumerator, TSource, TKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -108,6 +162,10 @@ namespace ZLinq
             return new(new(source.Enumerator, Math.Max(0, count), int.MaxValue));
         }
 
+        /// <summary>Returns a specified number of contiguous elements from the start of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to return. If it is less than or equal to zero, an empty sequence is returned.</param>
+        /// <returns>A sequence that contains the specified number of elements from the start of the source sequence.</returns>
         public static ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> Take<TEnumerator, TSource, TKey>(this ValueEnumerable<OrderBy<TEnumerator, TSource, TKey>, TSource> source, int count)
     where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -118,6 +176,10 @@ namespace ZLinq
             return new(new(source.Enumerator, 0, count - 1));
         }
 
+        /// <summary>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to skip before returning the remaining elements.</param>
+        /// <returns>A sequence that contains the elements that occur after the specified index in the source sequence.</returns>
         public static ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> Skip<TEnumerator, TSource, TKey>(this ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -127,6 +189,10 @@ namespace ZLinq
             return new(source.Enumerator.Skip(Math.Max(0, count)));
         }
 
+        /// <summary>Returns a specified number of contiguous elements from the start of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to return. If it is less than or equal to zero, an empty sequence is returned.</param>
+        /// <returns>A sequence that contains the specified number of elements from the start of the source sequence.</returns>
         public static ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> Take<TEnumerator, TSource, TKey>(this ValueEnumerable<OrderBySkipTake<TEnumerator, TSource, TKey>, TSource> source, int count)
     where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -7,11 +7,19 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInfiniteSequenceDateTime, DateTime> InfiniteSequence(DateTime start, TimeSpan step)
         {
             return new(new(start, step));
         }
 
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInfiniteSequenceDateTimeOffset, DateTimeOffset> InfiniteSequence(DateTimeOffset start, TimeSpan step)
         {
             return new(new(start, step));

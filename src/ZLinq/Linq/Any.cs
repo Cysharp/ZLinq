@@ -4,6 +4,9 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Determines whether a sequence contains any elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains any elements; otherwise, <see langword="false"/>.</returns>
         public static Boolean Any<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -21,6 +24,10 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Determines whether any element of a sequence satisfies a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns><see langword="true"/> if any elements in the sequence pass the test in the specified predicate; otherwise, <see langword="false"/>.</returns>
         public static Boolean Any<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -56,6 +63,10 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Determines whether any element of a sequence satisfies a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns><see langword="true"/> if any elements in the sequence pass the test in the specified predicate; otherwise, <see langword="false"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Boolean Any<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, Func<TSource, Boolean> predicate)
         {

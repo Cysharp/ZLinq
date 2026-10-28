@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns the maximum value in a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>The value with the maximum key in the sequence.</returns>
         public static TSource? MaxBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -12,6 +16,11 @@
             return MaxBy(source, keySelector, null);
         }
 
+        /// <summary>Returns the maximum value in a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">A comparer to compare keys, or <see langword="null"/> to use the default comparer.</param>
+        /// <returns>The value with the maximum key in the sequence.</returns>
         public static TSource? MaxBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

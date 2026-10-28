@@ -9,6 +9,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInfiniteSequence<T>, T> InfiniteSequence<T>(T start, T step)
             where T : IAdditionOperators<T, T, T>
         {

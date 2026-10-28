@@ -12,6 +12,10 @@ partial class ValueEnumerableExtensions
     static string FastAllocateString(int length) => new string('\0', length);
 #endif
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, string separator)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -21,6 +25,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, char separator)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -35,6 +43,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, ReadOnlySpan<char> separator)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -227,11 +239,19 @@ partial class ValueEnumerableExtensions
 
     #region for special types(FromArray, FromList)
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -242,6 +262,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, ReadOnlySpan<char> separator)
     {
         var span = source.Enumerator.GetSource(); // not span, it is array:)
@@ -287,11 +311,19 @@ partial class ValueEnumerableExtensions
         return result.ToStringAndClear();
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromList<TSource>, TSource> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromList<TSource>, TSource> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -302,6 +334,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<FromList<TSource>, TSource> source, ReadOnlySpan<char> separator)
     {
         var list = source.Enumerator.GetSource();
@@ -357,11 +393,19 @@ partial class ValueEnumerableExtensions
 
     #region for Array(Select/Where/WhereSelect)
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -372,6 +416,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source, ReadOnlySpan<char> separator)
     {
         var span = source.Enumerator.source; // array:)
@@ -412,11 +460,19 @@ partial class ValueEnumerableExtensions
         return result.ToStringAndClear();
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -427,6 +483,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source, ReadOnlySpan<char> separator)
     {
         var span = source.Enumerator.GetSource(); // array
@@ -483,11 +543,19 @@ partial class ValueEnumerableExtensions
         return result.ToStringAndClear();
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -498,6 +566,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> source, ReadOnlySpan<char> separator)
     {
         var span = source.Enumerator.GetSource(); // array
@@ -559,11 +631,19 @@ partial class ValueEnumerableExtensions
 
     #region for List(Select/Where/WhereSelect)
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListSelect<TSource, TResult>, TResult> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListSelect<TSource, TResult>, TResult> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -574,6 +654,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListSelect<TSource, TResult>, TResult> source, ReadOnlySpan<char> separator)
     {
         var list = source.Enumerator.source;
@@ -616,11 +700,19 @@ partial class ValueEnumerableExtensions
         return result.ToStringAndClear();
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -631,6 +723,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source, ReadOnlySpan<char> separator)
     {
         var list = source.Enumerator.GetSource();
@@ -689,11 +785,19 @@ partial class ValueEnumerableExtensions
         return result.ToStringAndClear();
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> source, string separator)
     {
         return JoinToString(source, separator.AsSpan());
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> source, char separator)
     {
 #if NET8_0_OR_GREATER
@@ -704,6 +808,10 @@ partial class ValueEnumerableExtensions
         return JoinToString(source, span);
     }
 
+    /// <summary>Concatenates the elements of a sequence, using the specified separator between each element. This is the equivalent of <see cref="string.Join(string, System.Collections.Generic.IEnumerable{string})"/>.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="separator">The separator to insert between elements.</param>
+    /// <returns>A string that consists of the elements of the sequence delimited by the separator, or <see cref="string.Empty"/> if the sequence has no elements.</returns>
     public static string JoinToString<TSource, TResult>(this ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> source, ReadOnlySpan<char> separator)
     {
         var list = source.Enumerator.GetSource();

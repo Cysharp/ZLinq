@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Produces a sequence of tuples with elements from the two specified sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <returns>A sequence that contains tuples with elements taken from the source and second sequences, in that order. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, TEnumerator2, TFirst, TSecond>, (TFirst First, TSecond Second)> Zip<TEnumerator, TEnumerator2, TFirst, TSecond>(this ValueEnumerable<TEnumerator, TFirst> source, ValueEnumerable<TEnumerator2, TSecond> second)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER
@@ -13,6 +17,11 @@
 #endif
             => new(new(source.Enumerator, second.Enumerator));
 
+        /// <summary>Produces a sequence of tuples with elements from the three specified sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <param name="third">The third sequence to merge.</param>
+        /// <returns>A sequence that contains tuples with elements taken from the source, second and third sequences, in that order. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, TEnumerator2, TEnumerator3, TFirst, TSecond, TThird>, (TFirst First, TSecond Second, TThird Third)> Zip<TEnumerator, TEnumerator2, TEnumerator3, TFirst, TSecond, TThird>(this ValueEnumerable<TEnumerator, TFirst> source, ValueEnumerable<TEnumerator2, TSecond> second, ValueEnumerable<TEnumerator3, TThird> third)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER
@@ -28,6 +37,11 @@
 #endif
             => new(new(source.Enumerator, second.Enumerator, third.Enumerator));
 
+        /// <summary>Applies a specified function to the corresponding elements of two sequences, producing a sequence of the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <param name="resultSelector">A function that specifies how to merge the elements from the two sequences.</param>
+        /// <returns>A sequence that contains the merged elements of the two sequences. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, TEnumerator2, TFirst, TSecond, TResult>, TResult> Zip<TEnumerator, TEnumerator2, TFirst, TSecond, TResult>(this ValueEnumerable<TEnumerator, TFirst> source, ValueEnumerable<TEnumerator2, TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER
@@ -40,6 +54,10 @@
             => new(new(source.Enumerator, second.Enumerator, Throws.IfNull(resultSelector)));
 
 
+        /// <summary>Produces a sequence of tuples with elements from the two specified sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <returns>A sequence that contains tuples with elements taken from the source and second sequences, in that order. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, FromEnumerable<TSecond>, TFirst, TSecond>, (TFirst First, TSecond Second)> Zip<TEnumerator, TFirst, TSecond>(this ValueEnumerable<TEnumerator, TFirst> source, IEnumerable<TSecond> second)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER
@@ -47,6 +65,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(second).AsValueEnumerable().Enumerator));
 
+        /// <summary>Produces a sequence of tuples with elements from the three specified sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <param name="third">The third sequence to merge.</param>
+        /// <returns>A sequence that contains tuples with elements taken from the source, second and third sequences, in that order. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, FromEnumerable<TSecond>, FromEnumerable<TThird>, TFirst, TSecond, TThird>, (TFirst First, TSecond Second, TThird Third)> Zip<TEnumerator, TFirst, TSecond, TThird>(this ValueEnumerable<TEnumerator, TFirst> source, IEnumerable<TSecond> second, IEnumerable<TThird> third)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER
@@ -54,6 +77,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(second).AsValueEnumerable().Enumerator, Throws.IfNull(third).AsValueEnumerable().Enumerator));
 
+        /// <summary>Applies a specified function to the corresponding elements of two sequences, producing a sequence of the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The second sequence to merge.</param>
+        /// <param name="resultSelector">A function that specifies how to merge the elements from the two sequences.</param>
+        /// <returns>A sequence that contains the merged elements of the two sequences. Its length is that of the shortest sequence.</returns>
         public static ValueEnumerable<Zip<TEnumerator, FromEnumerable<TSecond>, TFirst, TSecond, TResult>, TResult> Zip<TEnumerator, TFirst, TSecond, TResult>(this ValueEnumerable<TEnumerator, TFirst> source, IEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TFirst>
 #if NET9_0_OR_GREATER

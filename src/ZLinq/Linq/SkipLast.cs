@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns a sequence that contains the elements from the source sequence with the last specified number of elements omitted.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to omit from the end of the sequence.</param>
+        /// <returns>A sequence that contains the elements from the source sequence minus the specified number of elements from the end.</returns>
         public static ValueEnumerable<SkipLast<TEnumerator, TSource>, TSource> SkipLast<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Int32 count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

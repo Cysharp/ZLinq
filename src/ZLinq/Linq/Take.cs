@@ -4,6 +4,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns a specified number of contiguous elements from the start of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to return. If it is less than or equal to zero, an empty sequence is returned.</param>
+        /// <returns>A sequence that contains the specified number of elements from the start of the source sequence.</returns>
         public static ValueEnumerable<Take<TEnumerator, TSource>, TSource> Take<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Int32 count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -11,6 +15,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, count));
 
+        /// <summary>Returns a specified range of contiguous elements from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="range">The range of elements to return, which has start and end indexes either from the beginning or the end of the sequence.</param>
+        /// <returns>A sequence that contains the specified range of elements from the source sequence.</returns>
         public static ValueEnumerable<TakeRange<TEnumerator, TSource>, TSource> Take<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Range range)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -20,6 +28,10 @@ namespace ZLinq
 
         // Optimize
 
+        /// <summary>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to skip before returning the remaining elements.</param>
+        /// <returns>A sequence that contains the elements that occur after the specified index in the source sequence.</returns>
         public static ValueEnumerable<TakeSkip<TEnumerator, TSource>, TSource> Skip<TEnumerator, TSource>(this ValueEnumerable<Take<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -27,6 +39,10 @@ namespace ZLinq
 #endif
             => new(source.Enumerator.Skip(count));
 
+        /// <summary>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to skip before returning the remaining elements.</param>
+        /// <returns>A sequence that contains the elements that occur after the specified index in the source sequence.</returns>
         public static ValueEnumerable<TakeSkip<TEnumerator, TSource>, TSource> Skip<TEnumerator, TSource>(this ValueEnumerable<TakeSkip<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

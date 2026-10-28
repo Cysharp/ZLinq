@@ -2,6 +2,9 @@
 
 partial class ValueEnumerableExtensions
 {
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TSource[] ToArray<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
        where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -82,6 +85,9 @@ partial class ValueEnumerableExtensions
 
     // Select -> ToArray is common pattern so optimize it.
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TEnumerator, TSource, TResult>(this ValueEnumerable<Select<TEnumerator, TSource, TResult>, TResult> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -148,6 +154,9 @@ partial class ValueEnumerableExtensions
         }
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TResult>(this ValueEnumerable<RangeSelect<TResult>, TResult> source)
     {
         var value = source.Enumerator.start;
@@ -169,6 +178,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source)
     {
         var sourceArray = source.Enumerator.source;
@@ -191,6 +203,9 @@ partial class ValueEnumerableExtensions
 
     // filtering(Where/OfType) -> ToArray is frequently case so optimize it.
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TSource[] ToArray<TEnumerator, TSource>(this ValueEnumerable<Where<TEnumerator, TSource>, TSource> source)
        where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -264,6 +279,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TSource[] ToArray<TSource>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source)
     {
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
@@ -310,6 +328,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TEnumerator, TSource, TResult>(this ValueEnumerable<WhereSelect<TEnumerator, TSource, TResult>, TResult> source)
     where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -384,6 +405,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TSource, TResult>(this ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> source)
     {
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
@@ -432,6 +456,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TSource[] ToArray<TSource>(this ValueEnumerable<ListWhere<TSource>, TSource> source)
     {
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
@@ -505,6 +532,9 @@ partial class ValueEnumerableExtensions
         return array;
     }
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TSource, TResult>(this ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> source)
     {
         var whereEnumerator = source.Enumerator; // no needs dispose(using)
@@ -581,6 +611,9 @@ partial class ValueEnumerableExtensions
     }
 
 
+    /// <summary>Creates an array from a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>An array that contains the elements from the sequence.</returns>
     public static TResult[] ToArray<TEnumerator, TSource, TResult>(this ValueEnumerable<OfType<TEnumerator, TSource, TResult>, TResult> source)
        where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

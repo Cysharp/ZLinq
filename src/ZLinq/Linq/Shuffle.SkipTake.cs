@@ -5,6 +5,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns a specified number of contiguous elements from the start of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to return. If it is less than or equal to zero, an empty sequence is returned.</param>
+        /// <returns>A sequence that contains the specified number of elements from the start of the source sequence.</returns>
         public static ValueEnumerable<ShuffleSkipTake<TEnumerator, TSource>, TSource> Take<TEnumerator, TSource>(this ValueEnumerable<Shuffle<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -14,6 +18,10 @@ namespace ZLinq
             return new(new(source.Enumerator.source, skipCount: 0, takeCount: Math.Max(0, count)));
         }
 
+        /// <summary>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to skip before returning the remaining elements.</param>
+        /// <returns>A sequence that contains the elements that occur after the specified index in the source sequence.</returns>
         public static ValueEnumerable<ShuffleSkipTake<TEnumerator, TSource>, TSource> Skip<TEnumerator, TSource>(this ValueEnumerable<Shuffle<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -25,6 +33,10 @@ namespace ZLinq
 
         // 'Last' variants are syntax sugar. just takes specified count of items randomly from source.
 
+        /// <summary>Returns a sequence that contains the last specified number of elements from the source sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to take from the end of the sequence.</param>
+        /// <returns>A sequence that contains the specified number of elements from the end of the source sequence.</returns>
         public static ValueEnumerable<ShuffleSkipTake<TEnumerator, TSource>, TSource> TakeLast<TEnumerator, TSource>(this ValueEnumerable<Shuffle<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -34,6 +46,10 @@ namespace ZLinq
             return new(new(source.Enumerator.source, skipCount: 0, takeCount: Math.Max(0, count)));
         }
 
+        /// <summary>Returns a sequence that contains the elements from the source sequence with the last specified number of elements omitted.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to omit from the end of the sequence.</param>
+        /// <returns>A sequence that contains the elements from the source sequence minus the specified number of elements from the end.</returns>
         public static ValueEnumerable<ShuffleSkipTake<TEnumerator, TSource>, TSource> SkipLast<TEnumerator, TSource>(this ValueEnumerable<Shuffle<TEnumerator, TSource>, TSource> source, int count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -5,6 +5,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Filters a sequence of values based on a predicate.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that satisfy the condition.</returns>
         public static ValueEnumerable<Where<TEnumerator, TSource>, TSource> Where<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -12,6 +16,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, Throws.IfNull(predicate)));
 
+        /// <summary>Filters a sequence of values based on a predicate. Each element's index is used in the logic of the predicate function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each source element for a condition; the second parameter of the function represents the index of the source element.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that satisfy the condition.</returns>
         public static ValueEnumerable<Where2<TEnumerator, TSource>, TSource> Where<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Int32, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -19,6 +27,10 @@ namespace ZLinq
 #endif
             => new(new(source.Enumerator, Throws.IfNull(predicate)));
 
+        /// <summary>Projects each element of a sequence into a new form.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <returns>A sequence whose elements are the result of invoking the transform function on each element of the source sequence.</returns>
         public static ValueEnumerable<WhereSelect<TEnumerator, TSource, TResult>, TResult> Select<TEnumerator, TSource, TResult>(this ValueEnumerable<Where<TEnumerator, TSource>, TSource> source, Func<TSource, TResult> selector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -28,15 +40,31 @@ namespace ZLinq
 
         // Optimize variations
 
+        /// <summary>Filters a sequence of values based on a predicate.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that satisfy the condition.</returns>
         public static ValueEnumerable<ArrayWhere<TSource>, TSource> Where<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, Func<TSource, Boolean> predicate)
             => new(new(source.Enumerator, Throws.IfNull(predicate)));
 
+        /// <summary>Projects each element of a sequence into a new form.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <returns>A sequence whose elements are the result of invoking the transform function on each element of the source sequence.</returns>
         public static ValueEnumerable<ArrayWhereSelect<TSource, TResult>, TResult> Select<TSource, TResult>(this ValueEnumerable<ArrayWhere<TSource>, TSource> source, Func<TSource, TResult> selector)
             => new(source.Enumerator.Select(Throws.IfNull(selector)));
 
+        /// <summary>Filters a sequence of values based on a predicate.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that satisfy the condition.</returns>
         public static ValueEnumerable<ListWhere<TSource>, TSource> Where<TSource>(this ValueEnumerable<FromList<TSource>, TSource> source, Func<TSource, Boolean> predicate)
             => new(new(source.Enumerator, Throws.IfNull(predicate)));
 
+        /// <summary>Projects each element of a sequence into a new form.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="selector">A transform function to apply to each element.</param>
+        /// <returns>A sequence whose elements are the result of invoking the transform function on each element of the source sequence.</returns>
         public static ValueEnumerable<ListWhereSelect<TSource, TResult>, TResult> Select<TSource, TResult>(this ValueEnumerable<ListWhere<TSource>, TSource> source, Func<TSource, TResult> selector)
             => new(source.Enumerator.Select(Throws.IfNull(selector)));
     }

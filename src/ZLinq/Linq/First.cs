@@ -4,6 +4,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns the first element of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The first element in the sequence.</returns>
+        /// <remarks>Throws <see cref="System.InvalidOperationException"/> if the sequence is empty.</remarks>
         public static TSource First<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -23,6 +27,11 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns the first element in a sequence that satisfies a specified condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The first element in the sequence that passes the test in the specified predicate function.</returns>
+        /// <remarks>Throws <see cref="System.InvalidOperationException"/> if no element satisfies the condition.</remarks>
         public static TSource First<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -43,6 +52,9 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns the first element of a sequence, or a default value if the sequence contains no elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The default value if the sequence is empty; otherwise, the first element.</returns>
         public static TSource? FirstOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -62,6 +74,10 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns the first element of a sequence, or a default value if the sequence contains no elements.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="defaultValue">The default value to return if the sequence is empty.</param>
+        /// <returns>The default value if the sequence is empty; otherwise, the first element.</returns>
         public static TSource FirstOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource defaultValue)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -81,6 +97,10 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns the first element of the sequence that satisfies a condition, or a default value if no such element is found.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The default value if no element passes the test; otherwise, the first element that passes the test.</returns>
         public static TSource? FirstOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -101,6 +121,11 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Returns the first element of the sequence that satisfies a condition, or a default value if no such element is found.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="defaultValue">The default value to return if no element satisfies the condition.</param>
+        /// <returns>The default value if no element passes the test; otherwise, the first element that passes the test.</returns>
         public static TSource FirstOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate, TSource defaultValue)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

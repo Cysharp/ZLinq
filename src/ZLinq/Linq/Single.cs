@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns the only element of a sequence, and throws an exception if there is not exactly one element in the sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The single element of the sequence.</returns>
         public static TSource Single<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -21,6 +24,10 @@
             }
         }
 
+        /// <summary>Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The single element of the sequence that satisfies the condition.</returns>
         public static TSource Single<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -41,6 +48,9 @@
             }
         }
 
+        /// <summary>Returns the only element of a sequence, or a default value if the sequence is empty; this method throws an exception if there is more than one element in the sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The single element of the sequence, or the default value if the sequence contains no elements.</returns>
         public static TSource? SingleOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
     where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -60,6 +70,10 @@
             }
         }
 
+        /// <summary>Returns the only element of a sequence, or a default value if the sequence is empty; this method throws an exception if there is more than one element in the sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="defaultValue">The default value to return if the sequence is empty.</param>
+        /// <returns>The single element of the sequence, or the default value if the sequence contains no elements.</returns>
         public static TSource SingleOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource defaultValue)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -79,6 +93,10 @@
             }
         }
 
+        /// <summary>Returns the only element of a sequence that satisfies a specified condition, or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The single element of the sequence that satisfies the condition, or the default value if no such element is found.</returns>
         public static TSource? SingleOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -99,6 +117,11 @@
             }
         }
 
+        /// <summary>Returns the only element of a sequence that satisfies a specified condition, or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="defaultValue">The default value to return if no element satisfies the condition.</param>
+        /// <returns>The single element of the sequence that satisfies the condition, or the default value if no such element is found.</returns>
         public static TSource SingleOrDefault<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate, TSource defaultValue)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

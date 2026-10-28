@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Produces the set union of two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose distinct elements form the second set for the union.</param>
+        /// <returns>A sequence that contains the elements from both sequences, excluding duplicates.</returns>
         public static ValueEnumerable<Union<TEnumerator, TEnumerator2, TSource>, TSource> Union<TEnumerator, TEnumerator2, TSource>(this ValueEnumerable<TEnumerator, TSource> source, ValueEnumerable<TEnumerator2, TSource> second)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -13,6 +17,11 @@
 #endif
             => new(new(source.Enumerator, second.Enumerator, null));
 
+        /// <summary>Produces the set union of two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose distinct elements form the second set for the union.</param>
+        /// <param name="comparer">An equality comparer to compare values, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the elements from both sequences, excluding duplicates.</returns>
         public static ValueEnumerable<Union<TEnumerator, TEnumerator2, TSource>, TSource> Union<TEnumerator, TEnumerator2, TSource>(this ValueEnumerable<TEnumerator, TSource> source, ValueEnumerable<TEnumerator2, TSource> second, IEqualityComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -25,6 +34,10 @@
             => new(new(source.Enumerator, second.Enumerator, comparer));
 
 
+        /// <summary>Produces the set union of two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose distinct elements form the second set for the union.</param>
+        /// <returns>A sequence that contains the elements from both sequences, excluding duplicates.</returns>
         public static ValueEnumerable<Union<TEnumerator, FromEnumerable<TSource>, TSource>, TSource> Union<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IEnumerable<TSource> second)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -32,6 +45,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(second).AsValueEnumerable().Enumerator, null));
 
+        /// <summary>Produces the set union of two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose distinct elements form the second set for the union.</param>
+        /// <param name="comparer">An equality comparer to compare values, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the elements from both sequences, excluding duplicates.</returns>
         public static ValueEnumerable<Union<TEnumerator, FromEnumerable<TSource>, TSource>, TSource> Union<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IEnumerable<TSource> second, IEqualityComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

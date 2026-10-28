@@ -2,6 +2,11 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Produces the set difference of two sequences according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose keys that also occur in the source sequence will cause those elements to be removed from the returned sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence that contains the set difference of the elements of two sequences.</returns>
         public static ValueEnumerable<ExceptBy<TEnumerator, TEnumerator2, TSource, TKey>, TSource> ExceptBy<TEnumerator, TEnumerator2, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, ValueEnumerable<TEnumerator2, TKey> second, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -13,6 +18,12 @@
 #endif
             => new(new(source.Enumerator, second, Throws.IfNull(keySelector), null));
 
+        /// <summary>Produces the set difference of two sequences according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose keys that also occur in the source sequence will cause those elements to be removed from the returned sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the set difference of the elements of two sequences.</returns>
         public static ValueEnumerable<ExceptBy<TEnumerator, TEnumerator2, TSource, TKey>, TSource> ExceptBy<TEnumerator, TEnumerator2, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, ValueEnumerable<TEnumerator2, TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -24,6 +35,11 @@
 #endif
             => new(new(source.Enumerator, second, Throws.IfNull(keySelector), comparer));
 
+        /// <summary>Produces the set difference of two sequences according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose keys that also occur in the source sequence will cause those elements to be removed from the returned sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence that contains the set difference of the elements of two sequences.</returns>
         public static ValueEnumerable<ExceptBy<TEnumerator, FromEnumerable<TKey>, TSource, TKey>, TSource> ExceptBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, IEnumerable<TKey> second, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -31,6 +47,12 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(second).AsValueEnumerable(), Throws.IfNull(keySelector), null));
 
+        /// <summary>Produces the set difference of two sequences according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">A sequence whose keys that also occur in the source sequence will cause those elements to be removed from the returned sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the set difference of the elements of two sequences.</returns>
         public static ValueEnumerable<ExceptBy<TEnumerator, FromEnumerable<TKey>, TSource, TKey>, TSource> ExceptBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, IEnumerable<TKey> second, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

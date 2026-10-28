@@ -10,6 +10,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TSource>(this ValueEnumerable<FromEnumerable<TSource>, TSource> source, TSource value)
         {
             // When a collection like HashSet internally holds an IEqualityComparer, it's necessary to call the collection's own Contains method.
@@ -23,12 +27,20 @@ namespace ZLinq
             return ContainsCore(ref source, value);
         }
 
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TSource>(this ValueEnumerable<FromHashSet<TSource>, TSource> source, TSource value)
         {
             var innerCollection = source.Enumerator.GetSource();
             return innerCollection.Contains(value);
         }
 
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TSource>(this ValueEnumerable<FromSortedSet<TSource>, TSource> source, TSource value)
         {
             var innerCollection = source.Enumerator.GetSource();
@@ -37,6 +49,10 @@ namespace ZLinq
 
 #if NET8_0_OR_GREATER
 
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TSource>(this ValueEnumerable<FromImmutableHashSet<TSource>, TSource> source, TSource value)
         {
             var innerCollection = source.Enumerator.GetSource();
@@ -44,6 +60,10 @@ namespace ZLinq
         }
 #endif
 
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource value)
     where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -94,6 +114,11 @@ namespace ZLinq
             }
         }
 
+        /// <summary>Determines whether a sequence contains a specified element.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="value">The value to locate in the sequence.</param>
+        /// <param name="comparer">An equality comparer to compare values, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns><see langword="true"/> if the sequence contains the specified value; otherwise, <see langword="false"/>.</returns>
         public static Boolean Contains<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource value, IEqualityComparer<TSource>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

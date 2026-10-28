@@ -7,6 +7,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromSequenceDateTime, DateTime> Sequence(DateTime start, DateTime endInclusive, TimeSpan step)
         {
             if (step == TimeSpan.Zero) // (T.IsZero(step))
@@ -126,6 +131,11 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence that begins with the specified start value and advances by the step value until reaching the inclusive end value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="endInclusive">The inclusive bound of the sequence. If step is positive, it is the upper bound; if step is negative, it is the lower bound.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the sequence of values.</returns>
         public static ValueEnumerable<FromSequenceDateTimeOffset, DateTimeOffset> Sequence(DateTimeOffset start, DateTimeOffset endInclusive, TimeSpan step)
         {
             if (step == TimeSpan.Zero) // (T.IsZero(step))
