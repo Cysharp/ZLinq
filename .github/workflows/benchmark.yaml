@@ -82,17 +82,22 @@ jobs:
       - name: Update README.md benchmark report link
         if: ${{ github.repository_owner == 'Cysharp' && github.ref_name == 'main' && inputs.config == 'Default' && inputs.filter == '*' }}
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           $PSNativeCommandUseErrorActionPreference = $true
 
           $md = Get-Content README.md -Raw
           $md = [regex]::Replace($md, 'https://github.com/Cysharp/ZLinq/actions/runs/([\d]+)', 
                                       'https://github.com/Cysharp/ZLinq/actions/runs/${{ github.run_id }}')
-          Set-Content -Path README.md -Value $md -Encoding utf8NoBOM
+          Set-Content -Path README.md -Value $md -Encoding utf8NoBOM -NoNewline
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add README.md
           git commit -m 'ci: update benchmark report link'
+
+          # Cysharp/Actions checkout forces persist-credentials: false, so set up the token for push here.
+          gh auth setup-git
           git push
