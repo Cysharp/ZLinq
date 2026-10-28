@@ -379,6 +379,7 @@ namespace ZLinq.Linq
             if (remains == -2)
             {
                 Init();
+                remains = rangeProcessor.Remains; // re-read, Init() resolves the range (may be 0)
             }
 
             if (remains == 0)

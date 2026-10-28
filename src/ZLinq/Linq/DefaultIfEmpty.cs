@@ -81,7 +81,7 @@ namespace ZLinq.Linq
             if (source.TryGetNonEnumeratedCount(out var sourceCount) && sourceCount == 0 && destination.Length >= 1)
             {
                 // check offset
-                if (offset.GetOffset(sourceCount) == 0)
+                if (offset.GetOffset(1) == 0) // the result has exactly one element(the default value)
                 {
                     destination[0] = defaultValue;
                     return true;

@@ -227,7 +227,7 @@ namespace ZLinq.Linq
         // Range
         internal readonly int count = source.count;
         internal readonly int start = source.start;
-        internal readonly int to = source.to;
+        internal readonly int to = source.to; // may wrap to int.MinValue, see FromRange
         int value = source.start;
 
         // Select
@@ -263,7 +263,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out TResult current)
         {
-            if (value < to)
+            if (value != to)
             {
                 current = selector(value);
                 value++;

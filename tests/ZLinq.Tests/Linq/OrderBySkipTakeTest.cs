@@ -200,6 +200,39 @@ public class OrderBySkipTakeTest
         result.ShouldBe(new[] { "Bob", "Eve", "Alice" });
     }
 
+    [Fact]
+    public void OrderBy_EmptyTake_ElementAccess()
+    {
+        var source = new[] { 3, 1, 2, 5, 4 };
+
+        Should.Throw<InvalidOperationException>(() => source.AsValueEnumerable().OrderBy(x => x).Take(0).First());
+        Should.Throw<InvalidOperationException>(() => source.AsValueEnumerable().OrderBy(x => x).Take(0).Last());
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).FirstOrDefault().ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).LastOrDefault().ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(-1).ElementAtOrDefault(2).ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).ElementAtOrDefault(^1).ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Skip(1).Take(0).FirstOrDefault().ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(3).Take(0).FirstOrDefault().ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(2).Skip(2).FirstOrDefault().ShouldBe(0);
+
+        // non-empty ranges still work
+        source.AsValueEnumerable().OrderBy(x => x).Take(1).First().ShouldBe(1);
+        source.AsValueEnumerable().OrderBy(x => x).Skip(1).Take(2).Last().ShouldBe(3);
+        source.AsValueEnumerable().OrderBy(x => x).Skip(4).ElementAtOrDefault(^1).ShouldBe(5);
+    }
+
+    [Fact]
+    public void OrderBy_EmptyTake_Skip()
+    {
+        var source = new[] { 3, 1, 2, 5, 4 };
+
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).Skip(1).Count().ShouldBe(0);
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).Skip(1).ToArray().ShouldBeEmpty();
+        source.AsValueEnumerable().OrderBy(x => x).Take(0).Skip(1).ToList().ShouldBeEmpty();
+        source.AsValueEnumerable().OrderBy(x => x).Take(-1).Skip(3).TryGetNonEnumeratedCount(out var count).ShouldBeTrue();
+        count.ShouldBe(0);
+    }
+
 #if NET9_0_OR_GREATER
 
     [Fact]

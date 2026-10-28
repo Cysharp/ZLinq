@@ -3,6 +3,20 @@
 public class JoinToStringTest
 {
     [Fact]
+    public void JoinToString_SingleNullElement_ReturnsEmptyString()
+    {
+        var array = new object?[] { null };
+        var expected = string.Join(",", array);
+
+        array.AsValueEnumerable().JoinToString(",").ShouldBe(expected);
+        array.AsValueEnumerable().JoinToString(',').ShouldBe(expected);
+        array.ToList().AsValueEnumerable().JoinToString(",").ShouldBe(expected);
+        array.ToList().AsValueEnumerable().JoinToString(',').ShouldBe(expected);
+        array.ToValueEnumerable().JoinToString(",").ShouldBe(expected);
+        new Uri?[] { null }.AsValueEnumerable().JoinToString(",").ShouldBe(expected);
+    }
+
+    [Fact]
     public void JoinToString_EmptySequence_ReturnsEmptyString()
     {
         // Arrange

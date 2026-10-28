@@ -126,6 +126,19 @@ public class PrependTest
         xs.ToValueEnumerable().Prepend(element).ToArray().ShouldBe(expected);
     }
 
+    [Fact]
+    public void ElementAtOrDefault_FromEndOutOfRange()
+    {
+        var xs = new[] { 1, 2, 3 };
+
+        xs.AsValueEnumerable().Prepend(0).ElementAtOrDefault(^4).ShouldBe(0);
+        xs.AsValueEnumerable().Prepend(10).ElementAtOrDefault(^4).ShouldBe(10);
+        xs.AsValueEnumerable().Prepend(10).ElementAtOrDefault(^5).ShouldBe(0);
+        xs.AsValueEnumerable().Prepend(10).ElementAtOrDefault(^10).ShouldBe(0);
+        Array.Empty<int>().AsValueEnumerable().Append(100).Prepend(200).ElementAtOrDefault(^3).ShouldBe(0);
+        Should.Throw<ArgumentOutOfRangeException>(() => xs.AsValueEnumerable().Prepend(10).ElementAt(^10));
+    }
+
 #if NET8_0_OR_GREATER
 
     [Fact]

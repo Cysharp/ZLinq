@@ -3,6 +3,17 @@
 public class DefaultIfEmptyTest
 {
     [Fact]
+    public void EmptyCollection_FromEndIndex()
+    {
+        var defaultIfEmpty = Array.Empty<int>().AsValueEnumerable().DefaultIfEmpty(42);
+
+        defaultIfEmpty.ElementAtOrDefault(^1).ShouldBe(42);
+        defaultIfEmpty.ElementAtOrDefault(^0).ShouldBe(0);
+        defaultIfEmpty.ElementAtOrDefault(^2).ShouldBe(0);
+        Should.Throw<ArgumentOutOfRangeException>(() => Array.Empty<int>().AsValueEnumerable().DefaultIfEmpty(42).ElementAt(^0));
+    }
+
+    [Fact]
     public void EmptyCollection_ReturnsDefaultValue()
     {
         var xs = new int[0];

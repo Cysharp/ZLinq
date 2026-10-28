@@ -178,7 +178,7 @@ namespace ZLinq.Linq
     {
         internal readonly int count = count;
         internal readonly int start = start;
-        internal readonly int to = start + count;
+        internal readonly int to = start + count; // wraps to int.MinValue when the last element is int.MaxValue, so compare with != instead of <
         int value = start;
 
         public bool TryGetNonEnumeratedCount(out int count)
@@ -206,7 +206,7 @@ namespace ZLinq.Linq
 
         public bool TryGetNext(out int current)
         {
-            if (value < to)
+            if (value != to)
             {
                 current = value;
                 value++;

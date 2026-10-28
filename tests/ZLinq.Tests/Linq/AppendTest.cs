@@ -130,6 +130,19 @@ public class AppendTest
         xs.ToValueEnumerable().Append(element).ToArray().ShouldBe(expected);
     }
 
+    [Fact]
+    public void ElementAtOrDefault_FromEndOutOfRange()
+    {
+        var xs = new[] { 1, 2, 3 };
+
+        xs.AsValueEnumerable().Append(9).ElementAtOrDefault(^4).ShouldBe(1);
+        xs.AsValueEnumerable().Append(9).ElementAtOrDefault(^5).ShouldBe(0);
+        xs.AsValueEnumerable().Append(9).ElementAtOrDefault(^10).ShouldBe(0);
+        xs.AsValueEnumerable().Take(2).Append(9).ElementAtOrDefault(^4).ShouldBe(0);
+        Array.Empty<int>().AsValueEnumerable().Append(9).ElementAtOrDefault(^2).ShouldBe(0);
+        Should.Throw<ArgumentOutOfRangeException>(() => xs.AsValueEnumerable().Append(9).ElementAt(^10));
+    }
+
 #if NET8_0_OR_GREATER
 
     [Fact]
