@@ -2,7 +2,7 @@
     "name": "com.cysharp.zlinq",
     "displayName": "ZLinq.Unity",
     "author": { "name": "Cysharp, Inc.", "url": "https://cysharp.co.jp/en/" },
-    "version": "1.5.6",
+    "version": "1.6.0",
     "unity": "2021.3",
     "description": "Zero allocation LINQ with Span and LINQ to SIMD, LINQ to Tree(FileSystem, GameObject, etc...) for all .NET platforms and Unity.",
     "keywords": [ "LINQ" ],
