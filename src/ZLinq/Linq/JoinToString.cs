@@ -66,7 +66,7 @@ partial class ValueEnumerableExtensions
 #endif
 
             if (span.Length == 0) return "";
-            if (span.Length == 1) return span[0]!.ToString() ?? "";
+            if (span.Length == 1) return span[0]?.ToString() ?? "";
 
             var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
 
@@ -109,7 +109,7 @@ partial class ValueEnumerableExtensions
 
             if (!e.TryGetNext(out var second))
             {
-                return first!.ToString() ?? ""; // return only first
+                return first?.ToString() ?? ""; // return only first
             }
 
             var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
@@ -276,7 +276,7 @@ partial class ValueEnumerableExtensions
         }
 
         if (span.Length == 0) return "";
-        if (span.Length == 1) return span[0]!.ToString() ?? "";
+        if (span.Length == 1) return span[0]?.ToString() ?? "";
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
 
@@ -354,7 +354,7 @@ partial class ValueEnumerableExtensions
         var span = ListMarshal.AsSpan(list);
 
         if (span.Length == 0) return "";
-        if (span.Length == 1) return span[0]!.ToString() ?? "";
+        if (span.Length == 1) return span[0]?.ToString() ?? "";
 
         var result = new ValueStringBuilder(stackalloc char[StackallocCharBufferSizeLimit]);
 

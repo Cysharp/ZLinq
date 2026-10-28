@@ -471,7 +471,14 @@ namespace ZLinq.Linq
             InitBuffer();
             if (indexMap != null)
             {
-                var indexSlice = indexMap.Span.Slice(minIndexInclusive, (int)Math.Min((uint)maxIndexInclusive - minIndexInclusive + 1, (uint)indexMap.Span.Length - minIndexInclusive));
+                // maxIndex is already clamped to the source count in Sort(); it is below minIndexInclusive for the empty range(0, -1).
+                var length = maxIndex - minIndexInclusive + 1;
+                if (length <= 0)
+                {
+                    return false;
+                }
+
+                var indexSlice = indexMap.Span.Slice(minIndexInclusive, length);
 
                 if (EnumeratorHelper.TryGetSlice<int>(indexSlice, offset, destination.Length, out var slice))
                 {
@@ -547,7 +554,8 @@ namespace ZLinq.Linq
         internal OrderBySkipTake<TEnumerator, TSource, TKey> Skip(int count)
         {
             var minIndex = minIndexInclusive + count;
-            if ((uint)minIndex > (uint)maxIndexInclusive)
+            // maxIndexInclusive < 0 is the empty range, (uint) cast also catches minIndex overflow.
+            if (maxIndexInclusive < 0 || (uint)minIndex > (uint)maxIndexInclusive)
             {
                 return new OrderBySkipTake<TEnumerator, TSource, TKey>(source, comparable, 0, -1); // Empty
             }

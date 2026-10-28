@@ -3,6 +3,21 @@
 public class RangeTest
 {
     [Fact]
+    public void EndsAtInt32MaxValue()
+    {
+        ValueEnumerable.Range(int.MaxValue, 1).IterateToArray().ShouldBe([int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue, 1).ToArray().ShouldBe([int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue, 1).Where(_ => true).ToArray().ShouldBe([int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue, 1).Contains(int.MaxValue).ShouldBeTrue();
+        ValueEnumerable.Range(int.MaxValue, 1).Max().ShouldBe(int.MaxValue);
+        ValueEnumerable.Range(int.MaxValue - 2, 3).IterateToArray().ShouldBe([int.MaxValue - 2, int.MaxValue - 1, int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue - 2, 3).Select(x => (long)x).IterateToArray().ShouldBe([int.MaxValue - 2L, int.MaxValue - 1L, int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue - 2, 3).Select(x => (long)x).Where(_ => true).ToArray().ShouldBe([int.MaxValue - 2L, int.MaxValue - 1L, int.MaxValue]);
+        ValueEnumerable.Range(int.MaxValue, 0).IterateToArray().ShouldBeEmpty();
+        ValueEnumerable.Range(int.MinValue, 2).IterateToArray().ShouldBe([int.MinValue, int.MinValue + 1]);
+    }
+
+    [Fact]
     public void Vectorize()
     {
         for (int i = 0; i < 100; i++)

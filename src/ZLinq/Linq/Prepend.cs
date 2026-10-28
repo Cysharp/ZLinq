@@ -60,7 +60,7 @@ namespace ZLinq.Linq
             var totalLength = srcCount + 1; // +1 for the prepended element
             var start = offset.GetOffset(totalLength);
 
-            if (start >= totalLength)
+            if ((uint)start >= (uint)totalLength) // negative when offset is from end and larger than totalLength
             {
                 return false;
             }
