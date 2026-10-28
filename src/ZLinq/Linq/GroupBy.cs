@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Groups the elements of a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence of groups, where each group contains a sequence of objects and a key.</returns>
         public static ValueEnumerable<GroupBy<TEnumerator, TSource, TKey>, IGrouping<TKey, TSource>> GroupBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -9,6 +13,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), null));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of groups, where each group contains a sequence of objects and a key.</returns>
         public static ValueEnumerable<GroupBy<TEnumerator, TSource, TKey>, IGrouping<TKey, TSource>> GroupBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -16,6 +25,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), comparer));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <returns>A sequence of groups, where each group contains a sequence of objects and a key.</returns>
         public static ValueEnumerable<GroupBy2<TEnumerator, TSource, TKey, TElement>, IGrouping<TKey, TElement>> GroupBy<TEnumerator, TSource, TKey, TElement>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -23,6 +37,12 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(elementSelector), null));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of groups, where each group contains a sequence of objects and a key.</returns>
         public static ValueEnumerable<GroupBy2<TEnumerator, TSource, TKey, TElement>, IGrouping<TKey, TElement>> GroupBy<TEnumerator, TSource, TKey, TElement>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -30,6 +50,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(elementSelector), comparer));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="resultSelector">A function to create a result value from each group.</param>
+        /// <returns>A sequence of elements of the result type where each element represents a projection over a group and its key.</returns>
         public static ValueEnumerable<GroupBy3<TEnumerator, TSource, TKey, TResult>, TResult> GroupBy<TEnumerator, TSource, TKey, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -37,6 +62,12 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(resultSelector), null));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="resultSelector">A function to create a result value from each group.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of elements of the result type where each element represents a projection over a group and its key.</returns>
         public static ValueEnumerable<GroupBy3<TEnumerator, TSource, TKey, TResult>, TResult> GroupBy<TEnumerator, TSource, TKey, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TKey, IEnumerable<TSource>, TResult> resultSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -44,6 +75,12 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(resultSelector), comparer));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <param name="resultSelector">A function to create a result value from each group.</param>
+        /// <returns>A sequence of elements of the result type where each element represents a projection over a group and its key.</returns>
         public static ValueEnumerable<GroupBy4<TEnumerator, TSource, TKey, TElement, TResult>, TResult> GroupBy<TEnumerator, TSource, TKey, TElement, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -51,6 +88,13 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(elementSelector), Throws.IfNull(resultSelector), null));
 
+        /// <summary>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="elementSelector">A transform function to produce a result element value from each element.</param>
+        /// <param name="resultSelector">A function to create a result value from each group.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of elements of the result type where each element represents a projection over a group and its key.</returns>
         public static ValueEnumerable<GroupBy4<TEnumerator, TSource, TKey, TElement, TResult>, TResult> GroupBy<TEnumerator, TSource, TKey, TElement, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, Func<TKey, IEnumerable<TElement>, TResult> resultSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

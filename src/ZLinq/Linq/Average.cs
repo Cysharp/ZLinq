@@ -11,6 +11,9 @@ partial class ValueEnumerableExtensions
 
     #region float
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static float Average<TEnumerator>(this ValueEnumerable<TEnumerator, float> source)
         where TEnumerator : struct, IValueEnumerator<float>
 #if NET9_0_OR_GREATER
@@ -35,6 +38,9 @@ partial class ValueEnumerableExtensions
         return (float)(sum / (double)count);
     }
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static float? Average<TEnumerator>(this ValueEnumerable<TEnumerator, float?> source)
         where TEnumerator : struct, IValueEnumerator<float?>
 #if NET9_0_OR_GREATER
@@ -65,6 +71,10 @@ partial class ValueEnumerableExtensions
         return null;
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static float Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, float> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -75,6 +85,10 @@ partial class ValueEnumerableExtensions
         return source.Select(selector).Average();
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static float? Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, float?> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -89,6 +103,9 @@ partial class ValueEnumerableExtensions
 
     #region decimal
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static decimal Average<TEnumerator>(this ValueEnumerable<TEnumerator, decimal> source)
         where TEnumerator : struct, IValueEnumerator<decimal>
 #if NET9_0_OR_GREATER
@@ -113,6 +130,9 @@ partial class ValueEnumerableExtensions
         return sum / count;
     }
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static decimal? Average<TEnumerator>(this ValueEnumerable<TEnumerator, decimal?> source)
         where TEnumerator : struct, IValueEnumerator<decimal?>
 #if NET9_0_OR_GREATER
@@ -143,6 +163,10 @@ partial class ValueEnumerableExtensions
         return null;
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static decimal Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, decimal> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -153,6 +177,10 @@ partial class ValueEnumerableExtensions
         return source.Select(selector).Average();
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static decimal? Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, decimal?> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -167,6 +195,9 @@ partial class ValueEnumerableExtensions
 
     #region INumber
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static double Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -497,6 +528,9 @@ partial class ValueEnumerableExtensions
 #endif
     }
 
+    /// <summary>Computes the average of a sequence of numeric values.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The average of the sequence of values.</returns>
     public static double? Average<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, Nullable<TSource>> source)
         where TEnumerator : struct, IValueEnumerator<Nullable<TSource>>
 #if NET9_0_OR_GREATER
@@ -933,6 +967,10 @@ partial class ValueEnumerableExtensions
 #endif
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static double Average<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TResult> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -947,6 +985,10 @@ partial class ValueEnumerableExtensions
         return source.Select(selector).Average();
     }
 
+    /// <summary>Computes the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The average of the projected values.</returns>
     public static double? Average<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TResult?> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

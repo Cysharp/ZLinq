@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns distinct elements from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence that contains distinct elements from the source sequence.</returns>
         public static ValueEnumerable<DistinctBy<TEnumerator, TSource, TKey>, TSource> DistinctBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -9,6 +13,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), null));
 
+        /// <summary>Returns distinct elements from a sequence according to a specified key selector function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains distinct elements from the source sequence.</returns>
         public static ValueEnumerable<DistinctBy<TEnumerator, TSource, TKey>, TSource> DistinctBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

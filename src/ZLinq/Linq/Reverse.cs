@@ -4,6 +4,9 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Inverts the order of the elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence that contains the elements of the source sequence in reverse order.</returns>
         public static ValueEnumerable<Reverse<TEnumerator, TSource>, TSource> Reverse<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

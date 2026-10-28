@@ -7,6 +7,12 @@
         // https://github.com/dotnet/runtime/issues/98259
         // I'm going to use DictionarySlim instead of Dictionary so removed TKey : notnull constraints.
 
+        /// <summary>Applies an accumulator function over a sequence, grouping results by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="seed">The initial accumulator value for each key.</param>
+        /// <param name="func">An accumulator function to be invoked on each element.</param>
+        /// <returns>A sequence that contains the aggregates corresponding to each key.</returns>
         public static ValueEnumerable<AggregateBy<TEnumerator, TSource, TKey, TAccumulate>, KeyValuePair<TKey, TAccumulate>> AggregateBy<TEnumerator, TSource, TKey, TAccumulate>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -14,6 +20,13 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), seed, Throws.IfNull(func), null));
 
+        /// <summary>Applies an accumulator function over a sequence, grouping results by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="seed">The initial accumulator value for each key.</param>
+        /// <param name="func">An accumulator function to be invoked on each element.</param>
+        /// <param name="keyComparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the aggregates corresponding to each key.</returns>
         public static ValueEnumerable<AggregateBy<TEnumerator, TSource, TKey, TAccumulate>, KeyValuePair<TKey, TAccumulate>> AggregateBy<TEnumerator, TSource, TKey, TAccumulate>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func, IEqualityComparer<TKey>? keyComparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -21,6 +34,12 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), seed, Throws.IfNull(func), keyComparer));
 
+        /// <summary>Applies an accumulator function over a sequence, grouping results by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="seedSelector">A function to create the initial accumulator value for each key.</param>
+        /// <param name="func">An accumulator function to be invoked on each element.</param>
+        /// <returns>A sequence that contains the aggregates corresponding to each key.</returns>
         public static ValueEnumerable<AggregateBy2<TEnumerator, TSource, TKey, TAccumulate>, KeyValuePair<TKey, TAccumulate>> AggregateBy<TEnumerator, TSource, TKey, TAccumulate>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TKey, TAccumulate> seedSelector, Func<TAccumulate, TSource, TAccumulate> func)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -28,6 +47,13 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), Throws.IfNull(seedSelector), Throws.IfNull(func), null));
 
+        /// <summary>Applies an accumulator function over a sequence, grouping results by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="seedSelector">A function to create the initial accumulator value for each key.</param>
+        /// <param name="func">An accumulator function to be invoked on each element.</param>
+        /// <param name="keyComparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the aggregates corresponding to each key.</returns>
         public static ValueEnumerable<AggregateBy2<TEnumerator, TSource, TKey, TAccumulate>, KeyValuePair<TKey, TAccumulate>> AggregateBy<TEnumerator, TSource, TKey, TAccumulate>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, Func<TKey, TAccumulate> seedSelector, Func<TAccumulate, TSource, TAccumulate> func, IEqualityComparer<TKey>? keyComparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

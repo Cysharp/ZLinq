@@ -7,6 +7,10 @@
         // https://github.com/dotnet/runtime/issues/98259
         // I'm going to use DictionarySlim instead of Dictionary so removed TKey : notnull constraints.
 
+        /// <summary>Returns the count of elements in the source sequence grouped by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <returns>A sequence that contains the keys and the number of elements for each key.</returns>
         public static ValueEnumerable<CountBy<TEnumerator, TSource, TKey>, KeyValuePair<TKey, int>> CountBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -14,6 +18,11 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(keySelector), null));
 
+        /// <summary>Returns the count of elements in the source sequence grouped by key.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="keySelector">A function to extract the key from each element.</param>
+        /// <param name="keyComparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains the keys and the number of elements for each key.</returns>
         public static ValueEnumerable<CountBy<TEnumerator, TSource, TKey>, KeyValuePair<TKey, int>> CountBy<TEnumerator, TSource, TKey>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey>? keyComparer)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

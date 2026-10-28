@@ -4,6 +4,10 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Concatenates two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The sequence to concatenate to the source sequence.</param>
+        /// <returns>A sequence that contains the concatenated elements of the two sequences.</returns>
         public static ValueEnumerable<Concat<TEnumerator1, TEnumerator2, TSource>, TSource> Concat<TEnumerator1, TEnumerator2, TSource>(this ValueEnumerable<TEnumerator1, TSource> source, ValueEnumerable<TEnumerator2, TSource> second)
             where TEnumerator1 : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -16,6 +20,10 @@ namespace ZLinq
             => new(new(source.Enumerator, second.Enumerator));
 
 
+        /// <summary>Concatenates two sequences.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="second">The sequence to concatenate to the source sequence.</param>
+        /// <returns>A sequence that contains the concatenated elements of the two sequences.</returns>
         public static ValueEnumerable<Concat<TEnumerator1, FromEnumerable<TSource>, TSource>, TSource> Concat<TEnumerator1, TSource>(this ValueEnumerable<TEnumerator1, TSource> source, IEnumerable<TSource> second)
             where TEnumerator1 : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

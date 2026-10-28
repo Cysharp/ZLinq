@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Appends a value to the end of the sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="element">The value to append to the source sequence.</param>
+        /// <returns>A sequence that ends with the specified value.</returns>
         public static ValueEnumerable<Append<TEnumerator, TSource>, TSource> Append<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, TSource element)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

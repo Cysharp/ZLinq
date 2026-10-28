@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns elements from a sequence as long as a specified condition is true.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that occur before the element at which the test no longer passes.</returns>
         public static ValueEnumerable<TakeWhile<TEnumerator, TSource>, TSource> TakeWhile<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -9,6 +13,10 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(predicate)));
 
+        /// <summary>Returns elements from a sequence as long as a specified condition is true. The element's index is used in the logic of the predicate function.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each source element for a condition; the second parameter of the function represents the index of the source element.</param>
+        /// <returns>A sequence that contains the elements from the source sequence that occur before the element at which the test no longer passes.</returns>
         public static ValueEnumerable<TakeWhile2<TEnumerator, TSource>, TSource> TakeWhile<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Int32, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -5,6 +5,10 @@ namespace ZLinq;
 
 partial class ValueEnumerableExtensions
 {
+    /// <summary>Invokes a transform function on each element of a sequence and returns the minimum resulting value.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The minimum value in the sequence.</returns>
     public static TResult? Min<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TResult> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -17,6 +21,9 @@ partial class ValueEnumerableExtensions
         return source.Select(selector).Min();
     }
 
+    /// <summary>Returns the minimum value in a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The minimum value in the sequence.</returns>
     public static TSource? Min<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -26,6 +33,10 @@ partial class ValueEnumerableExtensions
         return Min<TEnumerator, TSource>(source, null);
     }
 
+    /// <summary>Returns the minimum value in a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="comparer">A comparer to compare elements, or <see langword="null"/> to use the default comparer.</param>
+    /// <returns>The minimum value in the sequence.</returns>
     public static TSource? Min<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IComparer<TSource>? comparer)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

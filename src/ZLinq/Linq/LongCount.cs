@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns a <see cref="long"/> that represents the total number of elements in a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>The number of elements in the sequence.</returns>
         public static Int64 LongCount<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -37,6 +40,10 @@
             }
         }
 
+        /// <summary>Returns a <see cref="long"/> that represents how many elements in a sequence satisfy a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</returns>
         public static Int64 LongCount<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, Boolean> predicate)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -73,6 +80,10 @@
             }
         }
 
+        /// <summary>Returns a <see cref="long"/> that represents how many elements in a sequence satisfy a condition.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Int64 LongCount<TSource>(this ValueEnumerable<FromArray<TSource>, TSource> source, Func<TSource, Boolean> predicate)
         {

@@ -4,6 +4,9 @@ namespace ZLinq
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Shuffles the order of the elements of a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence that contains the elements of the source sequence in a random order.</returns>
         public static ValueEnumerable<Shuffle<TEnumerator, TSource>, TSource> Shuffle<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns a sequence that contains the last specified number of elements from the source sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="count">The number of elements to take from the end of the sequence.</param>
+        /// <returns>A sequence that contains the specified number of elements from the end of the source sequence.</returns>
         public static ValueEnumerable<TakeLast<TEnumerator, TSource>, TSource> TakeLast<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Int32 count)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

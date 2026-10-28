@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Returns an indexed sequence of elements, where each element is paired with its zero-based index.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A sequence that contains the elements of the source sequence paired with their indexes.</returns>
         public static ValueEnumerable<Index<TEnumerator, TSource>, (int Index, TSource Item)> Index<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

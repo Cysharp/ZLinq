@@ -6,6 +6,10 @@ namespace ZLinq;
 
 partial class ValueEnumerableExtensions
 {
+    /// <summary>Invokes a transform function on each element of a sequence and returns the maximum resulting value.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <returns>The maximum value in the sequence.</returns>
     public static TResult? Max<TEnumerator, TSource, TResult>(this ValueEnumerable<TEnumerator, TSource> source, Func<TSource, TResult> selector)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -21,6 +25,9 @@ partial class ValueEnumerableExtensions
 
     // already nullable supported.
 
+    /// <summary>Returns the maximum value in a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>The maximum value in the sequence.</returns>
     public static TSource? Max<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -30,6 +37,10 @@ partial class ValueEnumerableExtensions
         return Max<TEnumerator, TSource>(source, null);
     }
 
+    /// <summary>Returns the maximum value in a sequence.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="comparer">A comparer to compare elements, or <see langword="null"/> to use the default comparer.</param>
+    /// <returns>The maximum value in the sequence.</returns>
     public static TSource? Max<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, IComparer<TSource>? comparer)
         where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

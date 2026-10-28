@@ -2,6 +2,9 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Creates a <see cref="System.Collections.Generic.List{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A list that contains the elements from the sequence.</returns>
         public static List<TSource> ToList<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -78,6 +81,9 @@
 
         // Select -> ToList is common pattern so optimize it.
 
+        /// <summary>Creates a <see cref="System.Collections.Generic.List{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A list that contains the elements from the sequence.</returns>
         public static List<TResult> ToList<TEnumerator, TSource, TResult>(this ValueEnumerable<Select<TEnumerator, TSource, TResult>, TResult> source)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER
@@ -136,6 +142,9 @@
             }
         }
 
+        /// <summary>Creates a <see cref="System.Collections.Generic.List{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A list that contains the elements from the sequence.</returns>
         public static List<TResult> ToList<TResult>(this ValueEnumerable<RangeSelect<TResult>, TResult> source)
         {
             var value = source.Enumerator.start;
@@ -154,6 +163,9 @@
             return filler.Commit(count);
         }
 
+        /// <summary>Creates a <see cref="System.Collections.Generic.List{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A list that contains the elements from the sequence.</returns>
         public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ArraySelect<TSource, TResult>, TResult> source)
         {
             var sourceArray = source.Enumerator.source;
@@ -170,6 +182,9 @@
             return filler.Commit(sourceArray.Length);
         }
 
+        /// <summary>Creates a <see cref="System.Collections.Generic.List{T}"/> from a sequence.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <returns>A list that contains the elements from the sequence.</returns>
         public static List<TResult> ToList<TSource, TResult>(this ValueEnumerable<ListSelect<TSource, TResult>, TResult> source)
         {
             var sourceList = source.Enumerator.source;

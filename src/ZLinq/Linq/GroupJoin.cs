@@ -2,6 +2,13 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="resultSelector">A function to create a result element from an element from the source sequence and a collection of matching elements from the inner sequence.</param>
+        /// <returns>A sequence that contains elements of the result type that are obtained by performing a grouped join on two sequences.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey, TResult>, TResult> GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey, TResult>(this ValueEnumerable<TEnumerator, TOuter> source, ValueEnumerable<TEnumerator2, TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER
@@ -13,6 +20,14 @@
 #endif
             => new(new(source.Enumerator, inner.Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), Throws.IfNull(resultSelector), null));
 
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="resultSelector">A function to create a result element from an element from the source sequence and a collection of matching elements from the inner sequence.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains elements of the result type that are obtained by performing a grouped join on two sequences.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey, TResult>, TResult> GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey, TResult>(this ValueEnumerable<TEnumerator, TOuter> source, ValueEnumerable<TEnumerator2, TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER
@@ -26,6 +41,13 @@
 
 
 
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="resultSelector">A function to create a result element from an element from the source sequence and a collection of matching elements from the inner sequence.</param>
+        /// <returns>A sequence that contains elements of the result type that are obtained by performing a grouped join on two sequences.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, FromEnumerable<TInner>, TOuter, TInner, TKey, TResult>, TResult> GroupJoin<TEnumerator, TOuter, TInner, TKey, TResult>(this ValueEnumerable<TEnumerator, TOuter> source, IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER
@@ -33,6 +55,14 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), Throws.IfNull(resultSelector), null));
 
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="resultSelector">A function to create a result element from an element from the source sequence and a collection of matching elements from the inner sequence.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence that contains elements of the result type that are obtained by performing a grouped join on two sequences.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, FromEnumerable<TInner>, TOuter, TInner, TKey, TResult>, TResult> GroupJoin<TEnumerator, TOuter, TInner, TKey, TResult>(this ValueEnumerable<TEnumerator, TOuter> source, IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector, IEqualityComparer<TKey>? comparer)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER
@@ -40,6 +70,13 @@
 #endif
             => new(new(source.Enumerator, Throws.IfNull(inner).AsValueEnumerable().Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), Throws.IfNull(resultSelector), comparer));
 
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of groups, where each group's key is an element of the source sequence and its elements are the matching elements of the inner sequence.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>, IGrouping<TOuter, TInner>> GroupJoin<TEnumerator, TEnumerator2, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, ValueEnumerable<TEnumerator2, TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER
@@ -51,6 +88,13 @@
 #endif
             => new(new(source.Enumerator, inner.Enumerator, Throws.IfNull(outerKeySelector), Throws.IfNull(innerKeySelector), comparer));
 
+        /// <summary>Correlates the elements of two sequences based on equality of keys and groups the results.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="inner">The sequence to join to the source sequence.</param>
+        /// <param name="outerKeySelector">A function to extract the join key from each element of the source sequence.</param>
+        /// <param name="innerKeySelector">A function to extract the join key from each element of the inner sequence.</param>
+        /// <param name="comparer">An equality comparer to compare keys, or <see langword="null"/> to use the default equality comparer.</param>
+        /// <returns>A sequence of groups, where each group's key is an element of the source sequence and its elements are the matching elements of the inner sequence.</returns>
         public static ValueEnumerable<GroupJoin<TEnumerator, FromEnumerable<TInner>, TOuter, TInner, TKey>, IGrouping<TOuter, TInner>> GroupJoin<TEnumerator, TOuter, TInner, TKey>(this ValueEnumerable<TEnumerator, TOuter> source, IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector, IEqualityComparer<TKey>? comparer = null)
             where TEnumerator : struct, IValueEnumerator<TOuter>
 #if NET9_0_OR_GREATER

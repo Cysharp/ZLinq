@@ -6,6 +6,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="count">The number of elements to generate.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         public static ValueEnumerable<FromRange, int> Range(int start, int count)
         {
             long max = ((long)start) + count - 1;
@@ -17,12 +21,26 @@ namespace ZLinq
             return new(new(start, count));
         }
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="count">The number of elements to generate.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         public static ValueEnumerable<FromRangeDateTime, DateTime> Range(DateTime start, int count, TimeSpan step) => new(new(start, count, step));
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="count">The number of elements to generate.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         public static ValueEnumerable<FromRangeDateTimeOffset, DateTimeOffset> Range(DateTimeOffset start, int count, TimeSpan step) => new(new(start, count, step));
 
 #if NET8_0_OR_GREATER
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="count">The number of elements to generate.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         public static ValueEnumerable<FromRange<T, T>, T> Range<T>(T start, int count)
             where T : INumberBase<T>
         {
@@ -34,6 +52,11 @@ namespace ZLinq
             return new(new(start, count, T.One));
         }
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="count">The number of elements to generate.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         public static ValueEnumerable<FromRange<T, TStep>, T> Range<T, TStep>(T start, int count, TStep step)
             where T : IAdditionOperators<T, TStep, T>
         {
@@ -49,6 +72,10 @@ namespace ZLinq
 
         #region Obsolete
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="range">The range of integers to generate. The start must be an index from the start; the end can be <c>^0</c> to generate an infinite sequence.</param>
+        /// <param name="rightBound">Whether the end of the range is included in the sequence.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         [Obsolete("Use ValueEnumerable.Sequence instead. This will be removed in a future version.")]
         public static ValueEnumerable<FromRange2, int> Range(Range range, RightBound rightBound = RightBound.Exclusive)
         {
@@ -84,6 +111,11 @@ namespace ZLinq
 
 #if NET8_0_OR_GREATER
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="end">The end value of the range.</param>
+        /// <param name="rightBound">Whether the end value is included in the sequence.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         [Obsolete("Use ValueEnumerable.Sequence instead. This will be removed in a future version.")]
         public static ValueEnumerable<FromRangeTo<T, T>, T> Range<T>(T start, T end, RightBound rightBound)
             where T : INumberBase<T>, IComparisonOperators<T, T, bool>
@@ -92,6 +124,12 @@ namespace ZLinq
             return new(new(start, end, step, rightBound));
         }
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="end">The end value of the range.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <param name="rightBound">Whether the end value is included in the sequence.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         [Obsolete("Use ValueEnumerable.Sequence instead. This will be removed in a future version.")]
         public static ValueEnumerable<FromRangeTo<T, TStep>, T> Range<T, TStep>(T start, T end, TStep step, RightBound rightBound)
             where T : IAdditionOperators<T, TStep, T>, IComparisonOperators<T, T, bool>
@@ -101,9 +139,21 @@ namespace ZLinq
 
 #endif
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="end">The end value of the range.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <param name="rightBound">Whether the end value is included in the sequence.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         [Obsolete("Use ValueEnumerable.Sequence instead. This will be removed in a future version.")]
         public static ValueEnumerable<FromRangeDateTimeTo, DateTime> Range(DateTime start, DateTime end, TimeSpan step, RightBound rightBound) => new(new(start, end, step, rightBound));
 
+        /// <summary>Generates a sequence of sequential values within a specified range.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="end">The end value of the range.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <param name="rightBound">Whether the end value is included in the sequence.</param>
+        /// <returns>A sequence that contains a range of sequential values.</returns>
         [Obsolete("Use ValueEnumerable.Sequence instead. This will be removed in a future version.")]
         public static ValueEnumerable<FromRangeDateTimeOffsetTo, DateTimeOffset> Range(DateTimeOffset start, DateTimeOffset end, TimeSpan step, RightBound rightBound) => new(new(start, end, step, rightBound));
 

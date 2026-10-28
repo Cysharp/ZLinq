@@ -12,6 +12,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromByteInfiniteSequence, Byte> InfiniteSequence(Byte start, Byte step)
         {
             return new(new(start, step));
@@ -67,6 +71,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromSByteInfiniteSequence, SByte> InfiniteSequence(SByte start, SByte step)
         {
             return new(new(start, step));
@@ -122,6 +130,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromUInt16InfiniteSequence, UInt16> InfiniteSequence(UInt16 start, UInt16 step)
         {
             return new(new(start, step));
@@ -177,6 +189,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInt16InfiniteSequence, Int16> InfiniteSequence(Int16 start, Int16 step)
         {
             return new(new(start, step));
@@ -232,6 +248,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromUInt32InfiniteSequence, UInt32> InfiniteSequence(UInt32 start, UInt32 step)
         {
             return new(new(start, step));
@@ -287,6 +307,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInt32InfiniteSequence, Int32> InfiniteSequence(Int32 start, Int32 step)
         {
             return new(new(start, step));
@@ -342,6 +366,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromUInt64InfiniteSequence, UInt64> InfiniteSequence(UInt64 start, UInt64 step)
         {
             return new(new(start, step));
@@ -397,6 +425,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromInt64InfiniteSequence, Int64> InfiniteSequence(Int64 start, Int64 step)
         {
             return new(new(start, step));
@@ -452,6 +484,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromCharInfiniteSequence, Char> InfiniteSequence(Char start, Char step)
         {
             return new(new(start, step));
@@ -507,6 +543,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromSingleInfiniteSequence, Single> InfiniteSequence(Single start, Single step)
         {
             return new(new(start, step));
@@ -562,6 +602,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromDoubleInfiniteSequence, Double> InfiniteSequence(Double start, Double step)
         {
             return new(new(start, step));
@@ -617,6 +661,10 @@ namespace ZLinq
 {
     public static partial class ValueEnumerable
     {
+        /// <summary>Generates an infinite sequence that begins with the specified start value and advances by the step value.</summary>
+        /// <param name="start">The value of the first element in the sequence.</param>
+        /// <param name="step">The difference between each element and the next one.</param>
+        /// <returns>A sequence that contains the infinite sequence of values.</returns>
         public static ValueEnumerable<FromDecimalInfiniteSequence, Decimal> InfiniteSequence(Decimal start, Decimal step)
         {
             return new(new(start, step));

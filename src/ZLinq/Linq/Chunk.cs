@@ -2,6 +2,10 @@
 {
     partial class ValueEnumerableExtensions
     {
+        /// <summary>Splits the elements of a sequence into chunks of size at most the specified size.</summary>
+        /// <param name="source">The source sequence.</param>
+        /// <param name="size">The maximum size of each chunk.</param>
+        /// <returns>A sequence that contains the elements of the source sequence split into chunks. The last chunk can be smaller than the specified size.</returns>
         public static ValueEnumerable<Chunk<TEnumerator, TSource>, TSource[]> Chunk<TEnumerator, TSource>(this ValueEnumerable<TEnumerator, TSource> source, Int32 size)
             where TEnumerator : struct, IValueEnumerator<TSource>
 #if NET9_0_OR_GREATER

@@ -24,23 +24,46 @@ namespace ZLinq.Simd;
 
 public static class VectorizableExtensions
 {
+    /// <summary>Converts the source into a <see cref="Vectorizable{T}"/> to apply SIMD operations.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>A <see cref="Vectorizable{T}"/> over the source.</returns>
     public static Vectorizable<T> AsVectorizable<T>(this T[] source) where T : struct, INumber<T> => new(source);
+    /// <summary>Converts the source into a <see cref="Vectorizable{T}"/> to apply SIMD operations.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>A <see cref="Vectorizable{T}"/> over the source.</returns>
     public static Vectorizable<T> AsVectorizable<T>(this Span<T> source) where T : struct, INumber<T> => new(source);
+    /// <summary>Converts the source into a <see cref="Vectorizable{T}"/> to apply SIMD operations.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <returns>A <see cref="Vectorizable{T}"/> over the source.</returns>
     public static Vectorizable<T> AsVectorizable<T>(this ReadOnlySpan<T> source) where T : struct, INumber<T> => new(source);
 
+    /// <summary>Fills the source with sequential numbers starting from the specified value, using SIMD when available.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="start">The value of the first element.</param>
     public static void VectorizedFillRange(this int[] source, int start)
     {
         FromRange.FillIncremental(source.AsSpan(), start);
     }
 
+    /// <summary>Fills the source with sequential numbers starting from the specified value, using SIMD when available.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="start">The value of the first element.</param>
     public static void VectorizedFillRange(this Span<int> source, int start)
     {
         FromRange.FillIncremental(source, start);
     }
 
+    /// <summary>Updates each element of the source in place, using SIMD when available.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="vectorFunc">A function to update a vector of elements.</param>
+    /// <param name="func">A function to update each of the remaining elements that do not fill a vector.</param>
     public static void VectorizedUpdate<T>(this T[] source, Func<Vector<T>, Vector<T>> vectorFunc, Func<T, T> func)
         where T : struct, INumber<T> => Update(source, vectorFunc, func);
 
+    /// <summary>Updates each element of the source in place, using SIMD when available.</summary>
+    /// <param name="source">The source sequence.</param>
+    /// <param name="vectorFunc">A function to update a vector of elements.</param>
+    /// <param name="func">A function to update each of the remaining elements that do not fill a vector.</param>
     public static void VectorizedUpdate<T>(this Span<T> source, Func<Vector<T>, Vector<T>> vectorFunc, Func<T, T> func)
         where T : struct, INumber<T> => Update(source, vectorFunc, func);
 
