@@ -321,7 +321,7 @@ namespace ZLinq.Tests
             });
         }
 
-        [Fact(Skip = SkipReason.Issue0242)]
+        [Fact]
         public void AppendOverflowCountWithICollection()
         {
             // AppendPrepend1Iterator overflow when source is ICollection
@@ -334,7 +334,7 @@ namespace ZLinq.Tests
             });
         }
 
-        [Fact(Skip = SkipReason.Issue0242)]
+        [Fact]
         public void PrependOverflowCountWithICollection()
         {
             // AppendPrepend1Iterator overflow when source is ICollection
@@ -347,11 +347,11 @@ namespace ZLinq.Tests
             });
         }
 
-        [Fact(Skip = SkipReason.Issue0242)]
+        [Fact]
         public void AppendPrependNOverflowCountWithICollection()
         {
             // AppendPrependN overflow when source is ICollection
-            var source = new MockCollection<int>(int.MaxValue-2);
+            var source = new MockCollection<int>(int.MaxValue);
 
             Assert.Throws<OverflowException>(() =>
             {
