@@ -28,7 +28,7 @@ var seq = source
 foreach (var item in seq) { }
 ```
 
-* **99% compatibility** with .NET 10's LINQ (including new `Shuffle`, `RightJoin`, `LeftJoin`, `Sequence`, `InfiniteSequence` operators)
+* **99% compatibility** with .NET 10's LINQ (including new `Shuffle`, `RightJoin`, `LeftJoin`, `Sequence`, `InfiniteSequence`), .NET 11's `FullJoin`
 * **Zero allocation** for method chains through struct-based Enumerable via `ValueEnumerable`
 * **LINQ to Span** to full support LINQ operations on `Span<T>` using .NET 9/C# 13's `allows ref struct`
 * **LINQ to Tree** to extend tree-structured objects (built-in support for FileSystem, JSON, GameObject)
