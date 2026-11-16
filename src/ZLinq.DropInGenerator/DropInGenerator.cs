@@ -476,7 +476,7 @@ namespace {{extension.NamespaceName}}
         }
 
         // replace accessibility
-        sb.Replace("internal static partial class", $"{extension.Accessibility.ToString().ToLower().Replace("and", " ").Replace("or", " ").Replace("friend", "internal")} static partial class");
+        sb.Replace("internal static partial class", $"{extension.Accessibility.ToString().ToLowerInvariant().Replace("and", " ").Replace("or", " ").Replace("friend", "internal")} static partial class");
 
         // replace typename
         sb.Replace("class ZLinqDropInExtensions", $"class {extension.TypeName}ZLinqDropInExtensions");
