@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/sandbox/">
     <Project Path="sandbox/Benchmark/Benchmark.csproj" />
+    <Project Path="sandbox/ContextBenchmarks/ContextBenchmarks.csproj" />
     <Project Path="sandbox/ConsoleApp/ConsoleApp.csproj" />
     <Project Path="sandbox/ConsoleAppNativeAOT/ConsoleAppNativeAOT.csproj" />
     <Project Path="sandbox/ConsoleAppNet6/ConsoleAppNet6.csproj" />
